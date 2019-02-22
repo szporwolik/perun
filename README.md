@@ -27,8 +27,8 @@ Core:
 * Add the following line to your Export.lua : TBD
 * Run the Win32 application
 * Start DCS World and host multiplayer session
- * by default the JSON is written into : TBD
- * by default the UDP port TBD is in use
+  * by default the JSON is written into : TBD
+  * by default the UDP port TBD is in use
 
 ## Testing
 
