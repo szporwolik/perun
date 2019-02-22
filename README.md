@@ -19,7 +19,9 @@ For MySQL Export:
 
 ### Installing
 
+* Download latest [release](https://github.com/szporwolik/perun/releases) together with Win32 binary file
 * Copy contents of DCS folder to you \Scripts folder (inside DCS folder in your Saved Games)
+* Run the Win32 application
 
 ## Testing
 
