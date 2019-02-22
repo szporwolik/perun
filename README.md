@@ -15,6 +15,7 @@ Core:
    * Windows app which handles UDP readouts
  * **(Optional)** For MySQL Export:
    * MySQL server with read/write access
+
 3rd party support:
  * for [DCS SRS](https://github.com/ciribob/DCS-SimpleRadioStandalone/releases) integration location of the clients-list.json file and SRS configuration with JSON data export enabled - see [SRS documentation](https://github.com/ciribob/DCS-SimpleRadioStandalone/wiki)
  * for [LotATC](https://www.lotatc.com/) integration location of the stats.json file and LotATC configuration with JSON data export enabled - see [LotATC documentation](https://www.lotatc.com/documentation/server_configuration.html)
@@ -26,8 +27,8 @@ Core:
 * Add the following line to your Export.lua : TBD
 * Run the Win32 application
 * Start DCS World and host multiplayer session
- ** by default the JSON is written into : TBD
- ** by default the UDP port TBD is in use
+ * by default the JSON is written into : TBD
+ * by default the UDP port TBD is in use
 
 ## Testing
 
