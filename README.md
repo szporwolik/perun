@@ -4,77 +4,46 @@ This toolset extracts data from DCS World server and export it to local json fil
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+You can use this toolkit with or without Windows app. Simple DCS export scripts will create JSON file which can be used for further processing.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+JSON Export:
+* DCS World stable or DCS World beta
 
-```
-Give examples
-```
+For UDP Export:
+* Windows app which handles UDP readouts
+
+For MySQL Export:
+* MySQL server with read/write access
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+* Copy contents of DCS folder to you \Scripts folder (inside DCS folder in your Saved Games)
 
-Say what the step will be
+## Testing
 
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
+TBD
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [VisualStudio 2017 Community](https://visualstudio.microsoft.com/vs/community/) 
+* [Notepad++](https://notepad-plus-plus.org/)
+* [TortoiseGit](https://tortoisegit.org/)
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Please contact me if you'd like to contribute.
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/szporwolik/perun/tags). 
 
 ## Authors
 
 * **Szymon Porwolik** - *Initial work* - [szporwolik](https://github.com/szporwolik)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/szporwolik/perun/contributors) who participated in this project.
 
 ## License
 
@@ -82,6 +51,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* Thanks to [Gildia DCS](https://forum.gildia.org) Polish community of DCS World pilots.
