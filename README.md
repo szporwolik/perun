@@ -8,14 +8,12 @@ You can use this toolkit with or without Windows app. Simple DCS export scripts 
 
 ### Prerequisites
 
-JSON Export:
-* DCS World stable or DCS World beta
-
-For UDP Export:
-* Windows app which handles UDP readouts
-
-For MySQL Export:
-* MySQL server with read/write access
+* For JSON Export:
+  * DCS World stable or DCS World beta
+* For UDP Export:
+  * Windows app which handles UDP readouts
+* For MySQL Export:
+  * MySQL server with read/write access
 
 ### Installing
 
