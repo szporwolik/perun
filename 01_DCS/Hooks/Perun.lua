@@ -16,7 +16,7 @@
 -- ########### END OF SETTINGS ###########
 
 -- Variable init
-	Perun.Version = "v0.3.1"
+	Perun.Version = "v0.3.2"
 	Perun.StatusData = {}
 	Perun.SlotsData = {}
 	Perun.MissionData = {}
