@@ -1,18 +1,17 @@
 # Perun for DCS World
 
 This toolset extracts data from DCS World server and export it to local json file and UDP port. **Optional** windows app puts JSON data to MySQL database.
+Additionaly windows app can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World ultimate integration tool for server admins.
 
 ## Getting Started
 
-You can use this toolkit with or without Windows app. Simple DCS export scripts will create JSON file which can be used for further processing.
+You can use this toolkit with or without Windows app. Simple DCS export scripts will create JSON file which can be used for further processing, by default this file is created in Scripts\Json folder located in your Saved Games DCS folder tree.
 
 ### Prerequisites
 
 Core:
  * For JSON Export:
    * DCS World stable or DCS World beta
- * For UDP Export:
-   * Windows app which handles UDP readouts
  * **(Optional)** For MySQL Export:
    * MySQL server with read/write access
 
@@ -24,15 +23,28 @@ Core:
 
 * Download latest [release](https://github.com/szporwolik/perun/releases) **optionaly** together with Win32 binary file for MySQL export
 * Copy contents of DCS folder to you \Scripts folder (inside DCS folder in your Saved Games)
-* Add the following line to your Export.lua : TBD
-* Run the Win32 application
+* create MySQL server 03_MySQL folder contains creation SQL file
+* **optionaly** Run the Win32 application
+	* set MySQL connection data
+	* point LotATC json file location
+	* point DCS SRS json file location
+	* click connect and leave the app running
 * Start DCS World and host multiplayer session
-  * by default the JSON is written into : TBD
-  * by default the UDP port TBD is in use
+  * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
+  * by default the UDP port 48620 is in use as target
 
-## Testing
-
-TBD
+## Data packets
+* ID: 1, contains version information
+* ID: 2, contains status data in the following sections
+	* mission
+	* players
+* ID: 3, available slots list and coalitions
+	* coalitions
+	* slots
+* ID: 50, chat event
+* ID: 51, game event
+* ID: 100, DCS SRS's client-list.json
+* ID: 101, LotATC's stats.json
 
 ## Built With
 

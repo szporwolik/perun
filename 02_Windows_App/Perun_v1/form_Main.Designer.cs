@@ -36,6 +36,8 @@
             this.con_GroupBox_1 = new System.Windows.Forms.GroupBox();
             this.tim_1000ms = new System.Windows.Forms.Timer(this.components);
             this.con_GroupBox_2 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.con_txt_mysql_port = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.con_txt_mysql_username = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -83,7 +85,7 @@
             // 
             // con_Button_Listen_ON
             // 
-            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 405);
+            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 434);
             this.con_Button_Listen_ON.Name = "con_Button_Listen_ON";
             this.con_Button_Listen_ON.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_ON.TabIndex = 2;
@@ -94,7 +96,7 @@
             // con_Button_Listen_OFF
             // 
             this.con_Button_Listen_OFF.Enabled = false;
-            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 405);
+            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 434);
             this.con_Button_Listen_OFF.Name = "con_Button_Listen_OFF";
             this.con_Button_Listen_OFF.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_OFF.TabIndex = 3;
@@ -105,9 +107,9 @@
             // con_GroupBox_1
             // 
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
-            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 235);
+            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 261);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
-            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 164);
+            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 167);
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "UDP log";
@@ -119,6 +121,8 @@
             // 
             // con_GroupBox_2
             // 
+            this.con_GroupBox_2.Controls.Add(this.label6);
+            this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_port);
             this.con_GroupBox_2.Controls.Add(this.label4);
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_username);
             this.con_GroupBox_2.Controls.Add(this.label3);
@@ -129,15 +133,31 @@
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_password);
             this.con_GroupBox_2.Location = new System.Drawing.Point(12, 27);
             this.con_GroupBox_2.Name = "con_GroupBox_2";
-            this.con_GroupBox_2.Size = new System.Drawing.Size(324, 127);
+            this.con_GroupBox_2.Size = new System.Drawing.Size(324, 154);
             this.con_GroupBox_2.TabIndex = 5;
             this.con_GroupBox_2.TabStop = false;
             this.con_GroupBox_2.Text = "MySQL";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(41, 48);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(59, 13);
+            this.label6.TabIndex = 9;
+            this.label6.Text = "Server port";
+            // 
+            // con_txt_mysql_port
+            // 
+            this.con_txt_mysql_port.Location = new System.Drawing.Point(106, 45);
+            this.con_txt_mysql_port.Name = "con_txt_mysql_port";
+            this.con_txt_mysql_port.Size = new System.Drawing.Size(207, 20);
+            this.con_txt_mysql_port.TabIndex = 8;
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(45, 74);
+            this.label4.Location = new System.Drawing.Point(45, 100);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(55, 13);
             this.label4.TabIndex = 7;
@@ -145,7 +165,7 @@
             // 
             // con_txt_mysql_username
             // 
-            this.con_txt_mysql_username.Location = new System.Drawing.Point(106, 71);
+            this.con_txt_mysql_username.Location = new System.Drawing.Point(106, 97);
             this.con_txt_mysql_username.Name = "con_txt_mysql_username";
             this.con_txt_mysql_username.Size = new System.Drawing.Size(207, 20);
             this.con_txt_mysql_username.TabIndex = 6;
@@ -153,7 +173,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(47, 100);
+            this.label3.Location = new System.Drawing.Point(47, 126);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 13);
             this.label3.TabIndex = 5;
@@ -162,7 +182,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(47, 48);
+            this.label2.Location = new System.Drawing.Point(47, 74);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 13);
             this.label2.TabIndex = 4;
@@ -179,7 +199,7 @@
             // 
             // con_txt_mysql_database
             // 
-            this.con_txt_mysql_database.Location = new System.Drawing.Point(106, 45);
+            this.con_txt_mysql_database.Location = new System.Drawing.Point(106, 71);
             this.con_txt_mysql_database.Name = "con_txt_mysql_database";
             this.con_txt_mysql_database.Size = new System.Drawing.Size(207, 20);
             this.con_txt_mysql_database.TabIndex = 2;
@@ -193,7 +213,7 @@
             // 
             // con_txt_mysql_password
             // 
-            this.con_txt_mysql_password.Location = new System.Drawing.Point(106, 97);
+            this.con_txt_mysql_password.Location = new System.Drawing.Point(106, 123);
             this.con_txt_mysql_password.Name = "con_txt_mysql_password";
             this.con_txt_mysql_password.PasswordChar = '*';
             this.con_txt_mysql_password.Size = new System.Drawing.Size(207, 20);
@@ -205,9 +225,9 @@
             this.con_GroupBox_3.Controls.Add(this.con_txt_3rd_srs);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_lotatc);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_srs);
-            this.con_GroupBox_3.Location = new System.Drawing.Point(12, 160);
+            this.con_GroupBox_3.Location = new System.Drawing.Point(12, 187);
             this.con_GroupBox_3.Name = "con_GroupBox_3";
-            this.con_GroupBox_3.Size = new System.Drawing.Size(324, 69);
+            this.con_GroupBox_3.Size = new System.Drawing.Size(324, 68);
             this.con_GroupBox_3.TabIndex = 6;
             this.con_GroupBox_3.TabStop = false;
             this.con_GroupBox_3.Text = "3rd Party";
@@ -250,7 +270,7 @@
             // 
             // con_Button_Quit
             // 
-            this.con_Button_Quit.Location = new System.Drawing.Point(250, 405);
+            this.con_Button_Quit.Location = new System.Drawing.Point(250, 434);
             this.con_Button_Quit.Name = "con_Button_Quit";
             this.con_Button_Quit.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Quit.TabIndex = 7;
@@ -298,14 +318,14 @@
             // 
             // tim_10000ms
             // 
-            this.tim_10000ms.Interval = 10000;
+            this.tim_10000ms.Interval = 30000;
             this.tim_10000ms.Tick += new System.EventHandler(this.tim_10000ms_Tick);
             // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(348, 456);
+            this.ClientSize = new System.Drawing.Size(349, 483);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.con_lab_github);
             this.Controls.Add(this.con_Button_Quit);
@@ -361,6 +381,8 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog_SRS;
         private System.Windows.Forms.OpenFileDialog openFileDialog_LotATC;
         private System.Windows.Forms.Timer tim_10000ms;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox con_txt_mysql_port;
     }
 }
 

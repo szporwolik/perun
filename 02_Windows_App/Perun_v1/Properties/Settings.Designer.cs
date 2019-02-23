@@ -118,5 +118,17 @@ namespace Perun_v1.Properties {
                 this["OTHER_SRS_USE"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MYSQL_Port {
+            get {
+                return ((string)(this["MYSQL_Port"]));
+            }
+            set {
+                this["MYSQL_Port"] = value;
+            }
+        }
     }
 }

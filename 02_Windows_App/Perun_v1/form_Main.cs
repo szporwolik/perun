@@ -36,16 +36,15 @@ namespace Perun_v1
         public void SendToMySql(string raw_udp_frame)
         {
             // Main function to send data to mysql
-            // TODO : persistent connection and error handling
-
                 dynamic udp_frame = JsonConvert.DeserializeObject(raw_udp_frame);
 
             // Cut raw data to type and paylod for proper mysql insert
-                string type = udp_frame.type;                                   
-                
+                string type = udp_frame.type;
+                string payload = "";
+                string sql = "";
 
-                // Type specyfic
-                    if (type == "1") // Inject app version information
+                // Modify specific
+            if (type == "1") // Inject app version information
                     {
                         Assembly assembly = Assembly.GetExecutingAssembly();
                         FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
@@ -53,15 +52,27 @@ namespace Perun_v1
                         udp_frame.payload["v_win"] = "v"+version;
                     }
 
-                string payload = JsonConvert.SerializeObject(udp_frame.payload);
+                // Specific SQL 
+                    if(type == "50")
+                    {
+                        sql = "INSERT INTO `pe_LogChat` (`pe_LogChat_id`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`) VALUES (NULL, '"+udp_frame.payload.player+ "', '" + udp_frame.payload.msg + "', '" + udp_frame.payload.all + "');";
+                    }
+                    else if(type == "51")
+                    {
+                        sql = "INSERT INTO `pe_LogEvent` (`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`) VALUES (NULL, CURRENT_TIMESTAMP, '" + udp_frame.payload.log_type + "', '" + udp_frame.payload.log_content + "');";
+                    }
+                    else
+                    {
+                        payload = JsonConvert.SerializeObject(udp_frame.payload);
+                        sql = "INSERT INTO pe_DataRaw(pe_dataraw_type,pe_dataraw_payload) VALUES (" + type + ",JSON_QUOTE('" + payload + "')) ON DUPLICATE KEY UPDATE pe_dataraw_payload = JSON_QUOTE('" + payload + "')";
+                    }
+               
             // Connect to mysql
             MySqlConnection conn = new MySqlConnection(MySql_connStr);
                 try
                 {
                     Console.WriteLine("Sending data to MySQL - Begin");
                     conn.Open();
-
-                    string sql = "INSERT INTO pe_DataRaw(pe_dataraw_type,pe_dataraw_payload) VALUES (" + type+",JSON_QUOTE('" + payload + "')) ON DUPLICATE KEY UPDATE pe_dataraw_payload = JSON_QUOTE('" + payload + "')";
 
                     MySqlCommand cmd = new MySqlCommand(sql, conn);
                     MySqlDataReader rdr = cmd.ExecuteReader();
@@ -162,10 +173,16 @@ namespace Perun_v1
             con_txt_mysql_username.Text = Properties.Settings.Default.MYSQL_User;
             con_txt_mysql_password.Text = Properties.Settings.Default.MYSQL_Password;
             con_txt_mysql_server.Text = Properties.Settings.Default.MYSQL_Server;
+            con_txt_mysql_port.Text = Properties.Settings.Default.MYSQL_Port;
             con_txt_3rd_lotatc.Text = Properties.Settings.Default.OTHER_LOTATC_FILE;
             con_txt_3rd_srs.Text = Properties.Settings.Default.OTHER_SRS_FILE;
             con_check_3rd_lotatc.Checked = Properties.Settings.Default.OTHER_LOTATC_USE;
             con_check_3rd_srs.Checked = Properties.Settings.Default.OTHER_SRS_USE;
+
+            // Version to title header
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            this.Text = this.Text + " - v" + fileVersionInfo.ProductVersion;
         }
 
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
@@ -178,21 +195,22 @@ namespace Perun_v1
             // Update form controls
                 con_Button_Listen_ON.Enabled = false;
                 con_Button_Listen_OFF.Enabled = true;
-
                 con_txt_mysql_database.Enabled = false;
                 con_txt_mysql_username.Enabled = false;
                 con_txt_mysql_password.Enabled = false;
                 con_txt_mysql_server.Enabled = false;
+                con_txt_mysql_port.Enabled = false;
                 con_txt_3rd_lotatc.Enabled = false;
                 con_txt_3rd_srs.Enabled = false;
                 con_check_3rd_lotatc.Enabled = false;
                 con_check_3rd_srs.Enabled = false;
             // Prepare connection string
-                MySql_connStr = "server="+con_txt_mysql_server.Text+";user="+con_txt_mysql_username.Text+";database="+con_txt_mysql_database.Text+";port=3306;password="+con_txt_mysql_password.Text;
+                MySql_connStr = "server="+con_txt_mysql_server.Text+";user="+con_txt_mysql_username.Text+";database="+con_txt_mysql_database.Text+";port="+ con_txt_mysql_port.Text + ";password="+con_txt_mysql_password.Text;
 
             // Start timmers
                 tim_1000ms.Enabled = true;
                 tim_10000ms.Enabled = true;
+
         }
 
         private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
@@ -207,6 +225,7 @@ namespace Perun_v1
                 con_txt_mysql_database.Enabled = true;
                 con_txt_mysql_username.Enabled = true;
                 con_txt_mysql_password.Enabled = true;
+                con_txt_mysql_port.Enabled = true;
                 con_txt_mysql_server.Enabled = true;
                 con_txt_3rd_lotatc.Enabled = true;
                 con_txt_3rd_srs.Enabled = true;
@@ -261,7 +280,9 @@ namespace Perun_v1
                         Properties.Settings.Default.MYSQL_DB = con_txt_mysql_database.Text;
                         Properties.Settings.Default.MYSQL_User = con_txt_mysql_username.Text;
                         Properties.Settings.Default.MYSQL_Password = con_txt_mysql_password.Text;
+                        Properties.Settings.Default.MYSQL_Port = con_txt_mysql_port.Text;
                         Properties.Settings.Default.MYSQL_Server = con_txt_mysql_server.Text;
+                        Properties.Settings.Default.MYSQL_Port = con_txt_mysql_port.Text;
                         Properties.Settings.Default.OTHER_LOTATC_FILE = con_txt_3rd_lotatc.Text;
                         Properties.Settings.Default.OTHER_SRS_FILE = con_txt_3rd_srs.Text;
                         Properties.Settings.Default.OTHER_LOTATC_USE = con_check_3rd_lotatc.Checked;
@@ -333,14 +354,31 @@ namespace Perun_v1
         private void tim_10000ms_Tick(object sender, EventArgs e)
         {
             // Main timer to send JSON files to MySQL
-            string strSRSJson = System.IO.File.ReadAllText(con_txt_3rd_srs.Text);
-            LogHistoryAdd(ref LogHistory, "SRS data loaded");
-            string strLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
-            LogHistoryAdd(ref LogHistory, "LotATC data loaded");
+            string strSRSJson;
+            string strLotATCJson;
 
-            strSRSJson = "{'type':'100','payload':'" + strSRSJson + "'}";
+            if (con_check_3rd_srs.Checked)
+            {
+                strSRSJson = System.IO.File.ReadAllText(con_txt_3rd_srs.Text);
+                LogHistoryAdd(ref LogHistory, "SRS data loaded");
+                strSRSJson = "{'type':'100','payload':'" + strSRSJson + "'}";
+            }
+            else
+            {
+                strSRSJson = "{'type':'100','payload':{'ignore':'true'}}";
+            }
+
             SendToMySql(strSRSJson);
-            strLotATCJson = "{'type':'101','payload':'" + strLotATCJson + "'}";
+            if (con_check_3rd_lotatc.Checked)
+            {
+                strLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
+                LogHistoryAdd(ref LogHistory, "LotATC data loaded");
+                strLotATCJson = "{'type':'101','payload':'" + strLotATCJson + "'}";
+                
+            } else
+            {
+                strLotATCJson = "{'type':'101','payload':{'ignore':'true'}}";
+            }
             SendToMySql(strLotATCJson);
         }
     }
