@@ -9,6 +9,7 @@ using System.Windows.Forms;
 
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Perun_v1
 {
@@ -21,7 +22,7 @@ namespace Perun_v1
             public string[] LogHistory=new string[10];      // Log history for GUI
             public string[] SendBuffer=new string[10];      // Mysql send buffer
             public bool LetMeOut=false;                     // Helper to handle system tray
-            public string MySql_connStr;             // MySQL connection string
+            public string MySql_connStr;                    // MySQL connection string
 
         public static void LogHistoryAdd(ref string[] LogHistory, string Comment)
         {
@@ -87,8 +88,8 @@ namespace Perun_v1
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
-                LogHistoryAdd(ref LogHistory, "ERROR: MySQL");
-            }
+                    LogHistoryAdd(ref LogHistory, "ERROR: MySQL");
+                }
 
                 conn.Close();
                 Console.WriteLine("Sending data to MySQL - Done");
@@ -204,8 +205,22 @@ namespace Perun_v1
                 con_txt_3rd_srs.Enabled = false;
                 con_check_3rd_lotatc.Enabled = false;
                 con_check_3rd_srs.Enabled = false;
+
+            // Save settings
+                Properties.Settings.Default.MYSQL_Server = con_txt_mysql_database.Text;
+                Properties.Settings.Default.MYSQL_DB = con_txt_mysql_database.Text;
+                Properties.Settings.Default.MYSQL_User = con_txt_mysql_username.Text;
+                Properties.Settings.Default.MYSQL_Password = con_txt_mysql_password.Text;
+                Properties.Settings.Default.MYSQL_Port = con_txt_mysql_port.Text;
+                Properties.Settings.Default.MYSQL_Server = con_txt_mysql_server.Text;
+                Properties.Settings.Default.MYSQL_Port = con_txt_mysql_port.Text;
+                Properties.Settings.Default.OTHER_LOTATC_FILE = con_txt_3rd_lotatc.Text;
+                Properties.Settings.Default.OTHER_SRS_FILE = con_txt_3rd_srs.Text;
+                Properties.Settings.Default.OTHER_LOTATC_USE = con_check_3rd_lotatc.Checked;
+                Properties.Settings.Default.OTHER_SRS_USE = con_check_3rd_srs.Checked;
+
             // Prepare connection string
-                MySql_connStr = "server="+con_txt_mysql_server.Text+";user="+con_txt_mysql_username.Text+";database="+con_txt_mysql_database.Text+";port="+ con_txt_mysql_port.Text + ";password="+con_txt_mysql_password.Text;
+            MySql_connStr = "server="+con_txt_mysql_server.Text+";user="+con_txt_mysql_username.Text+";database="+con_txt_mysql_database.Text+";port="+ con_txt_mysql_port.Text + ";password="+con_txt_mysql_password.Text;
 
             // Start timmers
                 tim_1000ms.Enabled = true;
@@ -360,22 +375,53 @@ namespace Perun_v1
             bool SRSdefault = true;
             bool LotATCdefault = true;
 
+            // Handle SRS
             if (con_check_3rd_srs.Checked)
             {
                 try
                 {
                     strSRSJson = System.IO.File.ReadAllText(con_txt_3rd_srs.Text);
-                    JsonConvert.DeserializeObject(strSRSJson);
+                    dynamic raw_lotatc = JsonConvert.DeserializeObject(strSRSJson);
 
-                    LogHistoryAdd(ref LogHistory, "SRS data loaded");
+                    for (int i = 0; i < raw_lotatc.Count; i++)
+                    {
+
+                        int temp = raw_lotatc[i].RadioInfo.radios.Count - 1;
+                        for (int j = temp; j >= 0; j--)
+                        {
+                            raw_lotatc[i].RadioInfo.radios[j].enc.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].encKey.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].encMode.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].freqMax.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].freqMin.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].modulation.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].freqMode.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].volMode.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].expansion.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].channel.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.radios[j].simul.Parent.Remove();
+
+                            if (raw_lotatc[i].RadioInfo.radios[j].name == "No Radio")
+                            {
+                                raw_lotatc[i].RadioInfo.radios[j].Remove();
+                            }
+                        }
+                        raw_lotatc[i].ClientChannelId.Parent.Remove();
+                        raw_lotatc[i].RadioInfo.simultaneousTransmission.Parent.Remove();
+                    }
+
+                    strSRSJson = JsonConvert.SerializeObject(raw_lotatc);
                     strSRSJson = "{'type':'100','payload':'" + strSRSJson + "'}";
-
                     SRSdefault = false;
+                    LogHistoryAdd(ref LogHistory, "SRS data loaded");
+
                 }
                 catch
                 {
-                   
+                    LogHistoryAdd(ref LogHistory, "SRS data ERROR");
                 }
+
+
             } 
             if(SRSdefault)
             {
@@ -383,19 +429,23 @@ namespace Perun_v1
             }
             SendToMySql(strSRSJson);
 
+            // Handle LotATC
             if (con_check_3rd_lotatc.Checked)
             {
                 try
                 {
                     strLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
-                    JsonConvert.DeserializeObject(strLotATCJson);
-                    LogHistoryAdd(ref LogHistory, "LotATC data loaded");
+                    dynamic raw_srs = JsonConvert.DeserializeObject(strLotATCJson);
+
                     strLotATCJson = "{'type':'101','payload':'" + strLotATCJson + "'}";
+                    LotATCdefault = false;
+                    LogHistoryAdd(ref LogHistory, "LotATC data loaded");
                 }
                 catch
                 {
-
+                    LogHistoryAdd(ref LogHistory, "LotATC data ERROR");
                 }
+                
                 
             }
 

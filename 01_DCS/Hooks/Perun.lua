@@ -10,14 +10,13 @@
 	Perun.Refresh = 15 														-- base refresh rate in secounds (values lower than 60 may affect performance!)
 	Perun.JsonLocation = "Scripts\\Json\\perun_export.json" 				-- relatve do user's SaveGames DCS folder
 	Perun.UDPTargetPort = 48620												-- UDP port to send data to
-	Perun.MOTD_L1 = "Witamy na serwerze Gildia.org"							-- Message send to players connecting the server - Line 1
-	Perun.MOTD_L2 = "Wymagamy obecnoœci na 255Mhz (DCS SRS)"				-- Message send to players connecting the server - Line 2
-	Perun.MOTD_L3 = "Udanej zabawy"											-- Message send to players connecting the server - Line 3
+	Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"						-- Message send to players connecting the server - Line 1
+	Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- Message send to players connecting the server - Line 2
 	
 -- ########### END OF SETTINGS ###########
 
 -- Variable init
-	Perun.Version = "v0.2.1"
+	Perun.Version = "v0.3.0"
 	Perun.StatusData = {}
 	Perun.SlotsData = {}
 	Perun.VersionData = {}
@@ -156,7 +155,6 @@
 	Perun.onPlayerStart = function (id)
 		net.send_chat(Perun.MOTD_L1, id);
 		net.send_chat(Perun.MOTD_L2, id);
-		net.send_chat(Perun.MOTD_L3, id);
 	end
 
 	Perun.onPlayerTrySendChat = function (playerID, msg, all)
@@ -193,7 +191,7 @@
 			
 		elseif eventName == "disconnect" then
 		    --"disconnect", playerID, name, playerSide, reason_code
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " disconnected; reason: " .. arg4);
+			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " disconnected");
 			
 		elseif eventName == "crash" then
 		    --"crash", playerID, unit_missionID
@@ -213,7 +211,7 @@
 			
 		elseif eventName == "pilot_death" then
 		    --"pilot_death", playerID, unit_missionID
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. "died");
+			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " died");
 			
 		else
 			Perun.LogEvent(eventName,"Unknown event type");
