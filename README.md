@@ -7,6 +7,7 @@ Provided windows app puts JSON data to MySQL database. Additionaly Perun windows
 However this software is intended to be used by experienced users - the output is data Json and MySQL; you will need to process/display it yourself.
 
 ![Perun in action](https://i.imgur.com/ougQMPq.png)
+![Data flow](https://i.imgur.com/sHDQoLM.png)
 
 ### Prerequisites
 
