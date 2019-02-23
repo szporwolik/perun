@@ -16,9 +16,10 @@
 -- ########### END OF SETTINGS ###########
 
 -- Variable init
-	Perun.Version = "v0.3.0"
+	Perun.Version = "v0.3.1"
 	Perun.StatusData = {}
 	Perun.SlotsData = {}
+	Perun.MissionData = {}
 	Perun.VersionData = {}
 	Perun.lastSent =0
 	Perun.JsonLocation = lfs.writedir() .. Perun.JsonLocation
@@ -40,6 +41,7 @@
 		TempData["1"]=Perun.VersionData
 		TempData["2"]=Perun.StatusData
 		TempData["3"]=Perun.SlotsData
+		TempData["4"]=Perun.MissionData
 		
 		io.open(Perun.JsonLocation,"w"):close()
 		perun_export = io.open(Perun.JsonLocation, "w")
@@ -97,10 +99,10 @@
 			Perun.Send(2,Perun.StatusData)
 	end
 
-	Perun.UpdateMission = function()
-		-- Main function for mission information updates
+	Perun.UpdateSlots = function()
+		-- Main function for slot
 
-		-- Update Mission data
+		-- Update slots data
 			Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
 			Perun.SlotsData['slots']={}
 			
@@ -109,6 +111,16 @@
 			end
 		-- Send
 			Perun.Send(3,Perun.SlotsData)
+	end
+	
+	Perun.UpdateMission = function()
+		-- Main function for mission information updates
+
+		-- Update Mission data
+			Perun.MissionData=DCS.getCurrentMission()
+
+		-- Send
+			-- Perun.Send(4,Perun.MissionData)
 	end
 	
 	Perun.LogChat = function(playerID,msg,all)
@@ -139,16 +151,17 @@
 		if _now > Perun.lastSent + Perun.Refresh then
 			Perun.lastSent = _now 
 			
-			Perun.UpdateMission()
+			Perun.UpdateSlots()
 			Perun.UpdateStatus()
 			Perun.UpdateVersion()
+			Perun.UpdateMission()
 			Perun.UpdateJson()
 		end
 
 	end
 
 	Perun.onMissionLoadEnd = function()
-		Perun.UpdateMission()
+		Perun.UpdateSlots()
 		Perun.UpdateJson()
 	end
 	
@@ -158,7 +171,10 @@
 	end
 
 	Perun.onPlayerTrySendChat = function (playerID, msg, all)
-		Perun.LogChat(playerID,msg,all)
+		if msg~=Perun.MOTD_L1 and msg~=Perun.MOTD_L2 then
+			Perun.LogChat(playerID,msg,all)
+		end
+		
 		return msg
 	end
 	
