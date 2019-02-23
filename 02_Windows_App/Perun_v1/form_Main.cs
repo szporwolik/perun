@@ -354,32 +354,57 @@ namespace Perun_v1
         private void tim_10000ms_Tick(object sender, EventArgs e)
         {
             // Main timer to send JSON files to MySQL
-            string strSRSJson;
-            string strLotATCJson;
+            string strSRSJson ="";
+            string strLotATCJson="";
+
+            bool SRSdefault = true;
+            bool LotATCdefault = true;
 
             if (con_check_3rd_srs.Checked)
             {
-                strSRSJson = System.IO.File.ReadAllText(con_txt_3rd_srs.Text);
-                LogHistoryAdd(ref LogHistory, "SRS data loaded");
-                strSRSJson = "{'type':'100','payload':'" + strSRSJson + "'}";
-            }
-            else
+                try
+                {
+                    strSRSJson = System.IO.File.ReadAllText(con_txt_3rd_srs.Text);
+                    JsonConvert.DeserializeObject(strSRSJson);
+
+                    LogHistoryAdd(ref LogHistory, "SRS data loaded");
+                    strSRSJson = "{'type':'100','payload':'" + strSRSJson + "'}";
+
+                    SRSdefault = false;
+                }
+                catch
+                {
+                   
+                }
+            } 
+            if(SRSdefault)
             {
                 strSRSJson = "{'type':'100','payload':{'ignore':'true'}}";
             }
-
             SendToMySql(strSRSJson);
+
             if (con_check_3rd_lotatc.Checked)
             {
-                strLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
-                LogHistoryAdd(ref LogHistory, "LotATC data loaded");
-                strLotATCJson = "{'type':'101','payload':'" + strLotATCJson + "'}";
+                try
+                {
+                    strLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
+                    JsonConvert.DeserializeObject(strLotATCJson);
+                    LogHistoryAdd(ref LogHistory, "LotATC data loaded");
+                    strLotATCJson = "{'type':'101','payload':'" + strLotATCJson + "'}";
+                }
+                catch
+                {
+
+                }
                 
-            } else
+            }
+
+            if (LotATCdefault)
             {
                 strLotATCJson = "{'type':'101','payload':{'ignore':'true'}}";
             }
             SendToMySql(strLotATCJson);
+    
         }
     }
 }
