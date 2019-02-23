@@ -1,11 +1,10 @@
 # Perun for DCS World
 
-This toolset extracts data from DCS World server and export it to local json file and UDP port. **Optional** windows app puts JSON data to MySQL database.
-Additionaly windows app can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World ultimate integration tool for server admins.
+This toolset extracts data from DCS World server and sends information to the local Json file and UDP port. 
 
-## Getting Started
+Provided windows app puts JSON data to MySQL database. Additionaly Perun windows app can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
 
-You can use this toolkit with or without Windows app. Simple DCS export scripts will create JSON file which can be used for further processing, by default this file is created in Scripts\Json folder located in your Saved Games DCS folder tree.
+However this software is intended to be used by experienced users - the output is data Json and MySQL; you will need to process/display it yourself.
 
 ### Prerequisites
 
@@ -16,22 +15,22 @@ Core:
    * MySQL server with read/write access
 
 3rd party support:
- * for [DCS SRS](https://github.com/ciribob/DCS-SimpleRadioStandalone/releases) integration location of the clients-list.json file and SRS configuration with JSON data export enabled - see [SRS documentation](https://github.com/ciribob/DCS-SimpleRadioStandalone/wiki)
- * for [LotATC](https://www.lotatc.com/) integration location of the stats.json file and LotATC configuration with JSON data export enabled - see [LotATC documentation](https://www.lotatc.com/documentation/server_configuration.html)
+ * for [DCS SRS](https://github.com/ciribob/DCS-SimpleRadioStandalone/releases) integration location of the clients-list.json file will be required (by default: SRS Server folder), "Auto Export List" option has to be enabled - see [SRS documentation](https://github.com/ciribob/DCS-SimpleRadioStandalone/wiki)
+ * for [LotATC](https://www.lotatc.com/) you will need location of stats.json file and proper LotATC configuration with JSON data export enabled - see [LotATC documentation](https://www.lotatc.com/documentation/server_configuration.html)
 
 ### Installing
 
-* Download latest [release](https://github.com/szporwolik/perun/releases) **optionaly** together with Win32 binary file for MySQL export
-* Copy contents of DCS folder to you \Scripts folder (inside DCS folder in your Saved Games)
-* create MySQL server 03_MySQL folder contains creation SQL file
+* Download latest [release](https://github.com/szporwolik/perun/releases), **optionaly** together with Win32 binary file for MySQL export
+* Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
+* **optionaly** Create MySQL server using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL)
 * **optionaly** Run the Win32 application
 	* set MySQL connection data
 	* point LotATC json file location
 	* point DCS SRS json file location
-	* click connect and leave the app running
+	* click connect and leave the app running in the background
 * Start DCS World and host multiplayer session
   * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
-  * by default the UDP port 48620 is in use as target
+  * by default the UDP port 48620 is in use as target port
 
 ## Data packets
 * ID: 1, contains version information
