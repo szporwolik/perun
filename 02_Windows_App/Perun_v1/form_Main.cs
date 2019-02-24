@@ -23,6 +23,7 @@ namespace Perun_v1
             public string[] SendBuffer=new string[10];      // Mysql send buffer
             public bool LetMeOut=false;                     // Helper to handle system tray
             public string MySql_connStr;                    // MySQL connection string
+            string publishVersion = "DEBUG";                // Helper for pulling version definition
 
         public static void LogHistoryAdd(ref string[] LogHistory, string Comment)
         {
@@ -47,10 +48,8 @@ namespace Perun_v1
                 // Modify specific
             if (type == "1") // Inject app version information
                     {
-                        Assembly assembly = Assembly.GetExecutingAssembly();
-                        FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-                        string version = fileVersionInfo.ProductVersion;
-                        udp_frame.payload["v_win"] = "v"+version;
+
+                        udp_frame.payload["v_win"] = "v"+ publishVersion;
                     }
 
                 // Specific SQL 
@@ -181,9 +180,12 @@ namespace Perun_v1
             con_check_3rd_srs.Checked = Properties.Settings.Default.OTHER_SRS_USE;
 
             // Version to title header
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            this.Text = this.Text + " - v" + fileVersionInfo.ProductVersion;
+            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
+            {
+                System.Deployment.Application.ApplicationDeployment cd = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;
+                publishVersion = cd.CurrentVersion.ToString();
+            }
+            this.Text = this.Text + " - v" + publishVersion;
         }
 
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
@@ -386,28 +388,31 @@ namespace Perun_v1
                     for (int i = 0; i < raw_lotatc.Count; i++)
                     {
 
-                        int temp = raw_lotatc[i].RadioInfo.radios.Count - 1;
-                        for (int j = temp; j >= 0; j--)
-                        {
-                            raw_lotatc[i].RadioInfo.radios[j].enc.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].encKey.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].encMode.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].freqMax.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].freqMin.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].modulation.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].freqMode.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].volMode.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].expansion.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].channel.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.radios[j].simul.Parent.Remove();
+                        if (raw_lotatc[i].RadioInfo != null) {
 
-                            if (raw_lotatc[i].RadioInfo.radios[j].name == "No Radio")
+                            int temp = raw_lotatc[i].RadioInfo.radios.Count - 1;
+                            for (int j = temp; j >= 0; j--)
                             {
-                                raw_lotatc[i].RadioInfo.radios[j].Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].enc.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].encKey.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].encMode.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].freqMax.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].freqMin.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].modulation.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].freqMode.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].volMode.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].expansion.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].channel.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.radios[j].simul.Parent.Remove();
+
+                                if (raw_lotatc[i].RadioInfo.radios[j].name == "No Radio")
+                                {
+                                    raw_lotatc[i].RadioInfo.radios[j].Remove();
+                                }
                             }
+                            raw_lotatc[i].ClientChannelId.Parent.Remove();
+                            raw_lotatc[i].RadioInfo.simultaneousTransmission.Parent.Remove();
                         }
-                        raw_lotatc[i].ClientChannelId.Parent.Remove();
-                        raw_lotatc[i].RadioInfo.simultaneousTransmission.Parent.Remove();
                     }
 
                     strSRSJson = JsonConvert.SerializeObject(raw_lotatc);

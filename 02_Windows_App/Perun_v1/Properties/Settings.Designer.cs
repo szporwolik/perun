@@ -121,7 +121,7 @@ namespace Perun_v1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3306")]
         public string MYSQL_Port {
             get {
                 return ((string)(this["MYSQL_Port"]));
