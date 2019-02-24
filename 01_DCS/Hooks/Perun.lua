@@ -17,7 +17,7 @@
 -- ########### END OF SETTINGS ###########
 
 -- Variable init
-	Perun.Version = "v0.3.4"
+	Perun.Version = "v0.3.5"
 	Perun.StatusData = {}
 	Perun.SlotsData = {}
 	Perun.MissionData = {}
@@ -100,6 +100,8 @@
 					temp['realtime']=DCS.getRealTime()
 					temp['pause']=DCS.getPause()
 					temp['multiplayer']=DCS.isMultiplayer()
+					temp['theatre'] = Perun.MissionData['mission']['theatre']
+					temp['weather'] = Perun.MissionData['mission']['weather']
 				Perun.UpdateStatusPart("mission",temp)
 				
 			-- 2 - Players
@@ -201,8 +203,8 @@
 	end
 
 	Perun.onMissionLoadEnd = function()
-		Perun.UpdateSlots()
 		Perun.UpdateMission()
+		Perun.UpdateSlots()
 		Perun.UpdateVersion()
 		Perun.UpdateJson()
 	end
