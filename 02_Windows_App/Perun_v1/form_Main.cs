@@ -17,13 +17,13 @@ namespace Perun_v1
     {
 
         // Variable definitions
-            public Thread thread_UDPListener;               // Seperate thread for UDP
-            public class_UDPListener UDPListener;           // Helper class for UDP comunication
-            public string[] LogHistory=new string[10];      // Log history for GUI
-            public string[] SendBuffer=new string[10];      // Mysql send buffer
-            public bool LetMeOut=false;                     // Helper to handle system tray
-            public string MySql_connStr;                    // MySQL connection string
-            public string publishVersion = "DEBUG";                // Helper for pulling version definition
+        public Thread thread_UDPListener;               // Seperate thread for UDP
+        public class_UDPListener UDPListener;           // Helper class for UDP comunication
+        public string[] LogHistory = new string[10];      // Log history for GUI
+        public string[] SendBuffer = new string[10];      // Mysql send buffer
+        public bool LetMeOut = false;                     // Helper to handle system tray
+        public string MySql_connStr;                    // MySQL connection string
+        public string publishVersion = "DEBUG";         // Helper for pulling version definition
 
         public static void LogHistoryAdd(ref string[] LogHistory, string Comment)
         {
@@ -38,141 +38,149 @@ namespace Perun_v1
         public void SendToMySql(string raw_udp_frame)
         {
             // Main function to send data to mysql
-                dynamic udp_frame = JsonConvert.DeserializeObject(raw_udp_frame);
+            dynamic udp_frame = JsonConvert.DeserializeObject(raw_udp_frame);
 
             // Cut raw data to type and paylod for proper mysql insert
-                string type = udp_frame.type;
-                string payload = "";
-                string sql = "";
+            string type = udp_frame.type;
+            string payload = "";
+            string sql = "";
 
-                // Modify specific
-                    if (type == "1") // Inject app version information
-                    {
-
-                        udp_frame.payload["v_win"] = "v"+ publishVersion;
-                    }
-
-                // Specific SQL 
-                    if(type == "50")
-                    {
-                        sql = "INSERT INTO `pe_LogChat` (`pe_LogChat_id`,`pe_LogChat_datetime`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`) VALUES (NULL,'" + udp_frame.payload.datetime + "', '" + udp_frame.payload.player+ "', '" + udp_frame.payload.msg + "', '" + udp_frame.payload.all + "');";
-                    }
-                    else if(type == "51")
-                    {
-                        sql = "INSERT INTO `pe_LogEvent` (`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`,`pe_LogEvent_missionhash`) VALUES ( NULL, '" + udp_frame.payload.log_datetime + "', '" + udp_frame.payload.log_type + "', '" + udp_frame.payload.log_content + "', '" + udp_frame.payload.log_missionhash + "');";
-                    }
-                    else if (type == "52")
-                    {
-                        payload = JsonConvert.SerializeObject(udp_frame.payload.stat_data);
-                        sql = "INSERT INTO `pe_LogStats` (`pe_LogStats_datetime`, `pe_LogStats_ucid`, `pe_LogStats_debug`,`pe_LogStats_missionhash`) VALUES ('" + udp_frame.payload.stat_datetime + "', '" + udp_frame.payload.stat_ucid + "', JSON_QUOTE('" + payload + "'), '" + udp_frame.payload.stat_missionhash + "') ON DUPLICATE KEY UPDATE pe_LogStats_datetime='" + udp_frame.payload.stat_datetime + "',pe_LogStats_ucid = '" + udp_frame.payload.stat_ucid + "', pe_LogStats_debug=JSON_QUOTE('" + payload + "'), pe_LogStats_missionhash='"+ udp_frame.payload.stat_missionhash+"'";
-                        Console.WriteLine(sql);
+            // Modify specific
+            if (type == "1") // Inject app version information
+            {
+                udp_frame.payload["v_win"] = "v" + publishVersion;
             }
-                    else
-                    {
-                        payload = JsonConvert.SerializeObject(udp_frame.payload);
-                        sql = "INSERT INTO pe_DataRaw(pe_dataraw_type,pe_dataraw_payload) VALUES (" + type + ",JSON_QUOTE('" + payload + "')) ON DUPLICATE KEY UPDATE pe_dataraw_payload = JSON_QUOTE('" + payload + "')";
-                    }
-               
-            // Connect to mysql
+
+            // Specific SQL 
+            if (type == "50")
+            {
+                // Add entry to event log
+                sql = "INSERT INTO `pe_LogChat` (`pe_LogChat_id`,`pe_LogChat_datetime`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`) VALUES (NULL,'" + udp_frame.payload.datetime + "', '" + udp_frame.payload.player + "', '" + udp_frame.payload.msg + "', '" + udp_frame.payload.all + "');";
+            }
+            else if (type == "51")
+            {
+                // Add entry to event log
+                sql = "INSERT INTO `pe_LogEvent` (`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`,`pe_LogEvent_missionhash`) VALUES ( NULL, '" + udp_frame.payload.log_datetime + "', '" + udp_frame.payload.log_type + "', '" + udp_frame.payload.log_content + "', '" + udp_frame.payload.log_missionhash + "');";
+            }
+            else if (type == "52")
+            {
+                // Update user stats
+                payload = JsonConvert.SerializeObject(udp_frame.payload.stat_data);
+                sql = "INSERT INTO `pe_LogStats` (`pe_LogStats_datetime`, `pe_LogStats_ucid`, `pe_LogStats_debug`,`pe_LogStats_missionhash`) VALUES ('" + udp_frame.payload.stat_datetime + "', '" + udp_frame.payload.stat_ucid + "', JSON_QUOTE('" + payload + "'), '" + udp_frame.payload.stat_missionhash + "') ON DUPLICATE KEY UPDATE pe_LogStats_datetime='" + udp_frame.payload.stat_datetime + "',pe_LogStats_ucid = '" + udp_frame.payload.stat_ucid + "', pe_LogStats_debug=JSON_QUOTE('" + payload + "'), pe_LogStats_missionhash='" + udp_frame.payload.stat_missionhash + "'";
+            }
+            else if (type == "53")
+            {
+                // User logged in to DCS server
+                payload = JsonConvert.SerializeObject(udp_frame.payload.stat_data);
+                sql = "INSERT INTO `pe_LogLogins` (`pe_LogLogins_datetime`, `pe_LogLogins_ucid`, `pe_LogLogins_name`, `pe_LogLogins_ip`) VALUES ('" + udp_frame.payload.login_datetime + "', '" + udp_frame.payload.login_ucid + "', '" + udp_frame.payload.login_name + "', '" + udp_frame.payload.login_ipaddr + "');";
+                sql = sql + "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_id`, `pe_DataPlayers_ucid`, `pe_DataPlayers_lastip`, `pe_DataPlayers_lastname`, `pe_DataPlayers_updated`) VALUES (NULL, '" + udp_frame.payload.login_ucid + "', '" + udp_frame.payload.login_ipaddr + "', '" + udp_frame.payload.login_name + "', '" + udp_frame.payload.login_datetime + "') ON DUPLICATE KEY UPDATE pe_DataPlayers_lastip='" + udp_frame.payload.login_ipaddr + "',pe_DataPlayers_lastname='" + udp_frame.payload.login_name + "',pe_DataPlayers_updated='" + udp_frame.payload.login_datetime + "'";
+            }
+            else
+            {
+                // General definition used for 1-10 packets
+                payload = JsonConvert.SerializeObject(udp_frame.payload);
+                sql = "INSERT INTO pe_DataRaw(pe_dataraw_type,pe_dataraw_payload) VALUES (" + type + ",JSON_QUOTE('" + payload + "')) ON DUPLICATE KEY UPDATE pe_dataraw_payload = JSON_QUOTE('" + payload + "')";
+            }
+
+            // Connect to mysql and execute sql
             MySqlConnection conn = new MySqlConnection(MySql_connStr);
-                try
+            try
+            {
+                Console.WriteLine("Sending data to MySQL - Begin");
+                conn.Open();
+
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
                 {
-                    Console.WriteLine("Sending data to MySQL - Begin");
-                    conn.Open();
-
-                    MySqlCommand cmd = new MySqlCommand(sql, conn);
-                    MySqlDataReader rdr = cmd.ExecuteReader();
-
-                    while (rdr.Read())
-                    {
-                        Console.WriteLine(rdr[0] + " -- " + rdr[1]);
-                    }
-                    rdr.Close();
-                    LogHistoryAdd(ref LogHistory, "MySQL updated, package type: "+ type);
+                    Console.WriteLine(rdr[0] + " -- " + rdr[1]);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                    LogHistoryAdd(ref LogHistory, "ERROR: MySQL");
-                }
+                rdr.Close();
+                LogHistoryAdd(ref LogHistory, "MySQL updated, package type: " + type);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                LogHistoryAdd(ref LogHistory, "ERROR: MySQL");
+            }
 
-                conn.Close();
-                Console.WriteLine("Sending data to MySQL - Done");
+            conn.Close();
+            Console.WriteLine("Sending data to MySQL - Done");
         }
 
-     
+
 
         public class class_UDPListener
         {
             // Main class for UDP listener
-                int listenPort;                 // Port to listen at
-                public bool done;               // Helper to exit main loop without killing thread
-                public UdpClient listener;      // Listener object 
-                public string[] LogHistory;     // Log history for GUI
-                public string[] SendBuffer;     // Mysql send buffer
+            int listenPort;                 // Port to listen at
+            public bool done;               // Helper to exit main loop without killing thread
+            public UdpClient listener;      // Listener object 
+            public string[] LogHistory;     // Log history for GUI
+            public string[] SendBuffer;     // Mysql send buffer
 
-                public class_UDPListener(int port, ref string[] LogHistory, ref string[] SendBuffer)
-                {
-                    // Create clas - NOTE that there is reference passing
-                        this.listenPort = port;
-                        this.LogHistory = LogHistory;
-                        this.SendBuffer = SendBuffer;
-                }
-
-                public void StartListen()
-                {
-                    // Start listening to UDP
-                    this.done = false;
-                    listener = new UdpClient(listenPort);
-                    IPEndPoint groupEP = new IPEndPoint(IPAddress.Loopback, listenPort);
-                    string received_data;
-                    byte[] receive_byte_array;
-
-                    Console.WriteLine("UDP Listen start");
-                    try
-                    {
-                        while (!done)
-                        {
-                            Console.WriteLine("UDP: Waiting for packet");
-                            receive_byte_array = listener.Receive(ref groupEP);
-                            received_data = Encoding.ASCII.GetString(receive_byte_array, 0, receive_byte_array.Length);
-
-                            Console.WriteLine("Sender: {0} Payload: {1}", groupEP.ToString(), received_data);
-
-                        // Add to log history and rotate
-                            dynamic udp_frame = JsonConvert.DeserializeObject(received_data);
-                            string type = udp_frame.type;
-                            LogHistoryAdd(ref LogHistory, "UDP packet received, type: "+ type);
-                            
-                        // Add to mySQL send buffer and rotate
-                             for (int i = 0; i < SendBuffer.Length - 1; i++)
-                             {
-                                SendBuffer[i] = SendBuffer[i + 1];
-                             }
-                             SendBuffer[9] = received_data;
-
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.ToString());
-                    }
-                    Console.WriteLine("UDP listen stop");
-                    listener.Close();
-                }
+            public class_UDPListener(int port, ref string[] LogHistory, ref string[] SendBuffer)
+            {
+                // Create clas - NOTE that there is reference passing
+                this.listenPort = port;
+                this.LogHistory = LogHistory;
+                this.SendBuffer = SendBuffer;
             }
 
+            public void StartListen()
+            {
+                // Start listening to UDP
+                this.done = false;
+                listener = new UdpClient(listenPort);
+                IPEndPoint groupEP = new IPEndPoint(IPAddress.Loopback, listenPort);
+                string received_data;
+                byte[] receive_byte_array;
+
+                Console.WriteLine("UDP Listen start");
+                try
+                {
+                    while (!done)
+                    {
+                        Console.WriteLine("UDP: Waiting for packet");
+                        receive_byte_array = listener.Receive(ref groupEP);
+                        received_data = Encoding.ASCII.GetString(receive_byte_array, 0, receive_byte_array.Length);
+
+                        Console.WriteLine("Sender: {0} Payload: {1}", groupEP.ToString(), received_data);
+
+                        // Add to log history and rotate
+                        dynamic udp_frame = JsonConvert.DeserializeObject(received_data);
+                        string type = udp_frame.type;
+                        LogHistoryAdd(ref LogHistory, "UDP packet received, type: " + type);
+
+                        // Add to mySQL send buffer and rotate
+                        for (int i = 0; i < SendBuffer.Length - 1; i++)
+                        {
+                            SendBuffer[i] = SendBuffer[i + 1];
+                        }
+                        SendBuffer[9] = received_data;
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+                Console.WriteLine("UDP listen stop");
+                listener.Close();
+            }
+        }
 
         public form_Main()
         {
             // Form init
-                InitializeComponent();
+            InitializeComponent();
         }
 
         private void form_Main_Load(object sender, EventArgs e)
         {
             // Form loaded - fill controls with default values
-                LogHistory[0] = DateTime.Now.ToString("HH:mm:ss") + " > " + "Perun loaded...";
+            LogHistory[0] = DateTime.Now.ToString("HH:mm:ss") + " > " + "Perun loaded...";
 
             // Load settings
             con_txt_mysql_database.Text = Properties.Settings.Default.MYSQL_DB;
@@ -197,24 +205,108 @@ namespace Perun_v1
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
         {
             // Start listening
-                UDPListener = new class_UDPListener(48620,ref LogHistory, ref SendBuffer);
-                thread_UDPListener = new Thread(UDPListener.StartListen);
-                thread_UDPListener.Start();
-            
+            UDPListener = new class_UDPListener(48620, ref LogHistory, ref SendBuffer);
+            thread_UDPListener = new Thread(UDPListener.StartListen);
+            thread_UDPListener.Start();
+
             // Update form controls
-                con_Button_Listen_ON.Enabled = false;
-                con_Button_Listen_OFF.Enabled = true;
-                con_txt_mysql_database.Enabled = false;
-                con_txt_mysql_username.Enabled = false;
-                con_txt_mysql_password.Enabled = false;
-                con_txt_mysql_server.Enabled = false;
-                con_txt_mysql_port.Enabled = false;
-                con_txt_3rd_lotatc.Enabled = false;
-                con_txt_3rd_srs.Enabled = false;
-                con_check_3rd_lotatc.Enabled = false;
-                con_check_3rd_srs.Enabled = false;
+            con_Button_Listen_ON.Enabled = false;
+            con_Button_Listen_OFF.Enabled = true;
+            con_txt_mysql_database.Enabled = false;
+            con_txt_mysql_username.Enabled = false;
+            con_txt_mysql_password.Enabled = false;
+            con_txt_mysql_server.Enabled = false;
+            con_txt_mysql_port.Enabled = false;
+            con_txt_3rd_lotatc.Enabled = false;
+            con_txt_3rd_srs.Enabled = false;
+            con_check_3rd_lotatc.Enabled = false;
+            con_check_3rd_srs.Enabled = false;
 
             // Save settings
+            Properties.Settings.Default.MYSQL_Server = con_txt_mysql_database.Text;
+            Properties.Settings.Default.MYSQL_DB = con_txt_mysql_database.Text;
+            Properties.Settings.Default.MYSQL_User = con_txt_mysql_username.Text;
+            Properties.Settings.Default.MYSQL_Password = con_txt_mysql_password.Text;
+            Properties.Settings.Default.MYSQL_Port = con_txt_mysql_port.Text;
+            Properties.Settings.Default.MYSQL_Server = con_txt_mysql_server.Text;
+            Properties.Settings.Default.MYSQL_Port = con_txt_mysql_port.Text;
+            Properties.Settings.Default.OTHER_LOTATC_FILE = con_txt_3rd_lotatc.Text;
+            Properties.Settings.Default.OTHER_SRS_FILE = con_txt_3rd_srs.Text;
+            Properties.Settings.Default.OTHER_LOTATC_USE = con_check_3rd_lotatc.Checked;
+            Properties.Settings.Default.OTHER_SRS_USE = con_check_3rd_srs.Checked;
+
+            // Prepare connection string
+            MySql_connStr = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
+
+            // Start timmers
+            tim_1000ms.Enabled = true;
+            tim_10000ms.Enabled = true;
+
+        }
+
+        private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
+        {
+            // Stop listening
+            UDPListener.listener.Close();
+
+            // Update form controls
+            con_Button_Listen_ON.Enabled = true;
+            con_Button_Listen_OFF.Enabled = false;
+
+            con_txt_mysql_database.Enabled = true;
+            con_txt_mysql_username.Enabled = true;
+            con_txt_mysql_password.Enabled = true;
+            con_txt_mysql_port.Enabled = true;
+            con_txt_mysql_server.Enabled = true;
+            con_txt_3rd_lotatc.Enabled = true;
+            con_txt_3rd_srs.Enabled = true;
+            con_check_3rd_lotatc.Enabled = true;
+            con_check_3rd_srs.Enabled = true;
+
+            // Stop timmers
+            tim_1000ms.Enabled = false;
+            tim_10000ms.Enabled = false;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            // Main timer to sync GUI with background tasks and flush buffers
+            // Refresh Log Window
+            con_List_Received.Items.Clear();
+            foreach (string i in LogHistory)
+            {
+                if (i != null)
+                {
+                    con_List_Received.Items.Add(i);
+                }
+            }
+
+            // Send buffer to MySQL
+            for (int i = 0; i < SendBuffer.Length - 1; i++)
+            {
+                if (SendBuffer[i] != null)
+                {
+                    SendToMySql(SendBuffer[i]);
+                    SendBuffer[i] = null;
+                }
+            }
+        }
+
+        private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            // Open default browser with link to Perun repo
+            ProcessStartInfo sInfo = new ProcessStartInfo("https://github.com/szporwolik/perun");
+            Process.Start(sInfo);
+        }
+
+        private void con_Button_Quit_Click(object sender, EventArgs e)
+        {
+            // Close app
+
+            DialogResult dialogResult = MessageBox.Show("Are you sure to exit Perun?", "Question", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+            if (dialogResult == DialogResult.Yes)
+            {
+                // Save settings on exit
                 Properties.Settings.Default.MYSQL_Server = con_txt_mysql_database.Text;
                 Properties.Settings.Default.MYSQL_DB = con_txt_mysql_database.Text;
                 Properties.Settings.Default.MYSQL_User = con_txt_mysql_username.Text;
@@ -227,104 +319,20 @@ namespace Perun_v1
                 Properties.Settings.Default.OTHER_LOTATC_USE = con_check_3rd_lotatc.Checked;
                 Properties.Settings.Default.OTHER_SRS_USE = con_check_3rd_srs.Checked;
 
-            // Prepare connection string
-            MySql_connStr = "server="+con_txt_mysql_server.Text+";user="+con_txt_mysql_username.Text+";database="+con_txt_mysql_database.Text+";port="+ con_txt_mysql_port.Text + ";password="+con_txt_mysql_password.Text;
+                Properties.Settings.Default.Save();
 
-            // Start timmers
-                tim_1000ms.Enabled = true;
-                tim_10000ms.Enabled = true;
-
-        }
-
-        private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
-        {
-            // Stop listening
-                UDPListener.listener.Close();
-
-            // Update form controls
-                con_Button_Listen_ON.Enabled = true;
-                con_Button_Listen_OFF.Enabled = false;
-                
-                con_txt_mysql_database.Enabled = true;
-                con_txt_mysql_username.Enabled = true;
-                con_txt_mysql_password.Enabled = true;
-                con_txt_mysql_port.Enabled = true;
-                con_txt_mysql_server.Enabled = true;
-                con_txt_3rd_lotatc.Enabled = true;
-                con_txt_3rd_srs.Enabled = true;
-                con_check_3rd_lotatc.Enabled = true;
-                con_check_3rd_srs.Enabled = true;
-            
-            // Stop timmers
-                tim_1000ms.Enabled = false;
-                tim_10000ms.Enabled = false;
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            // Main timer to sync GUI with background tasks and flush buffers
-            // Refresh Log Window
-                con_List_Received.Items.Clear();
-                foreach (string i in LogHistory)
-                {
-                    if (i != null)
-                    {
-                        con_List_Received.Items.Add(i);
-                    }
-                }
-
-            // Send buffer to MySQL
-                for (int i = 0; i < SendBuffer.Length - 1; i++)
-                {
-                    if (SendBuffer[i] != null)
-                    {
-                        SendToMySql(SendBuffer[i]);
-                        SendBuffer[i] = null;
-                    }
-                }
-        }
-
-        private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            // Open default browser with link to Perun repo
-                ProcessStartInfo sInfo = new ProcessStartInfo("https://github.com/szporwolik/perun");
-                Process.Start(sInfo);
-        }
-
-        private void con_Button_Quit_Click(object sender, EventArgs e)
-        {
-            // Close app
-           
-                DialogResult dialogResult = MessageBox.Show("Are you sure to exit Perun?", "Question", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
-                if (dialogResult == DialogResult.Yes)
-                {
-                    // Save settings on exit
-                        Properties.Settings.Default.MYSQL_Server = con_txt_mysql_database.Text;
-                        Properties.Settings.Default.MYSQL_DB = con_txt_mysql_database.Text;
-                        Properties.Settings.Default.MYSQL_User = con_txt_mysql_username.Text;
-                        Properties.Settings.Default.MYSQL_Password = con_txt_mysql_password.Text;
-                        Properties.Settings.Default.MYSQL_Port = con_txt_mysql_port.Text;
-                        Properties.Settings.Default.MYSQL_Server = con_txt_mysql_server.Text;
-                        Properties.Settings.Default.MYSQL_Port = con_txt_mysql_port.Text;
-                        Properties.Settings.Default.OTHER_LOTATC_FILE = con_txt_3rd_lotatc.Text;
-                        Properties.Settings.Default.OTHER_SRS_FILE = con_txt_3rd_srs.Text;
-                        Properties.Settings.Default.OTHER_LOTATC_USE = con_check_3rd_lotatc.Checked;
-                        Properties.Settings.Default.OTHER_SRS_USE = con_check_3rd_srs.Checked;
-
-                        Properties.Settings.Default.Save();
-
-                    LetMeOut = true;
-                    this.Close();
-                }
-                else if (dialogResult == DialogResult.No)
-                {
-                    //do nothing
-                }
+                LetMeOut = true;
+                this.Close();
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                //do nothing
+            }
         }
 
         private void form_Main_FormClosing(object sender, FormClosingEventArgs e)
         {
-           // Minimize to try
+            // Minimize to try
             if (e.CloseReason == CloseReason.UserClosing && !LetMeOut)
             {
                 e.Cancel = true;
@@ -352,7 +360,8 @@ namespace Perun_v1
             {
                 con_txt_3rd_srs.Text = openFileDialog_SRS.FileName;
                 con_check_3rd_srs.Checked = true;
-            } else
+            }
+            else
             {
                 con_txt_3rd_srs.Text = "";
                 con_check_3rd_srs.Checked = false;
@@ -377,8 +386,8 @@ namespace Perun_v1
         private void tim_10000ms_Tick(object sender, EventArgs e)
         {
             // Main timer to send JSON files to MySQL
-            string strSRSJson ="";
-            string strLotATCJson="";
+            string strSRSJson = "";
+            string strLotATCJson = "";
 
             bool SRSdefault = true;
             bool LotATCdefault = true;
@@ -394,7 +403,8 @@ namespace Perun_v1
                     for (int i = 0; i < raw_lotatc.Count; i++)
                     {
 
-                        if (raw_lotatc[i].RadioInfo != null) {
+                        if (raw_lotatc[i].RadioInfo != null)
+                        {
 
                             int temp = raw_lotatc[i].RadioInfo.radios.Count - 1;
                             for (int j = temp; j >= 0; j--)
@@ -440,8 +450,8 @@ namespace Perun_v1
                 }
 
 
-            } 
-            if(SRSdefault)
+            }
+            if (SRSdefault)
             {
                 strSRSJson = "{'type':'100','payload':{'ignore':'true'}}";
             }
@@ -463,8 +473,8 @@ namespace Perun_v1
                 {
                     LogHistoryAdd(ref LogHistory, "LotATC data ERROR");
                 }
-                
-                
+
+
             }
 
             if (LotATCdefault)
@@ -472,7 +482,7 @@ namespace Perun_v1
                 strLotATCJson = "{'type':'101','payload':{'ignore':'true'}}";
             }
             SendToMySql(strLotATCJson);
-    
+
         }
     }
 }

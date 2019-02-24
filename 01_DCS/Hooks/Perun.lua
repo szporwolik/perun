@@ -325,9 +325,9 @@
 			
 		elseif eventName == "connect" then
 		    --"connect", playerID, name
-			Perun.LogEvent(eventName,"Player "..net.get_player_info(arg1, "name") .. " connected");
 			Perun.LogLogin(arg1);
-			
+			Perun.LogEvent(eventName,"Player "..net.get_player_info(arg1, "name") .. " connected");
+
 		elseif eventName == "disconnect" then
 		    --"disconnect", playerID, name, playerSide, reason_code
 			Perun.LogEvent(eventName, Perun.SideID2Name(arg3) .. " player " ..net.get_player_info(arg1, "name") .. " disconnected");

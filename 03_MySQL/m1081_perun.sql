@@ -19,6 +19,23 @@ USE `m1081_perun`;
 -- --------------------------------------------------------
 
 --
+-- Struktura tabeli dla tabeli `pe_DataPlayers`
+--
+
+DROP TABLE IF EXISTS `pe_DataPlayers`;
+CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
+  `pe_DataPlayers_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `pe_DataPlayers_ucid` varchar(150) NOT NULL,
+  `pe_DataPlayers_lastip` varchar(100) NOT NULL,
+  `pe_DataPlayers_lastname` varchar(150) NOT NULL,
+  `pe_DataPlayers_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`pe_DataPlayers_id`),
+  UNIQUE KEY `UNIQUE_UCID` (`pe_DataPlayers_ucid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Struktura tabeli dla tabeli `pe_DataRaw`
 --
 
@@ -39,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
 DROP TABLE IF EXISTS `pe_LogChat`;
 CREATE TABLE IF NOT EXISTS `pe_LogChat` (
   `pe_LogChat_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `pe_LogChat_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `pe_LogChat_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `pe_LogChat_playerid` varchar(100) NOT NULL,
   `pe_LogChat_msg` text NOT NULL,
   `pe_LogChat_all` varchar(10) NOT NULL,
@@ -56,10 +73,41 @@ DROP TABLE IF EXISTS `pe_LogEvent`;
 CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   `pe_LogEvent_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `pe_LogEvent_missionhash` varchar(150) DEFAULT NULL,
-  `pe_LogEvent_datetime` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `pe_LogEvent_datetime` datetime DEFAULT CURRENT_TIMESTAMP,
   `pe_LogEvent_type` varchar(100) NOT NULL,
   `pe_LogEvent_content` text NOT NULL,
   PRIMARY KEY (`pe_LogEvent_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `pe_LogLogins`
+--
+
+DROP TABLE IF EXISTS `pe_LogLogins`;
+CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
+  `pe_LogLogins_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `pe_LogLogins_ucid` varchar(150) NOT NULL,
+  `pe_LogLogins_name` varchar(150) NOT NULL,
+  `pe_LogLogins_ip` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `pe_LogStats`
+--
+
+DROP TABLE IF EXISTS `pe_LogStats`;
+CREATE TABLE IF NOT EXISTS `pe_LogStats` (
+  `pe_LogStats_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `pe_LogStats_missionhash` varchar(150) DEFAULT NULL,
+  `pe_LogStats_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `pe_LogStats_ucid` varchar(200) NOT NULL,
+  `pe_LogStats_debug` text,
+  PRIMARY KEY (`pe_LogStats_id`),
+  UNIQUE KEY `UNIQUE_STATS_PER_MISSION_AND_UCID` (`pe_LogStats_ucid`,`pe_LogStats_missionhash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 COMMIT;
 
