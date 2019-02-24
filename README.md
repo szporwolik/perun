@@ -46,6 +46,8 @@ Core:
 * ID: 4, stores mission data **ONLY JSON FILE**
 * ID: 50, chat event
 * ID: 51, game event
+* ID: 52, player stats
+* ID: 53, player login to DCS server
 * ID: 100, DCS SRS's client-list.json
 * ID: 101, LotATC's stats.json
 

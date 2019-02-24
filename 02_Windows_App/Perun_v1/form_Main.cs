@@ -61,6 +61,12 @@ namespace Perun_v1
                     {
                         sql = "INSERT INTO `pe_LogEvent` (`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`,`pe_LogEvent_missionhash`) VALUES ( NULL, '" + udp_frame.payload.log_datetime + "', '" + udp_frame.payload.log_type + "', '" + udp_frame.payload.log_content + "', '" + udp_frame.payload.log_missionhash + "');";
                     }
+                    else if (type == "52")
+                    {
+                        payload = JsonConvert.SerializeObject(udp_frame.payload.stat_data);
+                        sql = "INSERT INTO `pe_LogStats` (`pe_LogStats_datetime`, `pe_LogStats_ucid`, `pe_LogStats_debug`,`pe_LogStats_missionhash`) VALUES ('" + udp_frame.payload.stat_datetime + "', '" + udp_frame.payload.stat_ucid + "', JSON_QUOTE('" + payload + "'), '" + udp_frame.payload.stat_missionhash + "') ON DUPLICATE KEY UPDATE pe_LogStats_datetime='" + udp_frame.payload.stat_datetime + "',pe_LogStats_ucid = '" + udp_frame.payload.stat_ucid + "', pe_LogStats_debug=JSON_QUOTE('" + payload + "'), pe_LogStats_missionhash='"+ udp_frame.payload.stat_missionhash+"'";
+                        Console.WriteLine(sql);
+            }
                     else
                     {
                         payload = JsonConvert.SerializeObject(udp_frame.payload);

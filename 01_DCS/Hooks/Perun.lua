@@ -33,7 +33,23 @@
 	Perun.UDP:setpeername("127.0.0.1",Perun.UDPTargetPort)
 
 -- Function definition
-
+	Perun.GetCategory = function(id)
+	    -- via https://pastebin.com/GUAXrd2U
+        local _killed_target_category = DCS.getUnitTypeAttribute(id, "category")
+        if _killed_target_category == nil then
+            local _killed_target_cat_check_ship = DCS.getUnitTypeAttribute(id, "DeckLevel")
+            local _killed_target_cat_check_plane = DCS.getUnitTypeAttribute(id, "WingSpan")
+            if _killed_target_cat_check_ship ~= nil and _killed_target_cat_check_plane == nil then
+                _killed_target_category = "Ships"
+            elseif _killed_target_cat_check_ship == nil and _killed_target_cat_check_plane ~= nil then
+                _killed_target_category = "Planes"
+            else
+                _killed_target_category = "Helicopters"
+            end
+        end
+		return _killed_target_category
+	end 
+	
 	Perun.SideID2Name = function(id)
 		-- Helper function
 		local sides = {
@@ -56,6 +72,7 @@
 		TempData["2"]=Perun.StatusData
 		TempData["3"]=Perun.SlotsData
 		TempData["4"]=Perun.MissionData
+		TempData["debug"]=net.get_player_list()
 		
 		io.open(Perun.JsonLocation,"w"):close()
 		perun_export = io.open(Perun.JsonLocation, "w")
@@ -105,11 +122,12 @@
 				Perun.UpdateStatusPart("mission",temp)
 				
 			-- 2 - Players
-					temp = net.get_player_list()
-					for _, i in pairs(temp) do
-						temp[i]=net.get_player_info(temp[i])
+					_temp = net.get_player_list()
+					_temp2={}
+					for _, i in pairs(_temp) do
+						_temp2[i]=net.get_player_info(i)
 					end
-				Perun.UpdateStatusPart("players",temp)	
+				Perun.UpdateStatusPart("players",_temp2)	
 		
 		-- Send
 			Perun.Send(2,Perun.StatusData)
@@ -162,6 +180,42 @@
 		data['log_missionhash']=Perun.MissionHash
 		
 		Perun.Send(51,data)
+	end
+	
+	Perun.LogStats = function(playerID)
+		-- Log player status
+		
+		-- TBD : not working at the moment WIP
+		p_stats={}
+		p_stats['PS_CAR']=net.get_stat(playerID,2)
+		p_stats['PS_PLANE']=net.get_stat(playerID,3)
+		p_stats['PS_SHIP']=net.get_stat(playerID,4)
+		p_stats['PS_SCORE']=net.get_stat(playerID,5)
+		p_stats['PS_LAND']=net.get_stat(playerID,6)
+		p_stats['PS_PING']=net.get_stat(playerID,0)
+		p_stats['PS_CRASH']=net.get_stat(playerID,1)
+		p_stats['PS_EJECT']=net.get_stat(playerID,7)
+		p_stats['debug']="ok"
+		
+		data={}
+		data['stat_data']=p_stats
+		data['stat_ucid']=net.get_player_info(playerID, 'ucid')
+		data['stat_datetime']=os.date('%Y-%m-%d %H:%M:%S')
+		data['stat_missionhash']=Perun.MissionHash
+		
+		Perun.Send(52,data)
+	end
+	
+	Perun.LogLogin = function(playerID)
+		-- Player logged in
+		
+		data={}
+		data['login_ucid']=net.get_player_info(playerID, 'ucid')
+		data['login_ipaddr']=net.get_player_info(playerID, 'ipaddr')
+		data['login_name']=net.get_player_info(playerID, 'name')
+		data['login_datetime']=os.date('%Y-%m-%d %H:%M:%S')
+		
+		Perun.Send(53,data)
 	end
 
 --- Event callbacks
@@ -227,6 +281,7 @@
 		if eventName == "friendly_fire" then
 		    --"friendly_fire", playerID, weaponName, victimPlayerID
 			Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name").." killed friendy " .. net.get_player_info(arg3, "name") .. " using " .. arg2);
+			Perun.LogStats(arg1);
 			
 		elseif eventName == "mission_end" then
 		    --"mission_end", winner, msg
@@ -236,21 +291,25 @@
 			--"kill", killerPlayerID, killerUnitType, killerSide, victimPlayerID, victimUnitType, victimSide, weaponName	
 			if net.get_player_info(arg4, "name") ~= nil then
 				_temp = " player ".. net.get_player_info(arg4, "name") .." ";
+				Perun.LogStats(arg4);
 			else
 				_temp = " AI ";
 			end
 			
 			if net.get_player_info(arg1, "name") ~= nil then
 				_temp2 = " player ".. net.get_player_info(arg1, "name") .." ";
+				Perun.LogStats(arg1);
 			else
 				_temp2 = " AI ";
 			end
 			
-			Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp2 .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp .. " in " .. arg5  .. " using " .. arg7); 
+			Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp2 .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp .. " in " .. arg5  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]"); 
+			
 			
 		elseif eventName == "self_kill" then
 			--"self_kill", playerID	
 			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " killed himself"); 
+			Perun.LogStats(arg1);
 			
 		elseif eventName == "change_slot" then
 			--"change_slot", playerID, slotID, prevSide	
@@ -262,22 +321,27 @@
 			end
 			
 			Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " changed slot to " .. _temp);
+			Perun.LogStats(arg1);
 			
 		elseif eventName == "connect" then
 		    --"connect", playerID, name
 			Perun.LogEvent(eventName,"Player "..net.get_player_info(arg1, "name") .. " connected");
+			Perun.LogLogin(arg1);
 			
 		elseif eventName == "disconnect" then
 		    --"disconnect", playerID, name, playerSide, reason_code
 			Perun.LogEvent(eventName, Perun.SideID2Name(arg3) .. " player " ..net.get_player_info(arg1, "name") .. " disconnected");
+			Perun.LogStats(arg1);
 			
 		elseif eventName == "crash" then
 		    --"crash", playerID, unit_missionID
 			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " crashed in " .. DCS.getUnitType(arg2));
+			Perun.LogStats(arg1);
 			
 		elseif eventName == "eject" then
 		    --"eject", playerID, unit_missionID
 			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " ejected " .. DCS.getUnitType(arg2));
+			Perun.LogStats(arg1);
 			
 		elseif eventName == "takeoff" then
 		    --"takeoff", playerID, unit_missionID, airdromeName
@@ -288,7 +352,7 @@
 			end
 			
 			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " took off in ".. DCS.getUnitType(arg2) .. _temp);
-			
+			Perun.LogStats(arg1);
 		elseif eventName == "landing" then
 		    --"landing", playerID, unit_missionID, airdromeName
 			if arg3 then
@@ -298,10 +362,11 @@
 			end
 			
 			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " landed in " .. DCS.getUnitType(arg2).. _temp);
-			
+			Perun.LogStats(arg1);
 		elseif eventName == "pilot_death" then
 		    --"pilot_death", playerID, unit_missionID
 			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " in " .. DCS.getUnitType(arg2) .. " died");
+			Perun.LogStats(arg1);
 			
 		else
 			Perun.LogEvent(eventName,"Unknown event type");
