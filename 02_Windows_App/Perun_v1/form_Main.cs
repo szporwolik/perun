@@ -23,7 +23,7 @@ namespace Perun_v1
             public string[] SendBuffer=new string[10];      // Mysql send buffer
             public bool LetMeOut=false;                     // Helper to handle system tray
             public string MySql_connStr;                    // MySQL connection string
-            string publishVersion = "DEBUG";                // Helper for pulling version definition
+            public string publishVersion = "DEBUG";                // Helper for pulling version definition
 
         public static void LogHistoryAdd(ref string[] LogHistory, string Comment)
         {
@@ -415,8 +415,15 @@ namespace Perun_v1
                         }
                     }
 
-                    strSRSJson = JsonConvert.SerializeObject(raw_lotatc);
-                    strSRSJson = "{'type':'100','payload':'" + strSRSJson + "'}";
+                    if (raw_lotatc.Count > 0)
+                    {
+                        strSRSJson = JsonConvert.SerializeObject(raw_lotatc);
+                        strSRSJson = "{'type':'100','payload':'" + strSRSJson + "'}";
+                    }
+                    else
+                    {
+                        strSRSJson = "{'type':'100','payload':{'ignore':'false'}}";
+                    }
                     SRSdefault = false;
                     LogHistoryAdd(ref LogHistory, "SRS data loaded");
 
