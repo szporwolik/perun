@@ -23,7 +23,7 @@ Core:
 
 ### Installing
 
-* Download latest [release](https://github.com/szporwolik/perun/releases), **optionaly** together with Win32 binary file for MySQL export
+* Download latest [release](https://github.com/szporwolik/perun/releases), **optionaly** together with Win32 binary file for MySQL export - [DOWNLOAD](http://share.porwolik.com/ftp/perun/Perun.htm)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
 * **optionaly** Create MySQL server using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL)
 * **optionaly** Run the Win32 application
