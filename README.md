@@ -43,7 +43,7 @@ Core:
 * ID: 3, available slots list and coalitions
 	* coalitions - available coalitions
 	* slots - available slots
-* ID: 4, stores mission data
+* ID: 4, stores mission data **ONLY JSON FILE**
 * ID: 50, chat event
 * ID: 51, game event
 * ID: 100, DCS SRS's client-list.json
