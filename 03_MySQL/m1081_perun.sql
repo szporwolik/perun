@@ -1,3 +1,4 @@
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
@@ -54,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogChat` (
 DROP TABLE IF EXISTS `pe_LogEvent`;
 CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   `pe_LogEvent_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `pe_LogEvent_missionhash` varchar(150) DEFAULT NULL,
   `pe_LogEvent_datetime` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `pe_LogEvent_type` varchar(100) NOT NULL,
   `pe_LogEvent_content` text NOT NULL,
