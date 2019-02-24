@@ -56,11 +56,11 @@ namespace Perun_v1
                 // Specific SQL 
                     if(type == "50")
                     {
-                        sql = "INSERT INTO `pe_LogChat` (`pe_LogChat_id`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`) VALUES (NULL, '"+udp_frame.payload.player+ "', '" + udp_frame.payload.msg + "', '" + udp_frame.payload.all + "');";
+                        sql = "INSERT INTO `pe_LogChat` (`pe_LogChat_id`,`pe_LogChat_datetime`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`) VALUES (NULL,'" + udp_frame.payload.datetime + "', '" + udp_frame.payload.player+ "', '" + udp_frame.payload.msg + "', '" + udp_frame.payload.all + "');";
                     }
                     else if(type == "51")
                     {
-                        sql = "INSERT INTO `pe_LogEvent` (`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`) VALUES (NULL, CURRENT_TIMESTAMP, '" + udp_frame.payload.log_type + "', '" + udp_frame.payload.log_content + "');";
+                        sql = "INSERT INTO `pe_LogEvent` (`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`,`pe_LogEvent_missionhash`) VALUES ( NULL, '" + udp_frame.payload.log_datetime + "', '" + udp_frame.payload.log_type + "', '" + udp_frame.payload.log_content + "', '" + udp_frame.payload.log_missionhash + "');";
                     }
                     else
                     {

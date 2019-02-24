@@ -7,7 +7,8 @@
 	
 -- ########### SETTINGS ###########
 	
-	Perun.Refresh = 15 														-- base refresh rate in secounds (values lower than 60 may affect performance!)
+	Perun.RefreshStatus = 15 												-- base refresh rate in seconds to send status update (values lower than 60 may affect performance!)
+	Perun.RefreshMission = 60 												-- refresh rate in seconds to send mission information  (values lower than 60 may affect performance!)
 	Perun.JsonLocation = "Scripts\\Json\\perun_export.json" 				-- relatve do user's SaveGames DCS folder
 	Perun.UDPTargetPort = 48620												-- UDP port to send data to
 	Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"						-- Message send to players connecting the server - Line 1
@@ -16,12 +17,14 @@
 -- ########### END OF SETTINGS ###########
 
 -- Variable init
-	Perun.Version = "v0.3.2"
+	Perun.Version = "v0.3.3"
 	Perun.StatusData = {}
 	Perun.SlotsData = {}
 	Perun.MissionData = {}
 	Perun.VersionData = {}
-	Perun.lastSent =0
+	Perun.MissionHash=""
+	Perun.lastSentStatus =0
+	Perun.lastSentMission =0
 	Perun.JsonLocation = lfs.writedir() .. Perun.JsonLocation
 	Perun.socket  = require("socket")
 	Perun.UDP = assert(Perun.socket.udp())
@@ -30,6 +33,17 @@
 	Perun.UDP:setpeername("127.0.0.1",Perun.UDPTargetPort)
 
 -- Function definition
+
+	Perun.SideID2Name = function(id)
+		-- Helper function
+		local sides = {
+			[0] = 'SPECTATOR',
+			[1] = 'RED',
+			[2] = 'BLUE',
+		}
+		return sides[id]
+	end
+	
 	Perun.AddLog = function(text)
 		-- Adds logs to DCS.log file
 		net.log("Perun : ".. text)
@@ -90,7 +104,7 @@
 				
 			-- 2 - Players
 					temp = net.get_player_list()
-					for _, i in ipairs(temp) do
+					for _, i in pairs(temp) do
 						temp[i]=net.get_player_info(i)
 					end
 				Perun.UpdateStatusPart("players",temp)	
@@ -130,6 +144,8 @@
 		data['player']= net.get_player_info(playerID, "name")
 		data['msg']=msg
 		data['all']=all
+		data['datetime']=os.date('%Y-%m-%d %H:%M:%S')
+		data['log_missionhash']=Perun.MissionHash
 		
 		Perun.Send(50,data)
 	end
@@ -140,28 +156,54 @@
 		data={}
 		data['log_type']= log_type
 		data['log_content']=log_content
+		data['log_datetime']=os.date('%Y-%m-%d %H:%M:%S')
+		data['log_missionhash']=Perun.MissionHash
 		
 		Perun.Send(51,data)
 	end
 
 --- Event callbacks
+
+	Perun.onSimulationStart = function()
+		Perun.MissionHash=DCS.getMissionName( ).."@"..os.date('%Y%m%d_%H%M%S');
+		Perun.LogEvent("SimStart",Perun.MissionHash);
+	end
+
+	Perun.onSimulationStop = function()
+		Perun.LogEvent("SimStop",Perun.MissionHash);
+	end
+	
+	Perun.onPlayerDisconnect= function(id, err_code)
+		Perun.LogEvent("disconnect", "Player " .. net.get_player_info(id, "name") .. " disconnected; " .. err_code);
+	end
+
 	Perun.onSimulationFrame = function()
 		local _now = DCS.getRealTime()
+		
+		-- Send status update
+		if _now > Perun.lastSentStatus + Perun.RefreshStatus then
+			Perun.lastSentStatus = _now 
 
-		if _now > Perun.lastSent + Perun.Refresh then
-			Perun.lastSent = _now 
-			
-			Perun.UpdateSlots()
 			Perun.UpdateStatus()
-			Perun.UpdateVersion()
-			Perun.UpdateMission()
 			Perun.UpdateJson()
 		end
-
+		
+		-- Send mission update
+		if _now > Perun.lastSentMission + Perun.RefreshMission then
+			Perun.lastSentMission = _now 
+			
+			Perun.UpdateSlots()
+			Perun.UpdateMission()
+			
+			Perun.UpdateJson()
+		end
+		
 	end
 
 	Perun.onMissionLoadEnd = function()
 		Perun.UpdateSlots()
+		Perun.UpdateMission()
+		Perun.UpdateVersion()
 		Perun.UpdateJson()
 	end
 	
@@ -178,56 +220,86 @@
 		return msg
 	end
 	
-	Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4)
-	
-			
+	Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
+
 		if eventName == "friendly_fire" then
 		    --"friendly_fire", playerID, weaponName, victimPlayerID
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name").." killed " .. net.get_player_info(arg3, "name") .. " using " .. arg2);
+			Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name").." killed friendy " .. net.get_player_info(arg3, "name") .. " using " .. arg2);
 			
 		elseif eventName == "mission_end" then
 		    --"mission_end", winner, msg
-			Perun.LogEvent(eventName,"Mission end, winner " .. arg1 .. " message: " .. arg2);
+			Perun.LogEvent(eventName,"Mission finished, winner " .. arg1 .. " message: " .. arg2);
 			
 		elseif eventName == "kill" then
-			--"kill", killerPlayerID, killerUnitType, killerSide, victimPlayerID, victimUnitType, victimSide, weaponName		
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name").. " in " .. arg3 .. " " .. arg2 .. " killed " .. net.get_player_info(arg4, "name") .. " in " .. arg6 .. " " .. arg5 .. " using " .. arg7);
+			--"kill", killerPlayerID, killerUnitType, killerSide, victimPlayerID, victimUnitType, victimSide, weaponName	
+			if net.get_player_info(arg4, "name") ~= nil then
+				_temp = " player ".. net.get_player_info(arg4, "name") .." ";
+			else
+				_temp = " AI ";
+			end
+			
+			if net.get_player_info(arg1, "name") ~= nil then
+				_temp2 = " player ".. net.get_player_info(arg1, "name") .." ";
+			else
+				_temp2 = " AI ";
+			end
+			
+			Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp2 .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp .. " in " .. arg5  .. " using " .. arg7); 
 			
 		elseif eventName == "self_kill" then
 			--"self_kill", playerID	
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " killed himself");
+			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " killed himself"); 
 			
 		elseif eventName == "change_slot" then
 			--"change_slot", playerID, slotID, prevSide	
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " changed slot to " .. arg2);
+			
+			if DCS.getUnitType(arg2) ~= nil and DCS.getUnitType(arg2) ~= "" then
+				_temp = DCS.getUnitType(arg2);
+			else
+				_temp = "SPECTATOR";
+			end
+			
+			Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " changed slot to " .. _temp);
 			
 		elseif eventName == "connect" then
 		    --"connect", playerID, name
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " connected");
+			Perun.LogEvent(eventName,"Player "..net.get_player_info(arg1, "name") .. " connected");
 			
 		elseif eventName == "disconnect" then
 		    --"disconnect", playerID, name, playerSide, reason_code
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " disconnected");
+			Perun.LogEvent(eventName, Perun.SideID2Name(arg3) .. " player " ..net.get_player_info(arg1, "name") .. " disconnected");
 			
 		elseif eventName == "crash" then
 		    --"crash", playerID, unit_missionID
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " crashed");
+			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " crashed in " .. DCS.getUnitType(arg2));
 			
 		elseif eventName == "eject" then
 		    --"eject", playerID, unit_missionID
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " ejected");
+			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " ejected " .. DCS.getUnitType(arg2));
 			
 		elseif eventName == "takeoff" then
 		    --"takeoff", playerID, unit_missionID, airdromeName
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " took off from " .. arg3);
+			if arg3 then
+				_temp = " from " .. arg3;
+			else
+				_temp = "";
+			end
+			
+			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " took off in ".. DCS.getUnitType(arg2) .. _temp);
 			
 		elseif eventName == "landing" then
 		    --"landing", playerID, unit_missionID, airdromeName
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " landed at " .. arg3);
+			if arg3 then
+				_temp = " at " .. arg3;
+			else 
+				_temp ="";
+			end
+			
+			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " landed in " .. DCS.getUnitType(arg2).. _temp);
 			
 		elseif eventName == "pilot_death" then
 		    --"pilot_death", playerID, unit_missionID
-			Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " died");
+			Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " in " .. DCS.getUnitType(arg2) .. " died");
 			
 		else
 			Perun.LogEvent(eventName,"Unknown event type");
