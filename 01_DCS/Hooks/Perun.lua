@@ -17,7 +17,7 @@
 -- ########### END OF SETTINGS ###########
 
 -- Variable init
-	Perun.Version = "v0.3.3"
+	Perun.Version = "v0.3.4"
 	Perun.StatusData = {}
 	Perun.SlotsData = {}
 	Perun.MissionData = {}
@@ -105,7 +105,7 @@
 			-- 2 - Players
 					temp = net.get_player_list()
 					for _, i in pairs(temp) do
-						temp[i]=net.get_player_info(i)
+						temp[i]=net.get_player_info(temp[i])
 					end
 				Perun.UpdateStatusPart("players",temp)	
 		
