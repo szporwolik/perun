@@ -17,7 +17,7 @@
 -- ########### END OF SETTINGS ###########
 
 -- Variable init
-	Perun.Version = "v0.3.5"
+	Perun.Version = "v0.3.6"
 	Perun.StatusData = {}
 	Perun.SlotsData = {}
 	Perun.MissionData = {}
@@ -164,8 +164,9 @@
 		data['player']= net.get_player_info(playerID, "name")
 		data['msg']=msg
 		data['all']=all
+		data['ucid']=net.get_player_info(playerID, 'ucid')
 		data['datetime']=os.date('%Y-%m-%d %H:%M:%S')
-		data['log_missionhash']=Perun.MissionHash
+		data['missionhash']=Perun.MissionHash
 		
 		Perun.Send(50,data)
 	end
@@ -222,11 +223,11 @@
 
 	Perun.onSimulationStart = function()
 		Perun.MissionHash=DCS.getMissionName( ).."@"..os.date('%Y%m%d_%H%M%S');
-		Perun.LogEvent("SimStart",Perun.MissionHash);
+		Perun.LogEvent("SimStart","Mission" .. Perun.MissionHash .. " started");
 	end
 
 	Perun.onSimulationStop = function()
-		Perun.LogEvent("SimStop",Perun.MissionHash);
+		Perun.LogEvent("SimStop","Mission" .. Perun.MissionHash .. " finished");
 	end
 	
 	Perun.onPlayerDisconnect= function(id, err_code)
