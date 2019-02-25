@@ -71,7 +71,7 @@
 		TempData["1"]=Perun.VersionData
 		TempData["2"]=Perun.StatusData
 		TempData["3"]=Perun.SlotsData
-		TempData["4"]=Perun.MissionData
+		-- TempData["4"]=Perun.MissionData
 		TempData["debug"]=net.get_player_list()
 		
 		io.open(Perun.JsonLocation,"w"):close()
