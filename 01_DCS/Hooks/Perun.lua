@@ -17,11 +17,11 @@
 -- ########### END OF SETTINGS ###########
 
 -- Variable init
-	Perun.Version = "v0.3.6"
+	Perun.Version = "v0.3.7"
 	Perun.StatusData = {}
 	Perun.SlotsData = {}
 	Perun.MissionData = {}
-	Perun.VersionData = {}
+	Perun.ServerData = {}
 	Perun.MissionHash=""
 	Perun.lastSentStatus =0
 	Perun.lastSentMission =0
@@ -68,10 +68,10 @@
 	Perun.UpdateJson = function()
 		-- Updates main json file
 		TempData={}
-		TempData["1"]=Perun.VersionData
+		TempData["1"]=Perun.ServerData
 		TempData["2"]=Perun.StatusData
 		TempData["3"]=Perun.SlotsData
-		-- TempData["4"]=Perun.MissionData
+		TempData["4"]=Perun.MissionData
 		TempData["debug"]=net.get_player_list()
 		
 		io.open(Perun.JsonLocation,"w"):close()
@@ -85,6 +85,7 @@
 		TempData={}
 		TempData["type"]=data_id
 		TempData["payload"]=data_package
+		TempData["timestamp"]=os.date('%Y-%m-%d %H:%M:%S')
 		
 		temp=net.lua2json(TempData)
 		Perun.UDP:send(temp)
@@ -96,14 +97,20 @@
 		Perun.StatusData[part_id] = data_package
 	end
 
-	Perun.UpdateVersion = function()
+	Perun.UpdateServer = function()
 		-- Main function for debug/version information
 		
-		-- Update Mission data
-			Perun.VersionData['v_dcs_hook']=Perun.Version
+		-- Update version data
+			Perun.ServerData['v_dcs_hook']=Perun.Version
+		
+		-- Update server data
+			_table=net.get_player_list()
+			_count = 0
+			for _ in pairs(_table) do _count = _count + 1 end
+			Perun.ServerData['c_players']=_count
 			
 		-- Send
-			Perun.Send(1,Perun.VersionData)
+			Perun.Send(1,Perun.ServerData)
 	end
 	
 	Perun.UpdateStatus = function()
@@ -124,8 +131,8 @@
 			-- 2 - Players
 					_temp = net.get_player_list()
 					_temp2={}
-					for _, i in pairs(_temp) do
-						_temp2[i]=net.get_player_info(i)
+					for k, i in ipairs(_temp) do
+						_temp2[k]=net.get_player_info(i)
 					end
 				Perun.UpdateStatusPart("players",_temp2)	
 		
@@ -242,7 +249,6 @@
 			Perun.lastSentStatus = _now 
 
 			Perun.UpdateStatus()
-			Perun.UpdateJson()
 		end
 		
 		-- Send mission update
@@ -251,6 +257,7 @@
 			
 			Perun.UpdateSlots()
 			Perun.UpdateMission()
+			Perun.UpdateServer()
 			
 			Perun.UpdateJson()
 		end
@@ -260,8 +267,7 @@
 	Perun.onMissionLoadEnd = function()
 		Perun.UpdateMission()
 		Perun.UpdateSlots()
-		Perun.UpdateVersion()
-		Perun.UpdateJson()
+		Perun.UpdateServer()
 	end
 	
 	Perun.onPlayerStart = function (id)
