@@ -1,10 +1,10 @@
 # Perun for DCS World
 
-This toolset extracts data from DCS World server and sends information to the local Json file and UDP port. 
+This toolset extracts data from DCS World server and sends information to the local Json file and UDP port for further processing. 
 
-Provided windows app puts JSON data to MySQL database. Additionaly Perun windows app can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
+Provided windows app puts received UDP packets to MySQL database. Additionaly Perun windows app can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
 
-However this software is intended to be used by experienced users - the output is data Json and MySQL; you will need to process/display it yourself.
+However, this software is intended to be used by experienced users - the output is Json data and MySQL; you will need to process/display it yourself.
 
 ![Perun in action](https://i.imgur.com/ougQMPq.png)
 ![Data flow](https://i.imgur.com/sHDQoLM.png)
@@ -17,7 +17,7 @@ Core:
  * **(Optional)** For MySQL Export:
    * MySQL server with read/write access
 
-3rd party support:
+3rd party applications support:
  * for [DCS SRS](https://github.com/ciribob/DCS-SimpleRadioStandalone/releases) integration location of the clients-list.json file will be required (by default: SRS Server folder), "Auto Export List" option has to be enabled - see [SRS documentation](https://github.com/ciribob/DCS-SimpleRadioStandalone/wiki)
  * for [LotATC](https://www.lotatc.com/) you will need location of stats.json file and proper LotATC configuration with JSON data export enabled - see [LotATC documentation](https://www.lotatc.com/documentation/server_configuration.html)
 
@@ -34,19 +34,20 @@ Core:
 * Start DCS World and host multiplayer session
   * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
   * by default the UDP port 48620 is in use as target port
+* Data shall be filling your MySQL database
 
 ## Data packets
-* ID: 1, contains version information
+* ID: 1, contains version/diagnostic information
 * ID: 2, contains status data in the following sections
-	* mission - minimal information
+	* mission - minimal information about mission
 	* players - connected players
 * ID: 3, available slots list and coalitions
 	* coalitions - available coalitions
 	* slots - available slots
-* ID: 4, stores mission data **ONLY JSON FILE**
+* ID: 4, stores mission data **WIP: ONLY JSON FILE**
 * ID: 50, chat event
 * ID: 51, game event
-* ID: 52, player stats
+* ID: 52, player stats **WIP**
 * ID: 53, player login to DCS server
 * ID: 100, DCS SRS's client-list.json
 * ID: 101, LotATC's stats.json
