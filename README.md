@@ -44,7 +44,7 @@ Core:
 * ID: 3, available slots list and coalitions
 	* coalitions - available coalitions
 	* slots - available slots
-* ID: 4, stores mission data **WIP: ONLY JSON FILE**
+* ID: 4, stores mission data **WIP**
 * ID: 50, chat event
 * ID: 51, game event
 * ID: 52, player stats **WIP**
