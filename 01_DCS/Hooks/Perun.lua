@@ -9,7 +9,7 @@
 	
 	Perun.RefreshStatus = 15 												-- base refresh rate in seconds to send status update (values lower than 60 may affect performance!)
 	Perun.RefreshMission = 60 												-- refresh rate in seconds to send mission information  (values lower than 60 may affect performance!)
-	Perun.JsonLocation = "Scripts\\Json\\perun_export.json" 				-- relatve do user's SaveGames DCS folder
+	Perun.JsonStatusLocation = "Scripts\\Json\\" 		-- relatve do user's SaveGames DCS folder -> status file updated each RefreshMission
 	Perun.UDPTargetPort = 48620												-- UDP port to send data to
 	Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"						-- Message send to players connecting the server - Line 1
 	Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- Message send to players connecting the server - Line 2
@@ -25,7 +25,7 @@
 	Perun.MissionHash=""
 	Perun.lastSentStatus =0
 	Perun.lastSentMission =0
-	Perun.JsonLocation = lfs.writedir() .. Perun.JsonLocation
+	Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
 	Perun.socket  = require("socket")
 	Perun.UDP = assert(Perun.socket.udp())
 	Perun.UDP:settimeout(0)
@@ -34,7 +34,7 @@
 
 -- Function definition
 	Perun.GetCategory = function(id)
-	    -- via https://pastebin.com/GUAXrd2U
+	    -- Helper function via  https://pastebin.com/GUAXrd2U 
         local _killed_target_category = DCS.getUnitTypeAttribute(id, "category")
         if _killed_target_category == nil then
             local _killed_target_cat_check_ship = DCS.getUnitTypeAttribute(id, "DeckLevel")
@@ -65,19 +65,20 @@
 		net.log("Perun : ".. text)
 	end
 
-	Perun.UpdateJson = function()
-		-- Updates main json file
+	Perun.UpdateJsonStatus = function()
+		-- Updates status json file
 		TempData={}
 		TempData["1"]=Perun.ServerData
 		TempData["2"]=Perun.StatusData
 		TempData["3"]=Perun.SlotsData
-		TempData["4"]=Perun.MissionData
-		TempData["debug"]=net.get_player_list()
+		-- TempData["4"]=Perun.MissionData -- TBD?
 		
-		io.open(Perun.JsonLocation,"w"):close()
-		perun_export = io.open(Perun.JsonLocation, "w")
-		perun_export:write(net.lua2json(TempData) .. "\n")
+		_temp=net.lua2json(TempData) 
+
+		perun_export = io.open(Perun.JsonStatusLocation .. "perun_status_data.json", "w")
+		perun_export:write(_temp .. "\n")
 		perun_export:close()
+
 	end
 
 	Perun.Send = function(data_id, data_package)
@@ -97,25 +98,22 @@
 		Perun.StatusData[part_id] = data_package
 	end
 
-	Perun.UpdateServer = function()
-		-- Main function for debug/version information
-		
-		-- Update version data
-			Perun.ServerData['v_dcs_hook']=Perun.Version
-		
-		-- Update server data
-			_table=net.get_player_list()
-			_count = 0
-			for _ in pairs(_table) do _count = _count + 1 end
-			Perun.ServerData['c_players']=_count
-			
-		-- Send
-			Perun.Send(1,Perun.ServerData)
-	end
-	
 	Perun.UpdateStatus = function()
 		-- Main function for status updates
 		
+		-- Diagnostic data
+			-- Update version data
+				Perun.ServerData['v_dcs_hook']=Perun.Version
+			
+			-- Update server data
+				_table=net.get_player_list()
+				_count = 0
+				for _ in pairs(_table) do _count = _count + 1 end
+				Perun.ServerData['c_players']=_count
+				
+			-- Send
+				Perun.Send(1,Perun.ServerData)
+			
 		-- Update all subsections
 			-- 1 - Mission
 					temp={}
@@ -136,32 +134,26 @@
 					end
 				Perun.UpdateStatusPart("players",_temp2)	
 		
-		-- Send
-			Perun.Send(2,Perun.StatusData)
+			-- Send
+				Perun.Send(2,Perun.StatusData)
+
+			-- Update slots data
+				Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
+				Perun.SlotsData['slots']={}
+				
+				for j, i in pairs(Perun.SlotsData['coalitions']) do
+					Perun.SlotsData['slots'][j]=DCS.getAvailableSlots(j) 
+				end
+			-- Send
+				Perun.Send(3,Perun.SlotsData)
 	end
 
-	Perun.UpdateSlots = function()
-		-- Main function for slot
-
-		-- Update slots data
-			Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
-			Perun.SlotsData['slots']={}
-			
-			for j, i in pairs(Perun.SlotsData['coalitions']) do
-				Perun.SlotsData['slots'][j]=DCS.getAvailableSlots(j) 
-			end
-		-- Send
-			Perun.Send(3,Perun.SlotsData)
-	end
 	
 	Perun.UpdateMission = function()
 		-- Main function for mission information updates
 
 		-- Update Mission data
 			Perun.MissionData=DCS.getCurrentMission()
-
-		-- Send
-			-- Perun.Send(4,Perun.MissionData)
 	end
 	
 	Perun.LogChat = function(playerID,msg,all)
@@ -244,6 +236,19 @@
 	Perun.onSimulationFrame = function()
 		local _now = DCS.getRealTime()
 		
+		-- First run
+		if Perun.lastSentMission ==0 and Perun.lastSentStatus ==0 then
+			Perun.UpdateMission()	
+		end
+		
+		-- Send mission update and update JSON
+		if _now > Perun.lastSentMission + Perun.RefreshMission then
+			Perun.lastSentMission = _now 
+			
+			Perun.UpdateMission()		
+			Perun.UpdateJsonStatus()
+		end
+		
 		-- Send status update
 		if _now > Perun.lastSentStatus + Perun.RefreshStatus then
 			Perun.lastSentStatus = _now 
@@ -251,24 +256,10 @@
 			Perun.UpdateStatus()
 		end
 		
-		-- Send mission update
-		if _now > Perun.lastSentMission + Perun.RefreshMission then
-			Perun.lastSentMission = _now 
-			
-			Perun.UpdateSlots()
-			Perun.UpdateMission()
-			Perun.UpdateServer()
-			
-			Perun.UpdateJson()
-		end
+		
 		
 	end
 
-	Perun.onMissionLoadEnd = function()
-		Perun.UpdateMission()
-		Perun.UpdateSlots()
-		Perun.UpdateServer()
-	end
 	
 	Perun.onPlayerStart = function (id)
 		net.send_chat(Perun.MOTD_L1, id);
