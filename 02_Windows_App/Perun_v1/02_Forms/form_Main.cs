@@ -125,12 +125,27 @@ namespace Perun_v1
                 rdr.Close();
                 LogHistoryAdd(ref LogHistory, "MySQL updated, package type: " + type);
             }
-            catch (Exception ex)
+            catch (ArgumentException a_ex)
             {
-                Console.WriteLine(ex.ToString());
-                LogHistoryAdd(ref LogHistory, "ERROR MySQL: type " + type);
+                Console.WriteLine(a_ex.ToString());
+                LogHistoryAdd(ref LogHistory, "ERROR MySQL - package type " + type);
             }
-
+            catch (MySqlException ex)
+            {
+                LogHistoryAdd(ref LogHistory, "ERROR MySQL - package type " + type);
+                switch (ex.Number)
+                {
+                    case 1042: // Unable to connect to any of the specified MySQL hosts (Check Server,Port)
+                        LogHistoryAdd(ref LogHistory, "ERROR MySQL - unable to connect");
+                        break;
+                    case 0: // Access denied (Check DB name,username,password)
+                        LogHistoryAdd(ref LogHistory, "ERROR MySQL - access denied");
+                        break;
+                    default:
+                        LogHistoryAdd(ref LogHistory, "ERROR MySQL - " + ex.Number);
+                        break;
+                }
+            }
             conn.Close();
             Console.WriteLine("Sending data to MySQL - Done");
         }
@@ -156,16 +171,17 @@ namespace Perun_v1
 
             public void StartListen()
             {
-                // Start listening to UDP
-                this.done = false;
-                listener = new UdpClient(listenPort);
-                IPEndPoint groupEP = new IPEndPoint(IPAddress.Loopback, listenPort);
-                string received_data;
-                byte[] receive_byte_array;
-
                 Console.WriteLine("UDP Listen start");
                 try
                 {
+                    // Start listening to UDP
+                    this.done = false;
+                    listener = new UdpClient(listenPort);
+                    IPEndPoint groupEP = new IPEndPoint(IPAddress.Loopback, listenPort);
+                    string received_data;
+                    byte[] receive_byte_array;
+
+                   
                     while (!done)
                     {
                         Console.WriteLine("UDP: Waiting for packet");
@@ -191,13 +207,15 @@ namespace Perun_v1
                         }
 
                     }
+                    listener.Close();
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
+                    LogHistoryAdd(ref LogHistory, "ERROR UDP - port may be in use");
                 }
                 Console.WriteLine("UDP listen stop");
-                listener.Close();
+                
             }
         }
 
@@ -278,8 +296,14 @@ namespace Perun_v1
         private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
         {
             // Stop listening
-            UDPListener.listener.Close();
-
+            try
+            {
+                UDPListener.listener.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
             // Update form controls
             con_Button_Listen_ON.Enabled = true;
             con_Button_Listen_OFF.Enabled = false;
@@ -287,7 +311,7 @@ namespace Perun_v1
             con_txt_mysql_database.Enabled = true;
             con_txt_mysql_username.Enabled = true;
             con_txt_mysql_password.Enabled = true;
-            con_txt_mysql_port.Enabled = true;
+            //con_txt_mysql_port.Enabled = true;
             con_txt_mysql_server.Enabled = true;
             con_txt_3rd_lotatc.Enabled = true;
             con_txt_3rd_srs.Enabled = true;
