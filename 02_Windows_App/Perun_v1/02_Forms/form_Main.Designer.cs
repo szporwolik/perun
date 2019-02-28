@@ -150,6 +150,7 @@
             // 
             // con_txt_mysql_port
             // 
+            this.con_txt_mysql_port.Enabled = false;
             this.con_txt_mysql_port.Location = new System.Drawing.Point(106, 45);
             this.con_txt_mysql_port.Name = "con_txt_mysql_port";
             this.con_txt_mysql_port.Size = new System.Drawing.Size(207, 20);
