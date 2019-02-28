@@ -55,7 +55,6 @@ namespace Perun_v1
                 timestamp = "CURRENT_TIMESTAMP()";
             }
 
- 
             // Modify specific
             if (type == "1") // Inject app version information
             {
