@@ -58,6 +58,7 @@
             this.openFileDialog_SRS = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog_LotATC = new System.Windows.Forms.OpenFileDialog();
             this.tim_10000ms = new System.Windows.Forms.Timer(this.components);
+            this.tim_200ms = new System.Windows.Forms.Timer(this.components);
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -321,6 +322,10 @@
             this.tim_10000ms.Interval = 30000;
             this.tim_10000ms.Tick += new System.EventHandler(this.tim_10000ms_Tick);
             // 
+            // tim_200ms
+            // 
+            this.tim_200ms.Tick += new System.EventHandler(this.tim_200ms_Tick);
+            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -383,6 +388,7 @@
         private System.Windows.Forms.Timer tim_10000ms;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox con_txt_mysql_port;
+        private System.Windows.Forms.Timer tim_200ms;
     }
 }
 
