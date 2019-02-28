@@ -20,7 +20,7 @@ namespace Perun_v1
         public Thread thread_UDPListener;               // Seperate thread for UDP
         public class_UDPListener UDPListener;           // Helper class for UDP comunication
         public string[] LogHistory = new string[10];      // Log history for GUI
-        public string[] SendBuffer = new string[10];      // Mysql send buffer
+        public string[] SendBuffer = new string[100];      // Mysql send buffer
         public bool LetMeOut = false;                     // Helper to handle system tray
         public string MySql_connStr;                    // MySQL connection string
         public string publishVersion = "DEBUG";         // Helper for pulling version definition
@@ -182,9 +182,13 @@ namespace Perun_v1
                         // Add to mySQL send buffer and rotate
                         for (int i = 0; i < SendBuffer.Length - 1; i++)
                         {
-                            SendBuffer[i] = SendBuffer[i + 1];
+                            if (SendBuffer[i]==null)
+                            {
+                                SendBuffer[i] = received_data;
+                                break;
+                            }
+                            
                         }
-                        SendBuffer[9] = received_data;
 
                     }
                 }
@@ -267,6 +271,7 @@ namespace Perun_v1
             // Start timmers
             tim_1000ms.Enabled = true;
             tim_10000ms.Enabled = true;
+            tim_200ms.Enabled = true;
 
         }
 
@@ -292,6 +297,7 @@ namespace Perun_v1
             // Stop timmers
             tim_1000ms.Enabled = false;
             tim_10000ms.Enabled = false;
+            tim_200ms.Enabled = false;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -307,15 +313,6 @@ namespace Perun_v1
                 }
             }
 
-            // Send buffer to MySQL
-            for (int i = 0; i < SendBuffer.Length - 1; i++)
-            {
-                if (SendBuffer[i] != null)
-                {
-                    SendToMySql(SendBuffer[i]);
-                    SendBuffer[i] = null;
-                }
-            }
         }
 
         private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -509,6 +506,19 @@ namespace Perun_v1
             }
             SendToMySql(strLotATCJson);
 
+        }
+
+        private void tim_200ms_Tick(object sender, EventArgs e)
+        {
+            // Send buffer to MySQL
+            for (int i = 0; i < SendBuffer.Length - 1; i++)
+            {
+                if (SendBuffer[i] != null)
+                {
+                    SendToMySql(SendBuffer[i]);
+                    SendBuffer[i] = null;
+                }
+            }
         }
     }
 }
