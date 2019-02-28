@@ -1,5 +1,4 @@
 
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
@@ -57,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
 
 DROP TABLE IF EXISTS `pe_DataRaw`;
 CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
-  `pe_dataraw_type` tinyint(4) NOT NULL AUTO_INCREMENT,
+  `pe_dataraw_type` tinyint(4) NOT NULL,
   `pe_dataraw_payload` text NOT NULL,
   `pe_dataraw_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_dataraw_type`)
