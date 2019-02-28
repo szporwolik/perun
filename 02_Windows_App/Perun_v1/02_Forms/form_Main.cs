@@ -210,7 +210,7 @@ namespace Perun_v1
         private void form_Main_Load(object sender, EventArgs e)
         {
             // Form loaded - fill controls with default values
-            LogHistory[0] = DateTime.Now.ToString("HH:mm:ss") + " > " + "Perun loaded...";
+            LogHistory[0] = DateTime.Now.ToString("HH:mm:ss") + " > " + "Perun loaded";
 
             // Load settings
             con_txt_mysql_database.Text = Properties.Settings.Default.MYSQL_DB;
