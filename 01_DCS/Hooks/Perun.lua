@@ -18,7 +18,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- Message send to p
 
 
 -- Variable init
-Perun.Version = "v0.3.7"
+Perun.Version = "v0.4.0"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
