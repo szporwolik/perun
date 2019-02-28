@@ -314,11 +314,11 @@ end
 
 Perun.onSimulationStart = function()
     Perun.MissionHash=DCS.getMissionName( ).."@"..os.date('%Y%m%d_%H%M%S');
-    Perun.LogEvent("SimStart","Mission" .. Perun.MissionHash .. " started");
+    Perun.LogEvent("SimStart","Mission " .. Perun.MissionHash .. " started");
 end
 
 Perun.onSimulationStop = function()
-    Perun.LogEvent("SimStop","Mission" .. Perun.MissionHash .. " finished");
+    Perun.LogEvent("SimStop","Mission " .. Perun.MissionHash .. " finished");
 end
 
 Perun.onPlayerDisconnect= function(id, err_code)
