@@ -43,8 +43,19 @@ namespace Perun_v1
             // Cut raw data to type and paylod for proper mysql insert
             string type = udp_frame.type;
             string payload = "";
+            string timestamp = udp_frame.timestamp;
             string sql = "";
 
+            if (timestamp != null)
+            {
+                timestamp = "'" + timestamp + "'";
+            }
+            else
+            {
+                timestamp = "CURRENT_TIMESTAMP()";
+            }
+
+ 
             // Modify specific
             if (type == "1") // Inject app version information
             {
@@ -55,37 +66,47 @@ namespace Perun_v1
             if (type == "50")
             {
                 // Add entry to chat log
-                sql = "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) VALUES ('" + udp_frame.payload.ucid + "') ON DUPLICATE KEY UPDATE pe_DataPlayers_updated=CURRENT_TIMESTAMP(),pe_DataPlayers_lastname='"+ udp_frame.payload.player + "';";
-                sql = sql + "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`) VALUES ('" + udp_frame.payload.missionhash + "') ON DUPLICATE KEY UPDATE pe_DataMissionHashes_datetime=CURRENT_TIMESTAMP();";
-                sql = sql+ "INSERT INTO `pe_LogChat` (`pe_LogChat_id`,`pe_LogChat_datetime`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`,`pe_LogChat_missionhash_id`) VALUES (NULL,'" + udp_frame.payload.datetime + "', (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '"+ udp_frame.payload.ucid + "'), '" + udp_frame.payload.msg + "', '" + udp_frame.payload.all + "',(SELECT pe_DataMissionHashes_id FROM pe_DataMissionHashes WHERE pe_DataMissionHashes_hash = '" + udp_frame.payload.missionhash + "'));";
+                //sql = "INSERT IGNORE INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) VALUES ('" + udp_frame.payload.ucid + "');";
+                sql = "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) SELECT '" + udp_frame.payload.ucid + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataPlayers` where pe_DataPlayers_ucid = '" + udp_frame.payload.ucid + "' );";
+                sql = sql + "UPDATE  `pe_DataPlayers` SET `pe_DataPlayers_updated` = " + timestamp + ",`pe_DataPlayers_lastname`='" + udp_frame.payload.player + "' WHERE `pe_DataPlayers_ucid`='"+ udp_frame.payload.ucid + "' ;";
+                sql = sql + "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`) SELECT '" + udp_frame.payload.missionhash + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataMissionHashes` where pe_DataMissionHashes_hash ='" + udp_frame.payload.missionhash + "' );";
+                sql = sql + "UPDATE `pe_DataMissionHashes` SET `pe_DataMissionHashes_datetime` = " + timestamp + " WHERE `pe_DataMissionHashes_hash` = '" + udp_frame.payload.missionhash + "';";
+                sql = sql + "INSERT INTO `pe_LogChat` (`pe_LogChat_id`,`pe_LogChat_datetime`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`,`pe_LogChat_missionhash_id`) VALUES (NULL,'" + udp_frame.payload.datetime + "', (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '"+ udp_frame.payload.ucid + "'), '" + udp_frame.payload.msg + "', '" + udp_frame.payload.all + "',(SELECT pe_DataMissionHashes_id FROM pe_DataMissionHashes WHERE pe_DataMissionHashes_hash = '" + udp_frame.payload.missionhash + "'));";
             }
             else if (type == "51")
             {
                 // Add entry to event log
-                sql = "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`) VALUES ('" + udp_frame.payload.log_missionhash + "') ON DUPLICATE KEY UPDATE pe_DataMissionHashes_datetime=CURRENT_TIMESTAMP();";
+                sql = "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`) SELECT '" + udp_frame.payload.log_missionhash + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataMissionHashes` where pe_DataMissionHashes_hash = '" + udp_frame.payload.log_missionhash + "');";
+                sql = sql + "UPDATE `pe_DataMissionHashes` SET `pe_DataMissionHashes_datetime` = " + timestamp + " WHERE `pe_DataMissionHashes_hash` = '" + udp_frame.payload.log_missionhash + "';";
                 sql = sql + "INSERT INTO `pe_LogEvent` (`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`,`pe_LogEvent_missionhash_id`) VALUES ( NULL, '" + udp_frame.payload.log_datetime + "', '" + udp_frame.payload.log_type + "', '" + udp_frame.payload.log_content + "', (SELECT pe_DataMissionHashes_id FROM pe_DataMissionHashes WHERE pe_DataMissionHashes_hash = '" + udp_frame.payload.log_missionhash + "'));";
             }
             else if (type == "52")
             {
                 // Update user stats
                 payload = JsonConvert.SerializeObject(udp_frame.payload.stat_data);
-                sql = "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`) VALUES ('" + udp_frame.payload.stat_missionhash + "') ON DUPLICATE KEY UPDATE pe_DataMissionHashes_datetime=CURRENT_TIMESTAMP();";
-                sql = sql + "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) VALUES ('" + udp_frame.payload.stat_ucid + "') ON DUPLICATE KEY UPDATE pe_DataPlayers_updated=CURRENT_TIMESTAMP();";
-                sql = sql+ "INSERT INTO `pe_LogStats` (`pe_LogStats_datetime`, `pe_LogStats_playerid`, `pe_LogStats_debug`,`pe_LogStats_missionhash_id`) VALUES ('" + udp_frame.payload.stat_datetime + "', (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + udp_frame.payload.stat_ucid + "'), JSON_QUOTE('" + payload + "'), (SELECT pe_DataMissionHashes_id FROM pe_DataMissionHashes WHERE pe_DataMissionHashes_hash = '" + udp_frame.payload.stat_missionhash + "')) ON DUPLICATE KEY UPDATE pe_LogStats_datetime='" + udp_frame.payload.stat_datetime + "',pe_LogStats_playerid =  (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + udp_frame.payload.stat_ucid + "'), pe_LogStats_debug=JSON_QUOTE('" + payload + "'), pe_LogStats_missionhash_id=(SELECT pe_DataMissionHashes_id FROM pe_DataMissionHashes WHERE pe_DataMissionHashes_hash = '" + udp_frame.payload.stat_missionhash + "')";
+
+                sql =  "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`) SELECT '" + udp_frame.payload.stat_missionhash + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataMissionHashes` where pe_DataMissionHashes_hash = '" + udp_frame.payload.stat_missionhash + "');";
+                sql = sql + "UPDATE `pe_DataMissionHashes` SET `pe_DataMissionHashes_datetime` = " + timestamp + " WHERE `pe_DataMissionHashes_hash` = '" + udp_frame.payload.stat_missionhash + "';";
+                sql = sql + "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) SELECT '" + udp_frame.payload.stat_ucid + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataPlayers` where pe_DataPlayers_ucid = '" + udp_frame.payload.stat_ucid + "');";
+                sql = sql + "UPDATE `pe_DataPlayers` SET `pe_DataPlayers_updated`=" + timestamp + " WHERE `pe_DataPlayers_ucid`='" + udp_frame.payload.stat_ucid + "';";
+                sql = sql + "INSERT INTO `pe_LogStats` (`pe_LogStats_playerid`,`pe_LogStats_missionhash_id`) SELECT (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + udp_frame.payload.stat_ucid + "'), (SELECT pe_DataMissionHashes_id FROM pe_DataMissionHashes WHERE pe_DataMissionHashes_hash = '" + udp_frame.payload.stat_missionhash + "') FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_LogStats` WHERE `pe_LogStats_missionhash_id`=(SELECT pe_DataMissionHashes_id FROM pe_DataMissionHashes WHERE pe_DataMissionHashes_hash = '" + udp_frame.payload.stat_missionhash + "') AND `pe_LogStats_playerid` =  (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + udp_frame.payload.stat_ucid + "') );";
+                sql = sql + "UPDATE `pe_LogStats` SET `pe_LogStats_datetime`='" + udp_frame.payload.stat_datetime + "',`pe_LogStats_playerid` =  (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + udp_frame.payload.stat_ucid + "'),`pe_LogStats_debug`=JSON_QUOTE('" + payload + "'),`pe_LogStats_missionhash_id`=(SELECT pe_DataMissionHashes_id FROM pe_DataMissionHashes WHERE pe_DataMissionHashes_hash = '" + udp_frame.payload.stat_missionhash + "') WHERE `pe_LogStats_missionhash_id`=(SELECT pe_DataMissionHashes_id FROM pe_DataMissionHashes WHERE pe_DataMissionHashes_hash = '" + udp_frame.payload.stat_missionhash + "') AND `pe_LogStats_playerid` =  (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + udp_frame.payload.stat_ucid + "');";
             }
             else if (type == "53")
             {
                 // User logged in to DCS server
                 payload = JsonConvert.SerializeObject(udp_frame.payload.stat_data);
-                
-                sql = "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_id`, `pe_DataPlayers_ucid`, `pe_DataPlayers_lastip`, `pe_DataPlayers_lastname`, `pe_DataPlayers_updated`) VALUES (NULL, '" + udp_frame.payload.login_ucid + "', '" + udp_frame.payload.login_ipaddr + "', '" + udp_frame.payload.login_name + "', '" + udp_frame.payload.login_datetime + "') ON DUPLICATE KEY UPDATE pe_DataPlayers_lastip='" + udp_frame.payload.login_ipaddr + "',pe_DataPlayers_lastname='" + udp_frame.payload.login_name + "',pe_DataPlayers_updated='" + udp_frame.payload.login_datetime + "';";
+
+                sql = "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) SELECT '" + udp_frame.payload.login_ucid + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataPlayers` where pe_DataPlayers_ucid='" + udp_frame.payload.login_ucid + "');";
+                sql = sql + "UPDATE `pe_DataPlayers` SET  pe_DataPlayers_lastip='" + udp_frame.payload.login_ipaddr + "', pe_DataPlayers_lastname='" + udp_frame.payload.login_name + "',pe_DataPlayers_updated='" + udp_frame.payload.login_datetime + "' WHERE `pe_DataPlayers_ucid`= '" + udp_frame.payload.login_ucid + "';";
                 sql = sql + "INSERT INTO `pe_LogLogins` (`pe_LogLogins_datetime`, `pe_LogLogins_playerid`, `pe_LogLogins_name`, `pe_LogLogins_ip`) VALUES ('" + udp_frame.payload.login_datetime + "', (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + udp_frame.payload.login_ucid + "'), '" + udp_frame.payload.login_name + "', '" + udp_frame.payload.login_ipaddr + "');";
             }
             else
             {
                 // General definition used for 1-10 packets
                 payload = JsonConvert.SerializeObject(udp_frame.payload);
-                sql = "INSERT INTO pe_DataRaw(pe_dataraw_type,pe_dataraw_payload) VALUES (" + type + ",JSON_QUOTE('" + payload + "')) ON DUPLICATE KEY UPDATE pe_dataraw_payload = JSON_QUOTE('" + payload + "')";
+                sql = "INSERT INTO `pe_DataRaw` (`pe_dataraw_type`) SELECT '" + type + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataRaw` WHERE pe_dataraw_type = '" + type + "' );";
+                sql = sql + "UPDATE `pe_DataRaw` SET `pe_dataraw_payload` = JSON_QUOTE('" + payload + "'), `pe_dataraw_updated`="+ timestamp + " WHERE `pe_dataraw_type`=" + type + ";";
             }
 
             // Connect to mysql and execute sql
