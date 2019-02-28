@@ -2,7 +2,7 @@
 
 This toolset extracts data from DCS World server and sends information to the local Json file and UDP port for further processing. 
 
-Provided windows app puts received UDP packets to MySQL database. Additionaly Perun windows app can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
+Provided windows app puts received UDP packets to MySQL database. Additionaly Perun windows application can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
 
 However, this software is intended to be used by experienced users - the output is Json data and MySQL; you will need to process/display it yourself.
 
@@ -15,7 +15,8 @@ Core:
  * For JSON Export:
    * DCS World stable or DCS World beta
  * **(Optional)** For MySQL Export:
-   * MySQL server with read/write access
+   * MySQL server with read/write access (tested with v5.7.21)
+   * .NET Framework 4.6.1
 
 3rd party applications support:
  * for [DCS SRS](https://github.com/ciribob/DCS-SimpleRadioStandalone/releases) integration location of the clients-list.json file will be required (by default: SRS Server folder), "Auto Export List" option has to be enabled - see [SRS documentation](https://github.com/ciribob/DCS-SimpleRadioStandalone/wiki)
@@ -23,7 +24,7 @@ Core:
 
 ### Installing
 
-* Download latest [release](https://github.com/szporwolik/perun/releases), **optionaly** together with Win32 binary file for MySQL export - [DOWNLOAD](http://share.porwolik.com/ftp/perun/Perun.htm)
+* Download latest [release](https://github.com/szporwolik/perun/releases), **optionaly** together with windows binary file for MySQL export - [DOWNLOAD](http://share.porwolik.com/ftp/perun/Perun.htm)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
 * **optionaly** Create MySQL server using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL)
 * **optionaly** Run the Win32 application
@@ -44,10 +45,10 @@ Core:
 * ID: 3, available slots list and coalitions
 	* coalitions - available coalitions
 	* slots - available slots
-* ID: 4, stores mission data **WIP**
+* ID: 4, stores mission data **WIP: not yet implemented**
 * ID: 50, chat event
 * ID: 51, game event
-* ID: 52, player stats **WIP**
+* ID: 52, player stats **WIP: not yet implemented**
 * ID: 53, player login to DCS server
 * ID: 100, DCS SRS's client-list.json
 * ID: 101, LotATC's stats.json
