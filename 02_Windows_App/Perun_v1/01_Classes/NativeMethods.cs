@@ -1,4 +1,4 @@
-﻿// this class just wraps some Win32 stuff that we're going to use for blocking of multiple instances
+﻿// This class just wraps some Win32 stuff that we're going to use for blocking of multiple instances
 using System;
 using System.Runtime.InteropServices;
 
