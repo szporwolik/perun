@@ -59,6 +59,7 @@
             this.openFileDialog_LotATC = new System.Windows.Forms.OpenFileDialog();
             this.tim_10000ms = new System.Windows.Forms.Timer(this.components);
             this.tim_200ms = new System.Windows.Forms.Timer(this.components);
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -69,16 +70,7 @@
             this.con_List_Received.Enabled = false;
             this.con_List_Received.FormattingEnabled = true;
             this.con_List_Received.Items.AddRange(new object[] {
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading"});
+            "Welcome to Perun for DCS World!"});
             this.con_List_Received.Location = new System.Drawing.Point(6, 19);
             this.con_List_Received.Name = "con_List_Received";
             this.con_List_Received.Size = new System.Drawing.Size(307, 134);
@@ -327,6 +319,11 @@
             // 
             this.tim_200ms.Tick += new System.EventHandler(this.tim_200ms_Tick);
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -390,6 +387,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox con_txt_mysql_port;
         private System.Windows.Forms.Timer tim_200ms;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }
 
