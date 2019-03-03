@@ -1,3 +1,8 @@
+![alt text](https://img.shields.io/github/license/szporwolik/perun.svg "MIT")
+![alt text](https://img.shields.io/github/release-pre/szporwolik/perun.svg "Latest release")
+![alt text](https://img.shields.io/github/release-date-pre/szporwolik/perun.svg "Latest release date")
+
+
 # Perun for DCS World
 
 This toolset extracts data from DCS World server and sends information to the local Json file and UDP port for further processing. 
@@ -38,20 +43,20 @@ Core:
 * Data shall be filling your MySQL database
 
 ## Data packets
-* ID: 1, contains version/diagnostic information
-* ID: 2, contains status data in the following sections
+* ```ID: 1```, contains version/diagnostic information
+* ```ID: 2```, contains status data in the following sections
 	* mission - minimal information about mission
 	* players - connected players
-* ID: 3, available slots list and coalitions
+* ```ID: 3```, available slots list and coalitions
 	* coalitions - available coalitions
 	* slots - available slots
-* ID: 4, stores mission data **WIP: not yet implemented**
-* ID: 50, chat event
-* ID: 51, game event
-* ID: 52, player stats **WIP: not yet implemented**
-* ID: 53, player login to DCS server
-* ID: 100, DCS SRS's client-list.json
-* ID: 101, LotATC's stats.json
+* ```ID: 4```, stores mission data **WIP: not yet implemented**
+* ```ID: 50```, chat event
+* ```ID: 51```, game event
+* ```ID: 52```, player stats **WIP: not yet implemented**
+* ```ID: 53```, player login to DCS server
+* ```ID: 100```, DCS SRS's client-list.json
+* ```ID: 101```, LotATC's stats.json
 
 ## Built With
 
