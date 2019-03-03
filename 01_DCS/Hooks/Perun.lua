@@ -5,20 +5,22 @@ local Perun = {}
 package.path  = package.path..";"..lfs.currentdir().."/LuaSocket/?.lua"
 package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
--- ########### SETTINGS ###########
+-- ###################### SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION #############################
 
-Perun.RefreshStatus = 15 												-- base refresh rate in seconds to send status update (values lower than 60 may affect performance!)
-Perun.RefreshMission = 60 												-- refresh rate in seconds to send mission information  (values lower than 60 may affect performance!)
-Perun.JsonStatusLocation = "Scripts\\Json\\" 							-- folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
-Perun.UDPTargetPort = 48620												-- UDP port to send data to
-Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"						-- Message send to players connecting the server - Line 1
-Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- Message send to players connecting the server - Line 2
+Perun.RefreshStatus = 15 												-- (int) base refresh rate in seconds to send status update (values lower than 60 may affect performance!)
+Perun.RefreshMission = 60 												-- (int) refresh rate in seconds to send mission information  (values lower than 60 may affect performance!)
+Perun.UDPTargetPort = 48620												-- (int) UDP port to send data to
+Perun.UDPSourcePort = 48621												-- (int) UDP port to send data from 
+Perun.Instance = 1														-- (int) Id number of instance (if multiple DCS instances are to run at the same PC)
+Perun.JsonStatusLocation = "Scripts\\Json\\" 							-- (string) folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
+Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"						-- (string) Message send to players connecting the server - Line 1
+Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- (string) Message send to players connecting the server - Line 2
 
--- ########### END OF SETTINGS ###########
+-- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
 
 
 -- Variable init
-Perun.Version = "v0.4.0"
+Perun.Version = "v0.4.1"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -28,11 +30,8 @@ Perun.lastSentStatus =0
 Perun.lastSentMission =0
 Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
 Perun.socket  = require("socket")
-
-Perun.UDP = assert(Perun.socket.udp())
-Perun.UDP:settimeout(0)
-Perun.UDP:setsockname("*", 48621)
-Perun.UDP:setpeername("127.0.0.1",Perun.UDPTargetPort)
+Perun.IsServer = true --DCS.isServer( )								-- TBD looks like DCS API error, always returning True
+Perun.UDPSourcePort  = Perun.UDPSourcePort + Perun.Instance - 1
 
 -- ########### Helper function definitions ###########
 function stripChars(str)
@@ -179,7 +178,8 @@ Perun.Send = function(data_id, data_package)
     TempData["type"]=data_id
     TempData["payload"]=data_package
     TempData["timestamp"]=os.date('%Y-%m-%d %H:%M:%S')
-
+	TempData["instance"]=Perun.Instance
+	
     temp=net.lua2json(TempData)
     temp=stripChars(temp)
 
@@ -313,7 +313,7 @@ end
 --- ########### Event callbacks ###########
 
 Perun.onSimulationStart = function()
-    Perun.MissionHash=DCS.getMissionName( ).."@"..os.date('%Y%m%d_%H%M%S');
+    Perun.MissionHash=DCS.getMissionName( ).."@".. Perun.Instance .. "@"..os.date('%Y%m%d_%H%M%S');
     Perun.LogEvent("SimStart","Mission " .. Perun.MissionHash .. " started");
 end
 
@@ -370,6 +370,11 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
     if eventName == "friendly_fire" then
         --"friendly_fire", playerID, weaponName, victimPlayerID
+		
+		if arg2 == nil then
+			arg2 = Gun
+		end
+		
         Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name").." killed friendy " .. net.get_player_info(arg3, "name") .. " using " .. arg2);
         Perun.LogStats(arg1);
 
@@ -392,7 +397,11 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
         else
             _temp2 = " AI ";
         end
-
+		
+		if arg7 == nil then
+			arg7 = Gun
+		end
+		
         Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp2 .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp .. " in " .. arg5  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]");
 
 
@@ -465,5 +474,12 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 end
 
 -- ########### Finalize and set callbacks ###########
-DCS.setUserCallbacks(Perun)
-net.log("Loaded - Perun - VladMordock - " .. Perun.Version )
+if Perun.IsServer then
+	Perun.UDP = assert(Perun.socket.udp())
+	Perun.UDP:settimeout(0)
+	Perun.UDP:setsockname("*", Perun.UDPSourcePort)
+	Perun.UDP:setpeername("127.0.0.1",Perun.UDPTargetPort)
+
+	DCS.setUserCallbacks(Perun)
+	net.log("Loaded - Perun - VladMordock - " .. Perun.Version )
+end

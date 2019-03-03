@@ -25,6 +25,7 @@ USE `m1081_perun`;
 DROP TABLE IF EXISTS `pe_DataMissionHashes`;
 CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
   `pe_DataMissionHashes_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `pe_DataMissionHashes_instance` smallint(5) UNSIGNED NOT NULL,
   `pe_DataMissionHashes_hash` varchar(150) NOT NULL,
   `pe_DataMissionHashes_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataMissionHashes_id`),
@@ -57,9 +58,10 @@ CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
 DROP TABLE IF EXISTS `pe_DataRaw`;
 CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
   `pe_dataraw_type` tinyint(4) NOT NULL,
+  `pe_dataraw_instance` smallint(5) UNSIGNED NOT NULL,
   `pe_dataraw_payload` text NOT NULL,
   `pe_dataraw_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`pe_dataraw_type`)
+  PRIMARY KEY (`pe_dataraw_type`,`pe_dataraw_instance`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -105,6 +107,7 @@ DROP TABLE IF EXISTS `pe_LogLogins`;
 CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
   `pe_LogLogins_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `pe_LogLogins_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `pe_LogLogins_instance` smallint(5) UNSIGNED NOT NULL,
   `pe_LogLogins_playerid` bigint(20) DEFAULT NULL,
   `pe_LogLogins_name` varchar(150) NOT NULL,
   `pe_LogLogins_ip` varchar(100) NOT NULL,

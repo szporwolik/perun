@@ -323,11 +323,11 @@ namespace Perun_v1
                     if (raw_lotatc.Count > 0)
                     {
                         strSRSJson = JsonConvert.SerializeObject(raw_lotatc);
-                        strSRSJson = "{'type':'100','payload':'" + strSRSJson + "'}";
+                        strSRSJson = "{'type':'100','instance':'1','payload':'" + strSRSJson + "'}";
                     }
                     else
                     {
-                        strSRSJson = "{'type':'100','payload':{'ignore':'false'}}"; // No SRS clients connected
+                        strSRSJson = "{'type':'100','instance':'1','payload':{'ignore':'false'}}"; // No SRS clients connected
                     }
                     boolSRSdefault = false;
                     PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "SRS data loaded");
@@ -342,7 +342,7 @@ namespace Perun_v1
             }
             if (boolSRSdefault)
             {
-                strSRSJson = "{'type':'100','payload':{'ignore':'true'}}";
+                strSRSJson = "{'type':'100','instance':'1','payload':{'ignore':'true'}}";
             }
             DatabaseController.SendToMySql(strSRSJson);
 
@@ -354,7 +354,7 @@ namespace Perun_v1
                     strLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
                     dynamic raw_srs = JsonConvert.DeserializeObject(strLotATCJson);
 
-                    strLotATCJson = "{'type':'101','payload':'" + strLotATCJson + "'}";
+                    strLotATCJson = "{'type':'101','instance':'1','payload':'" + strLotATCJson + "'}";
                     boolLotATCdefault = false;
                     PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "LotATC data loaded");
                 }
@@ -368,7 +368,7 @@ namespace Perun_v1
 
             if (boolLotATCdefault)
             {
-                strLotATCJson = "{'type':'101','payload':{'ignore':'true'}}";   // No LotATC controller connected
+                strLotATCJson = "{'type':'101','instance':'1','payload':{'ignore':'true'}}";   // No LotATC controller connected
             }
             DatabaseController.SendToMySql(strLotATCJson);
         }
