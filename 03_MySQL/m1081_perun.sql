@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
   `pe_DataMissionHashes_hash` varchar(150) NOT NULL,
   `pe_DataMissionHashes_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataMissionHashes_id`),
-  UNIQUE KEY `UNIQUE_hash` (`pe_DataMissionHashes_hash`)
+  UNIQUE KEY `UNIQUE_hash` (`pe_DataMissionHashes_hash`),
+  KEY `pe_DataMissionHashes_instance` (`pe_DataMissionHashes_instance`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -78,7 +79,9 @@ CREATE TABLE IF NOT EXISTS `pe_LogChat` (
   `pe_LogChat_playerid` varchar(100) NOT NULL,
   `pe_LogChat_msg` text NOT NULL,
   `pe_LogChat_all` varchar(10) NOT NULL,
-  PRIMARY KEY (`pe_LogChat_id`)
+  PRIMARY KEY (`pe_LogChat_id`),
+  KEY `pe_LogChat_missionhash_id` (`pe_LogChat_missionhash_id`),
+  KEY `pe_LogChat_playerid` (`pe_LogChat_playerid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -94,7 +97,8 @@ CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   `pe_LogEvent_datetime` datetime DEFAULT CURRENT_TIMESTAMP,
   `pe_LogEvent_type` varchar(100) NOT NULL,
   `pe_LogEvent_content` text NOT NULL,
-  PRIMARY KEY (`pe_LogEvent_id`)
+  PRIMARY KEY (`pe_LogEvent_id`),
+  KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -111,7 +115,8 @@ CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
   `pe_LogLogins_playerid` bigint(20) DEFAULT NULL,
   `pe_LogLogins_name` varchar(150) NOT NULL,
   `pe_LogLogins_ip` varchar(100) NOT NULL,
-  PRIMARY KEY (`pe_LogLogins_id`)
+  PRIMARY KEY (`pe_LogLogins_id`),
+  KEY `pe_LogLogins_playerid` (`pe_LogLogins_playerid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -126,9 +131,33 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `pe_LogStats_missionhash_id` bigint(20) DEFAULT NULL,
   `pe_LogStats_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `pe_LogStats_playerid` bigint(20) DEFAULT NULL,
+  `pe_LogStats_type` varchar(50) DEFAULT NULL,
   `pe_LogStats_debug` text,
+  `pe_LogStats_dcs` text,
+  `pe_LogStats_perun` text,
+  `ps_kills` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_pvp` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_deaths` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_ejections` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_crashes` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_teamkills` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_planes` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_helicopters` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_air_defense` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_armor` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_unarmed` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_infantry` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_ships` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_other` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_airfield_takeoffs` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_airfield_landings` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_ship_takeoffs` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_ship_landings` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_farp_takeoffs` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_farp_landings` int(11) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`pe_LogStats_id`),
-  UNIQUE KEY `UNIQUE_STATS_PER_MISSION_AND_UCID` (`pe_LogStats_playerid`,`pe_LogStats_missionhash_id`) USING BTREE
+  UNIQUE KEY `UNIQUE_STATS_PER_MISSION_AND_UCID_AND_TYPE` (`pe_LogStats_playerid`,`pe_LogStats_missionhash_id`,`pe_LogStats_type`) USING BTREE,
+  KEY `pe_LogStats_type` (`pe_LogStats_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 COMMIT;
 
