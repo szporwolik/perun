@@ -20,7 +20,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- (string) Message 
 
 
 -- Variable init
-Perun.Version = "v0.4.1"
+Perun.Version = "v0.5.0"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -319,9 +319,10 @@ end
 
 Perun.onSimulationStop = function()
     Perun.LogEvent("SimStop","Mission " .. Perun.MissionHash .. " finished");
+	Perun.MissionHash="";
 end
 
-Perun.onPlayerDisconnect= function(id, err_code)
+Perun.onPlayerDisconnect = function(id, err_code)
     Perun.LogEvent("disconnect", "Player " .. net.get_player_info(id, "name") .. " disconnected; " .. err_code);
 end
 
@@ -347,15 +348,11 @@ Perun.onSimulationFrame = function()
 
         Perun.UpdateStatus()
     end
-
-
-
 end
 
-
 Perun.onPlayerStart = function (id)
-    net.send_chat(Perun.MOTD_L1, id);
-    net.send_chat(Perun.MOTD_L2, id);
+    net.send_chat_to(Perun.MOTD_L1, id);
+    net.send_chat_to(Perun.MOTD_L2, id);
 end
 
 Perun.onPlayerTrySendChat = function (playerID, msg, all)
