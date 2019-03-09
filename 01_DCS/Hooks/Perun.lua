@@ -364,12 +364,11 @@ Perun.onPlayerTrySendChat = function (playerID, msg, all)
 end
 
 Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
-
     if eventName == "friendly_fire" then
         --"friendly_fire", playerID, weaponName, victimPlayerID
 		
 		if arg2 == nil then
-			arg2 = Gun
+			arg2 = "Cannon"
 		end
 		
         Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name").." killed friendy " .. net.get_player_info(arg3, "name") .. " using " .. arg2);
@@ -396,7 +395,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
         end
 		
 		if arg7 == nil then
-			arg7 = Gun
+			arg7 = "Cannon"
 		end
 		
         Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp2 .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp .. " in " .. arg5  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]");
