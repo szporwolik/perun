@@ -1,4 +1,5 @@
 
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
@@ -97,6 +98,8 @@ CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   `pe_LogEvent_datetime` datetime DEFAULT CURRENT_TIMESTAMP,
   `pe_LogEvent_type` varchar(100) NOT NULL,
   `pe_LogEvent_content` text NOT NULL,
+  `pe_LogEvent_arg1` varchar(150) DEFAULT NULL,
+  `pe_LogEvent_arg2` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`pe_LogEvent_id`),
   KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
