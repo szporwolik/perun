@@ -20,7 +20,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- (string) Message 
 
 
 -- Variable init
-Perun.Version = "v0.5.1"
+Perun.Version = "v0.5.2"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -581,9 +581,9 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
         Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " took off in ".. DCS.getUnitType(arg2) .. _temp,arg3,nil);
         
-		if string.find(arg3, "FARP") then
+		if string.find(arg3, "FARP",1,true) then
 			Perun.LogStatsCount(arg1,"tookoff_FARP",DCS.getUnitType(arg2))
-		elseif string.find(arg3, "CVN-74 John C. Stennis") or string.find(arg3, "LHA-1 Tarawa") then
+		elseif string.find(arg3, "CVN-74 John C. Stennis",1,true) or string.find(arg3, "LHA-1 Tarawa",1,true) then
 			Perun.LogStatsCount(arg1,"tookoff_SHIP",DCS.getUnitType(arg2))
 		elseif arg3 then
 			Perun.LogStatsCount(arg1,"tookoff_AIRFIELD",DCS.getUnitType(arg2))
@@ -601,9 +601,9 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
         Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " landed in " .. DCS.getUnitType(arg2).. _temp,arg3,nil);
 		
-		if string.find(arg3, "FARP") then
+		if string.find(arg3, "FARP",1,true) then
 			Perun.LogStatsCount(arg1,"landing_FARP",DCS.getUnitType(arg2))
-		elseif string.find(arg3, "CVN-74 John C. Stennis") or string.find(arg3, "LHA-1 Tarawa") then
+		elseif string.find(arg3, "CVN-74 John C. Stennis",1,true) or string.find(arg3, "LHA-1 Tarawa",1,true) then
 			Perun.LogStatsCount(arg1,"landing_SHIP",DCS.getUnitType(arg2))
 		elseif arg3 then
 			Perun.LogStatsCount(arg1,"landing_AIRFIELD",DCS.getUnitType(arg2))
