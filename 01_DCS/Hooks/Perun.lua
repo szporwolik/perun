@@ -20,7 +20,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- (string) Message 
 
 
 -- Variable init
-Perun.Version = "v0.5.2"
+Perun.Version = "v0.5.3"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -305,6 +305,8 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argType)
 		_temp['ps_ship_landings'] = 0
 		_temp['ps_farp_takeoffs'] = 0
 		_temp['ps_farp_landings'] = 0
+		_temp['ps_other_takeoffs'] = 0
+		_temp['ps_other_landings'] = 0
 
 		Perun.StatData[_ucid]=_temp
 	end
@@ -354,6 +356,10 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argType)
 		Perun.StatData[_ucid]['ps_kills_other']=Perun.StatData[_ucid]['ps_kills_other']+1
 	elseif  argAction == "kill_PvP" then
 		Perun.StatData[_ucid]['ps_pvp']=Perun.StatData[_ucid]['ps_pvp']+1
+	elseif  argAction == "landing_OTHER" then
+		Perun.StatData[_ucid]['ps_other_landings']=Perun.StatData[_ucid]['ps_other_landings']+1
+	elseif  argAction == "tookoff_OTHER" then
+		Perun.StatData[_ucid]['ps_other_takeoffs']=Perun.StatData[_ucid]['ps_other_takeoffs']+1
 	end
 	
 	Perun.LogStats(argPlayerID);
@@ -482,7 +488,7 @@ end
 Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
     if eventName == "friendly_fire" then
         --"friendly_fire", playerID, weaponName, victimPlayerID
-		if arg2 == nil then
+		if arg2 == "" then
 			arg2 = "Cannon"
 		end
 		
@@ -523,14 +529,14 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			else 
 				Perun.LogStatsCount(arg1,"kill_Other",arg2)
 			end
-			if net.get_player_info(arg4, "name") ~= nil and killerSide ~= victimSide then
+			if net.get_player_info(arg4, "name") ~= nil and arg3 ~= arg6 then
 				Perun.LogStatsCount(arg1,"kill_PvP",arg2)
 			end
         else
             _temp2 = " AI ";
         end
 		
-		if arg7 == nil then
+		if arg7 == "" then
 			arg7 = "Cannon"
 		end
 
@@ -573,7 +579,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
     elseif eventName == "takeoff" then
         --"takeoff", playerID, unit_missionID, airdromeName
-        if arg3 then
+        if arg3 ~= "" then
             _temp = " from " .. arg3;
         else
             _temp = "";
@@ -585,15 +591,15 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			Perun.LogStatsCount(arg1,"tookoff_FARP",DCS.getUnitType(arg2))
 		elseif string.find(arg3, "CVN-74 John C. Stennis",1,true) or string.find(arg3, "LHA-1 Tarawa",1,true) then
 			Perun.LogStatsCount(arg1,"tookoff_SHIP",DCS.getUnitType(arg2))
-		elseif arg3 then
+		elseif arg3 ~= "" then
 			Perun.LogStatsCount(arg1,"tookoff_AIRFIELD",DCS.getUnitType(arg2))
 		else
-			-- do nothing
+			Perun.LogStatsCount(arg1,"tookoff_OTHER",DCS.getUnitType(arg2))
 		end
 		
     elseif eventName == "landing" then
         --"landing", playerID, unit_missionID, airdromeName
-        if arg3 then
+        if arg3 ~= "" then
             _temp = " at " .. arg3;
         else
             _temp ="";
@@ -605,10 +611,10 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			Perun.LogStatsCount(arg1,"landing_FARP",DCS.getUnitType(arg2))
 		elseif string.find(arg3, "CVN-74 John C. Stennis",1,true) or string.find(arg3, "LHA-1 Tarawa",1,true) then
 			Perun.LogStatsCount(arg1,"landing_SHIP",DCS.getUnitType(arg2))
-		elseif arg3 then
+		elseif arg3 ~= "" then
 			Perun.LogStatsCount(arg1,"landing_AIRFIELD",DCS.getUnitType(arg2))
 		else
-			-- do nothing
+			Perun.LogStatsCount(arg1,"landing_OTHER",DCS.getUnitType(arg2))
 		end
 		
     elseif eventName == "pilot_death" then
