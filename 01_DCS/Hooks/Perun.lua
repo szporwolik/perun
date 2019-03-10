@@ -493,7 +493,10 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 		end
 		
         Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name").." killed friendy " .. net.get_player_info(arg3, "name") .. " using " .. arg2,nil,nil);
-        Perun.LogStatsCount(arg1,"friendly_fire",DCS.getUnitType(arg1))
+        
+		if arg1 ~= arg3 then
+			Perun.LogStatsCount(arg1,"friendly_fire",DCS.getUnitType(arg1))
+		end
 
     elseif eventName == "mission_end" then
         --"mission_end", winner, msg

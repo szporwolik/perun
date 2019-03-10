@@ -158,6 +158,8 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `ps_ship_landings` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_farp_takeoffs` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_farp_landings` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_other_landings` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_other_takeoffs` int(10) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`pe_LogStats_id`),
   UNIQUE KEY `UNIQUE_STATS_PER_MISSION_AND_UCID_AND_TYPE` (`pe_LogStats_playerid`,`pe_LogStats_missionhash_id`,`pe_LogStats_type`) USING BTREE,
   KEY `pe_LogStats_type` (`pe_LogStats_type`)
