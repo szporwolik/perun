@@ -20,7 +20,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- (string) Message 
 
 
 -- Variable init
-Perun.Version = "v0.5.0"
+Perun.Version = "v0.5.1"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -495,17 +495,17 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
     elseif eventName == "kill" then
         --"kill", killerPlayerID, killerUnitType, killerSide, victimPlayerID, victimUnitType, victimSide, weaponName
-        if net.get_player_info(arg4, "name") ~= nil then
-            _temp = " player ".. net.get_player_info(arg4, "name") .." ";
+		_tempX=""
+		if net.get_player_info(arg4, "name") ~= nil then
+            _tempX = " player ".. net.get_player_info(arg4, "name") .." ";
             
 			Perun.LogStats(arg4);
         else
-            _temp = " AI ";
+            _tempX = " AI ";
         end
 
         if net.get_player_info(arg1, "name") ~= nil then
-            _temp2 = " player ".. net.get_player_info(arg1, "name") .." ";
-            
+			_temp2 = " player ".. net.get_player_info(arg1, "name") .." ";
 			if Perun.GetCategory(arg5) == "Planes" then
 				Perun.LogStatsCount(arg1,"kill_Planes",arg2)
 			elseif Perun.GetCategory(arg5) == "Helicopters" then
@@ -523,7 +523,6 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			else 
 				Perun.LogStatsCount(arg1,"kill_Other",arg2)
 			end
-			
 			if net.get_player_info(arg4, "name") ~= nil and killerSide ~= victimSide then
 				Perun.LogStatsCount(arg1,"kill_PvP",arg2)
 			end
@@ -534,9 +533,8 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 		if arg7 == nil then
 			arg7 = "Cannon"
 		end
-		
-        Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp2 .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp .. " in " .. arg5  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]",arg7,Perun.GetCategory(arg5));
 
+		Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp2 .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _tempX .. " in " .. arg5  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]",arg7,Perun.GetCategory(arg5));
     elseif eventName == "self_kill" then
         --"self_kill", playerID
         Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " killed himself",nil,nil);
@@ -551,8 +549,8 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
             _temp = "SPECTATOR";
         end
 
-        Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " changed slot to " .. _temp);
-       Perun.LogStatsCount(arg1,"init",_temp,nil,nil)
+       Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " changed slot to " .. _temp,nil,nil);
+       Perun.LogStatsCount(arg1,"init",_temp)
 
     elseif eventName == "connect" then
         --"connect", playerID, name
