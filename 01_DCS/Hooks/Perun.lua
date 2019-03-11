@@ -20,7 +20,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- (string) Message 
 
 
 -- Variable init
-Perun.Version = "v0.5.3"
+Perun.Version = "v0.5.4"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -285,7 +285,6 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argType)
 		-- Create empty element
 		_temp={}
 		_temp['ps_type'] = argType
-		_temp['ps_kills'] = 0
 		_temp['ps_pvp'] = 0
 		_temp['ps_deaths'] = 0
 		_temp['ps_ejections'] = 0
