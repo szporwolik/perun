@@ -238,6 +238,18 @@ Perun.UpdateStatus = function()
 
 		for j, i in pairs(Perun.SlotsData['coalitions']) do
 			Perun.SlotsData['slots'][j]=DCS.getAvailableSlots(j)
+			
+			for sj, si in pairs(Perun.SlotsData['slots'][j]) do
+				Perun.SlotsData['slots'][j][sj]['countryName']= nil
+				Perun.SlotsData['slots'][j][sj]['onboard_num']= nil
+				Perun.SlotsData['slots'][j][sj]['groupSize']= nil
+				Perun.SlotsData['slots'][j][sj]['groupName']= nil
+				Perun.SlotsData['slots'][j][sj]['callsign']= nil
+				Perun.SlotsData['slots'][j][sj]['task']= nil
+				Perun.SlotsData['slots'][j][sj]['airdromeId']= nil
+				Perun.SlotsData['slots'][j][sj]['helipadName']= nil
+			end
+			
 		end
 		-- Send
 		Perun.Send(3,Perun.SlotsData)
