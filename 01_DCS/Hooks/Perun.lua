@@ -14,13 +14,13 @@ Perun.UDPSourcePort = 48621												-- (int) UDP port to send data from
 Perun.Instance = 1														-- (int) Id number of instance (if multiple DCS instances are to run at the same PC)
 Perun.JsonStatusLocation = "Scripts\\Json\\" 							-- (string) folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
 Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"						-- (string) Message send to players connecting the server - Line 1
-Perun.MOTD_L2 = "Wymagamy obecnosci na 255Mhz (DCS SRS)"				-- (string) Message send to players connecting the server - Line 2
+Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS - szczegoly na forum"		-- (string) Message send to players connecting the server - Line 2
 
 -- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
 
 
 -- Variable init
-Perun.Version = "v0.5.4"
+Perun.Version = "v0.6.0"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
