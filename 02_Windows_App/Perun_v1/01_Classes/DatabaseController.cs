@@ -98,7 +98,7 @@ internal class DatabaseController
                 Console.WriteLine(rdrMySQL[0] + " -- " + rdrMySQL[1]);
             }
             rdrMySQL.Close();
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "MySQL updated, package type: " + strUDPFrameType);
+            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#"+strUDPFrameInstance + " > MySQL updated, package type: " + strUDPFrameType);
         }
         catch (ArgumentException a_ex)
         {

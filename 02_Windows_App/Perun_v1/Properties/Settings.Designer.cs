@@ -130,5 +130,53 @@ namespace Perun_v1.Properties {
                 this["MYSQL_Port"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OTHER_LOTATC_FILE2 {
+            get {
+                return ((string)(this["OTHER_LOTATC_FILE2"]));
+            }
+            set {
+                this["OTHER_LOTATC_FILE2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OTHER_SRS_FILE2 {
+            get {
+                return ((string)(this["OTHER_SRS_FILE2"]));
+            }
+            set {
+                this["OTHER_SRS_FILE2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OTHER_LOTATC_USE2 {
+            get {
+                return ((bool)(this["OTHER_LOTATC_USE2"]));
+            }
+            set {
+                this["OTHER_LOTATC_USE2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OTHER_SRS_USE2 {
+            get {
+                return ((bool)(this["OTHER_SRS_USE2"]));
+            }
+            set {
+                this["OTHER_SRS_USE2"] = value;
+            }
+        }
     }
 }

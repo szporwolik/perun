@@ -60,9 +60,15 @@
             this.tim_10000ms = new System.Windows.Forms.Timer(this.components);
             this.tim_200ms = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.con_txt_3rd_lotatc2 = new System.Windows.Forms.MaskedTextBox();
+            this.con_txt_3rd_srs2 = new System.Windows.Forms.MaskedTextBox();
+            this.con_check_3rd_lotatc2 = new System.Windows.Forms.CheckBox();
+            this.con_check_3rd_srs2 = new System.Windows.Forms.CheckBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // con_List_Received
@@ -73,12 +79,12 @@
             "Welcome to Perun for DCS World!"});
             this.con_List_Received.Location = new System.Drawing.Point(6, 19);
             this.con_List_Received.Name = "con_List_Received";
-            this.con_List_Received.Size = new System.Drawing.Size(307, 134);
+            this.con_List_Received.Size = new System.Drawing.Size(307, 147);
             this.con_List_Received.TabIndex = 0;
             // 
             // con_Button_Listen_ON
             // 
-            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 434);
+            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 517);
             this.con_Button_Listen_ON.Name = "con_Button_Listen_ON";
             this.con_Button_Listen_ON.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_ON.TabIndex = 2;
@@ -89,7 +95,7 @@
             // con_Button_Listen_OFF
             // 
             this.con_Button_Listen_OFF.Enabled = false;
-            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 434);
+            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 517);
             this.con_Button_Listen_OFF.Name = "con_Button_Listen_OFF";
             this.con_Button_Listen_OFF.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_OFF.TabIndex = 3;
@@ -100,9 +106,9 @@
             // con_GroupBox_1
             // 
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
-            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 261);
+            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 335);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
-            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 167);
+            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 176);
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "UDP log";
@@ -224,7 +230,7 @@
             this.con_GroupBox_3.Size = new System.Drawing.Size(324, 68);
             this.con_GroupBox_3.TabIndex = 6;
             this.con_GroupBox_3.TabStop = false;
-            this.con_GroupBox_3.Text = "3rd Party";
+            this.con_GroupBox_3.Text = "Instance #1";
             // 
             // con_txt_3rd_lotatc
             // 
@@ -264,7 +270,7 @@
             // 
             // con_Button_Quit
             // 
-            this.con_Button_Quit.Location = new System.Drawing.Point(250, 434);
+            this.con_Button_Quit.Location = new System.Drawing.Point(251, 517);
             this.con_Button_Quit.Name = "con_Button_Quit";
             this.con_Button_Quit.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Quit.TabIndex = 7;
@@ -324,11 +330,61 @@
             this.notifyIcon1.Text = "notifyIcon1";
             this.notifyIcon1.Visible = true;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.con_txt_3rd_lotatc2);
+            this.groupBox1.Controls.Add(this.con_txt_3rd_srs2);
+            this.groupBox1.Controls.Add(this.con_check_3rd_lotatc2);
+            this.groupBox1.Controls.Add(this.con_check_3rd_srs2);
+            this.groupBox1.Location = new System.Drawing.Point(12, 261);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(324, 68);
+            this.groupBox1.TabIndex = 7;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Instance #2";
+            // 
+            // con_txt_3rd_lotatc2
+            // 
+            this.con_txt_3rd_lotatc2.Location = new System.Drawing.Point(123, 39);
+            this.con_txt_3rd_lotatc2.Name = "con_txt_3rd_lotatc2";
+            this.con_txt_3rd_lotatc2.Size = new System.Drawing.Size(190, 20);
+            this.con_txt_3rd_lotatc2.TabIndex = 4;
+            this.con_txt_3rd_lotatc2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.con_txt_3rd_lotatc2_Click);
+            // 
+            // con_txt_3rd_srs2
+            // 
+            this.con_txt_3rd_srs2.Location = new System.Drawing.Point(123, 16);
+            this.con_txt_3rd_srs2.Name = "con_txt_3rd_srs2";
+            this.con_txt_3rd_srs2.Size = new System.Drawing.Size(190, 20);
+            this.con_txt_3rd_srs2.TabIndex = 3;
+            this.con_txt_3rd_srs2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.con_txt_3rd_srs2_Click);
+            // 
+            // con_check_3rd_lotatc2
+            // 
+            this.con_check_3rd_lotatc2.AutoSize = true;
+            this.con_check_3rd_lotatc2.Location = new System.Drawing.Point(6, 42);
+            this.con_check_3rd_lotatc2.Name = "con_check_3rd_lotatc2";
+            this.con_check_3rd_lotatc2.Size = new System.Drawing.Size(100, 17);
+            this.con_check_3rd_lotatc2.TabIndex = 1;
+            this.con_check_3rd_lotatc2.Text = "LotATC json file";
+            this.con_check_3rd_lotatc2.UseVisualStyleBackColor = true;
+            // 
+            // con_check_3rd_srs2
+            // 
+            this.con_check_3rd_srs2.AutoSize = true;
+            this.con_check_3rd_srs2.Location = new System.Drawing.Point(6, 19);
+            this.con_check_3rd_srs2.Name = "con_check_3rd_srs2";
+            this.con_check_3rd_srs2.Size = new System.Drawing.Size(111, 17);
+            this.con_check_3rd_srs2.TabIndex = 0;
+            this.con_check_3rd_srs2.Text = "DCS SRS json file";
+            this.con_check_3rd_srs2.UseVisualStyleBackColor = true;
+            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 483);
+            this.ClientSize = new System.Drawing.Size(349, 558);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.con_lab_github);
             this.Controls.Add(this.con_Button_Quit);
@@ -351,6 +407,8 @@
             this.con_GroupBox_2.PerformLayout();
             this.con_GroupBox_3.ResumeLayout(false);
             this.con_GroupBox_3.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -388,6 +446,11 @@
         private System.Windows.Forms.TextBox con_txt_mysql_port;
         private System.Windows.Forms.Timer tim_200ms;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.MaskedTextBox con_txt_3rd_lotatc2;
+        private System.Windows.Forms.MaskedTextBox con_txt_3rd_srs2;
+        private System.Windows.Forms.CheckBox con_check_3rd_lotatc2;
+        private System.Windows.Forms.CheckBox con_check_3rd_srs2;
     }
 }
 
