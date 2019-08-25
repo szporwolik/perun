@@ -456,7 +456,7 @@ namespace Perun_v1
             }
             if (boolSRSdefault2)
             {
-                strSRSJson = "{'type':'100','instance':'2','payload':{'ignore':'true'}}";
+                strSRSJson2 = "{'type':'100','instance':'2','payload':{'ignore':'true'}}";
             }
             DatabaseController.SendToMySql(strSRSJson2);
 
@@ -505,7 +505,7 @@ namespace Perun_v1
             }
             if (boolLotATCdefault2)
             {
-                strLotATCJson = "{'type':'101','instance':'2','payload':{'ignore':'true'}}";   // No LotATC controller connected
+                strLotATCJson2 = "{'type':'101','instance':'2','payload':{'ignore':'true'}}";   // No LotATC controller connected
             }
             DatabaseController.SendToMySql(strLotATCJson2);
         }
