@@ -20,7 +20,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"
 
 
 -- Variable init
-Perun.Version = "v0.7.0"
+Perun.Version = "v0.6.0"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -333,7 +333,9 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argType)
 	if argAction == "eject" then
 		Perun.StatData[_ucid]['ps_ejections']=Perun.StatData[_ucid]['ps_ejections']+1
 	elseif  argAction == "pilot_death" then
-		Perun.StatData[_ucid]['ps_deaths']=Perun.StatData[_ucid]['ps_deaths']+1
+		if DCS.getModelTime() > 300 then
+			Perun.StatData[_ucid]['ps_deaths']=Perun.StatData[_ucid]['ps_deaths']+1
+		end
 	elseif  argAction == "friendly_fire" then
 		Perun.StatData[_ucid]['ps_teamkills']=Perun.StatData[_ucid]['ps_teamkills']+1
 	elseif  argAction == "crash" then
