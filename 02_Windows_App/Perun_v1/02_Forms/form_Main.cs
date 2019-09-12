@@ -109,10 +109,15 @@ namespace Perun_v1
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
         {
             // Start listening
-            UDPController.Create(48620, ref Globals.arrLogHistory, ref arrSendBuffer);
-            UDPController.thrUDPListener = new Thread(UDPController.StartListen);
-            UDPController.thrUDPListener.Start();
-            UDPController.thrUDPListener.Name = "UDPThread";
+            //UDPController.Create(48620, ref Globals.arrLogHistory, ref arrSendBuffer);
+            //UDPController.thrUDPListener = new Thread(UDPController.StartListen);
+            //UDPController.thrUDPListener.Start();
+            //UDPController.thrUDPListener.Name = "UDPThread";
+
+            TCPController.Create(48620, ref Globals.arrLogHistory, ref arrSendBuffer);
+            TCPController.thrTCPListener = new Thread(TCPController.StartListen);
+            TCPController.thrTCPListener.Start();
+            TCPController.thrTCPListener.Name = "TCPThread";
 
             form_Main_DisableControls(); // Disable controlls
             form_Main_SaveSettings(); // Save settings
@@ -131,7 +136,8 @@ namespace Perun_v1
             // Stop listening
             try
             {
-                UDPController.StopListen();
+                //UDPController.StopListen();
+                TCPController.StopListen();
             }
             catch (Exception ex)
             {
@@ -334,26 +340,26 @@ namespace Perun_v1
                     if (raw_lotatc.Count > 0)
                     {
                         strSRSJson = JsonConvert.SerializeObject(raw_lotatc);
-                        strSRSJson = "{'type':'100','instance':'1','payload':'" + strSRSJson + "'}";
+                        strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + strSRSJson + "'}";
                     }
                     else
                     {
-                        strSRSJson = "{'type':'100','instance':'1','payload':{'ignore':'false'}}"; // No SRS clients connected
+                        strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'false'}}"; // No SRS clients connected
                     }
                     boolSRSdefault = false;
-                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#1 > SRS data loaded");
+                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > SRS data loaded");
 
                 }
                 catch
                 {
-                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#1 > SRS data ERROR");
+                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > SRS data ERROR");
                 }
 
 
             }
             if (boolSRSdefault)
             {
-                strSRSJson = "{'type':'100','instance':'1','payload':{'ignore':'true'}}";
+                strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";
             }
             DatabaseController.SendToMySql(strSRSJson);
 
@@ -365,20 +371,20 @@ namespace Perun_v1
                     strLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
                     dynamic raw_srs = JsonConvert.DeserializeObject(strLotATCJson);
 
-                    strLotATCJson = "{'type':'101','instance':'1','payload':'" + strLotATCJson + "'}";
+                    strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + strLotATCJson + "'}";
                     boolLotATCdefault = false;
-                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#1 > LotATC data loaded");
+                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data loaded");
                 }
                 catch
                 {
-                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#1 > LotATC data ERROR");
+                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data ERROR");
                 }
 
 
             }
             if (boolLotATCdefault)
             {
-                strLotATCJson = "{'type':'101','instance':'1','payload':{'ignore':'true'}}";   // No LotATC controller connected
+                strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";   // No LotATC controller connected
             }
             DatabaseController.SendToMySql(strLotATCJson);
         }

@@ -41,62 +41,65 @@ internal class TCPController
 
     public static void StartListen()
     {
-        Console.WriteLine("UDP Listen start");
-        try
+        Console.WriteLine("TCP Listen start");
+        while (!TCPController.boolDone)
         {
-            // Start listening to UDP
-
-            tcpServer = new TcpListener(IPAddress.Any, intListenPort);
-
-            string strReceivedData;
-            byte[] arrReceiveByteArray;
-
-            // Start the main loop
-            TCPController.boolDone = false;
-            tcpServer.Start();
-            while (!TCPController.boolDone)
+            try
             {
-                // Start listening
-         
-                Console.WriteLine("TCP: Waiting for packet");
-                TcpClient tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
-                NetworkStream ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
+                // Start listening to UDP
 
-                while (tcpClient.Connected && !TCPController.boolDone)  //while the client is connected, we look for incoming messages
+                tcpServer = new TcpListener(IPAddress.Any, intListenPort);
+
+                string strReceivedData;
+                byte[] arrReceiveByteArray;
+
+                // Start the main loop
+                TCPController.boolDone = false;
+                tcpServer.Start();
+                while (!TCPController.boolDone)
                 {
-                    arrReceiveByteArray = new byte[1024];     //the messages arrive as byte array
-                    ns.Read(arrReceiveByteArray, 0, arrReceiveByteArray.Length);   //the same networkstream reads the message sent by the client
-                    strReceivedData = Encoding.ASCII.GetString(arrReceiveByteArray, 0, arrReceiveByteArray.Length);
-                    Console.WriteLine("Sender: {0} Payload: {1}", null , strReceivedData);
+                    // Start listening
 
-                    dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
-                    string strRawTCPFrameType = dynamicRawTCPFrame.type;
+                    Console.WriteLine("TCP: Waiting for packet");
+                    TcpClient tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
+                    NetworkStream ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
 
-                    PerunHelper.LogHistoryAdd(ref arrLogHistory, "TCP packet received, type: " + strRawTCPFrameType);
-
-                    // Add to mySQL send buffer (find first empty slot)
-                    for (int i = 0; i < arrSendBuffer.Length - 1; i++)
+                    while (tcpClient.Connected && !TCPController.boolDone)  //while the client is connected, we look for incoming messages
                     {
-                        if (arrSendBuffer[i] == null)
+                        arrReceiveByteArray = new byte[1024];     //the messages arrive as byte array
+                        ns.Read(arrReceiveByteArray, 0, arrReceiveByteArray.Length);   //the same networkstream reads the message sent by the client
+                        strReceivedData = Encoding.ASCII.GetString(arrReceiveByteArray, 0, arrReceiveByteArray.Length);
+                        Console.WriteLine("Sender: {0} Payload: {1}", null, strReceivedData);
+
+                        dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
+                        string strRawTCPFrameType = dynamicRawTCPFrame.type;
+
+                        PerunHelper.LogHistoryAdd(ref arrLogHistory, "TCP packet received, type: " + strRawTCPFrameType);
+
+                        // Add to mySQL send buffer (find first empty slot)
+                        for (int i = 0; i < arrSendBuffer.Length - 1; i++)
                         {
-                            arrSendBuffer[i] = strReceivedData;
-                            break;
+                            if (arrSendBuffer[i] == null)
+                            {
+                                arrSendBuffer[i] = strReceivedData;
+                                break;
+                            }
                         }
                     }
-                }
 
+                }
+                tcpServer.Stop();
             }
-            tcpServer.Stop();
-        }
-        catch (Exception e)
-        {
-            // General exception found
-            if (e.HResult != -2147467259)
+            catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
-                PerunHelper.LogHistoryAdd(ref arrLogHistory, "ERROR UDP - port may be in use");
+                // General exception found
+                if (e.HResult != -2147467259)
+                {
+                    Console.WriteLine(e.ToString());
+                    PerunHelper.LogHistoryAdd(ref arrLogHistory, "ERROR TCP - port may be in use");
+                }
             }
+            //Console.WriteLine("TCP listen stop");
         }
-        Console.WriteLine("TCP listen stop");
     }
 }
