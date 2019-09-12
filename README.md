@@ -21,7 +21,7 @@ Core:
    * DCS World stable or DCS World beta
  * **(Optional)** For MySQL Export:
    * MySQL server with read/write access (tested with v5.7.21)
-   * .NET Framework 4.6.1
+   * .NET Framework 4.8.0
 
 3rd party applications support:
  * for [DCS SRS](https://github.com/ciribob/DCS-SimpleRadioStandalone/releases) integration location of the clients-list.json file will be required (by default: SRS Server folder), "Auto Export List" option has to be enabled - see [SRS documentation](https://github.com/ciribob/DCS-SimpleRadioStandalone/wiki)
@@ -39,7 +39,7 @@ Core:
 	* click connect and leave the app running in the background
 * Start DCS World and host multiplayer session
   * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
-  * by default the UDP port 48620 is in use as target port
+  * by default the TCP port 48620 is in use as target port
 * Data shall be filling your MySQL database
 
 ## Data packets
@@ -50,10 +50,10 @@ Core:
 * ```ID: 3```, available slots list and coalitions
 	* coalitions - available coalitions
 	* slots - available slots
-* ```ID: 4```, stores mission data **WIP: not yet implemented**
+* ```ID: 4```, stores mission data 
 * ```ID: 50```, chat event
 * ```ID: 51```, game event
-* ```ID: 52```, player stats **WIP: not yet implemented**
+* ```ID: 52```, player stats 
 * ```ID: 53```, player login to DCS server
 * ```ID: 100```, DCS SRS's client-list.json
 * ```ID: 101```, LotATC's stats.json

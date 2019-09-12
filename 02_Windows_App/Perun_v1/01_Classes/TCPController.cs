@@ -96,7 +96,7 @@ internal class TCPController
                 if (e.HResult != -2147467259)
                 {
                     Console.WriteLine(e.ToString());
-                    PerunHelper.LogHistoryAdd(ref arrLogHistory, "ERROR TCP - port may be in use");
+                    PerunHelper.LogHistoryAdd(ref arrLogHistory, "TCP error - connection closed or port in use");
                 }
             }
             //Console.WriteLine("TCP listen stop");
