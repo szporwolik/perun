@@ -29,7 +29,7 @@ internal class TCPController
     {
         // FInish listening
         TCPController.boolDone = true;
-        TCPController.tcpServer.Close();
+        TCPController.tcpServer.Stop();
         TCPController.tcpServer = null;
 
         for (int i = 0; i < arrSendBuffer.Length - 1; i++)
@@ -57,27 +57,36 @@ internal class TCPController
             while (!TCPController.boolDone)
             {
                 // Start listening
+         
                 Console.WriteLine("TCP: Waiting for packet");
-                arrReceiveByteArray = udpListener.Receive(ref ipendpointGroupEP);
-                strReceivedData = Encoding.ASCII.GetString(arrReceiveByteArray, 0, arrReceiveByteArray.Length);
-                Console.WriteLine("Sender: {0} Payload: {1}", ipendpointGroupEP.ToString(), strReceivedData);
+                TcpClient tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
+                NetworkStream ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
 
-                // Add to log history and rotate
-                dynamic dynamicRawUDPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
-                string strRawUDPFrameType = dynamicRawUDPFrame.type;
-                PerunHelper.LogHistoryAdd(ref arrLogHistory, "UDP packet received, type: " + strRawUDPFrameType);
-
-                // Add to mySQL send buffer (find first empty slot)
-                for (int i = 0; i < arrSendBuffer.Length - 1; i++)
+                while (tcpClient.Connected && !TCPController.boolDone)  //while the client is connected, we look for incoming messages
                 {
-                    if (arrSendBuffer[i] == null)
+                    arrReceiveByteArray = new byte[1024];     //the messages arrive as byte array
+                    ns.Read(arrReceiveByteArray, 0, arrReceiveByteArray.Length);   //the same networkstream reads the message sent by the client
+                    strReceivedData = Encoding.ASCII.GetString(arrReceiveByteArray, 0, arrReceiveByteArray.Length);
+                    Console.WriteLine("Sender: {0} Payload: {1}", null , strReceivedData);
+
+                    dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
+                    string strRawTCPFrameType = dynamicRawTCPFrame.type;
+
+                    PerunHelper.LogHistoryAdd(ref arrLogHistory, "TCP packet received, type: " + strRawTCPFrameType);
+
+                    // Add to mySQL send buffer (find first empty slot)
+                    for (int i = 0; i < arrSendBuffer.Length - 1; i++)
                     {
-                        arrSendBuffer[i] = strReceivedData;
-                        break;
+                        if (arrSendBuffer[i] == null)
+                        {
+                            arrSendBuffer[i] = strReceivedData;
+                            break;
+                        }
                     }
                 }
+
             }
-            udpListener.Close(); // Close port
+            tcpServer.Stop();
         }
         catch (Exception e)
         {
@@ -88,6 +97,6 @@ internal class TCPController
                 PerunHelper.LogHistoryAdd(ref arrLogHistory, "ERROR UDP - port may be in use");
             }
         }
-        Console.WriteLine("UDP listen stop");
+        Console.WriteLine("TCP listen stop");
     }
 }

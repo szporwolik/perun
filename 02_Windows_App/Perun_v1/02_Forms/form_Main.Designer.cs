@@ -61,10 +61,10 @@
             this.tim_200ms = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.con_txt_3rd_lotatc2 = new System.Windows.Forms.MaskedTextBox();
-            this.con_txt_3rd_srs2 = new System.Windows.Forms.MaskedTextBox();
-            this.con_check_3rd_lotatc2 = new System.Windows.Forms.CheckBox();
-            this.con_check_3rd_srs2 = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.con_txt_dcs_instance = new System.Windows.Forms.MaskedTextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.con_txt_dcs_server_port = new System.Windows.Forms.MaskedTextBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -84,7 +84,7 @@
             // 
             // con_Button_Listen_ON
             // 
-            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 517);
+            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 519);
             this.con_Button_Listen_ON.Name = "con_Button_Listen_ON";
             this.con_Button_Listen_ON.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_ON.TabIndex = 2;
@@ -95,7 +95,7 @@
             // con_Button_Listen_OFF
             // 
             this.con_Button_Listen_OFF.Enabled = false;
-            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 517);
+            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 519);
             this.con_Button_Listen_OFF.Name = "con_Button_Listen_OFF";
             this.con_Button_Listen_OFF.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_OFF.TabIndex = 3;
@@ -111,7 +111,7 @@
             this.con_GroupBox_1.Size = new System.Drawing.Size(324, 176);
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
-            this.con_GroupBox_1.Text = "UDP log";
+            this.con_GroupBox_1.Text = "Data log";
             // 
             // tim_1000ms
             // 
@@ -225,12 +225,12 @@
             this.con_GroupBox_3.Controls.Add(this.con_txt_3rd_srs);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_lotatc);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_srs);
-            this.con_GroupBox_3.Location = new System.Drawing.Point(12, 187);
+            this.con_GroupBox_3.Location = new System.Drawing.Point(12, 261);
             this.con_GroupBox_3.Name = "con_GroupBox_3";
             this.con_GroupBox_3.Size = new System.Drawing.Size(324, 68);
             this.con_GroupBox_3.TabIndex = 6;
             this.con_GroupBox_3.TabStop = false;
-            this.con_GroupBox_3.Text = "Instance #1";
+            this.con_GroupBox_3.Text = "3rd party";
             // 
             // con_txt_3rd_lotatc
             // 
@@ -270,7 +270,7 @@
             // 
             // con_Button_Quit
             // 
-            this.con_Button_Quit.Location = new System.Drawing.Point(251, 517);
+            this.con_Button_Quit.Location = new System.Drawing.Point(251, 519);
             this.con_Button_Quit.Name = "con_Button_Quit";
             this.con_Button_Quit.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Quit.TabIndex = 7;
@@ -332,63 +332,59 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.con_txt_3rd_lotatc2);
-            this.groupBox1.Controls.Add(this.con_txt_3rd_srs2);
-            this.groupBox1.Controls.Add(this.con_check_3rd_lotatc2);
-            this.groupBox1.Controls.Add(this.con_check_3rd_srs2);
-            this.groupBox1.Location = new System.Drawing.Point(12, 261);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.con_txt_dcs_instance);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.con_txt_dcs_server_port);
+            this.groupBox1.Location = new System.Drawing.Point(12, 187);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(324, 68);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Instance #2";
+            this.groupBox1.Text = "DCS Connection";
             // 
-            // con_txt_3rd_lotatc2
+            // label8
             // 
-            this.con_txt_3rd_lotatc2.Location = new System.Drawing.Point(123, 39);
-            this.con_txt_3rd_lotatc2.Name = "con_txt_3rd_lotatc2";
-            this.con_txt_3rd_lotatc2.Size = new System.Drawing.Size(190, 20);
-            this.con_txt_3rd_lotatc2.TabIndex = 4;
-            this.con_txt_3rd_lotatc2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.con_txt_3rd_lotatc2_Click);
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(41, 45);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(62, 13);
+            this.label8.TabIndex = 12;
+            this.label8.Text = "Instance ID";
             // 
-            // con_txt_3rd_srs2
+            // con_txt_dcs_instance
             // 
-            this.con_txt_3rd_srs2.Location = new System.Drawing.Point(123, 16);
-            this.con_txt_3rd_srs2.Name = "con_txt_3rd_srs2";
-            this.con_txt_3rd_srs2.Size = new System.Drawing.Size(190, 20);
-            this.con_txt_3rd_srs2.TabIndex = 3;
-            this.con_txt_3rd_srs2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.con_txt_3rd_srs2_Click);
+            this.con_txt_dcs_instance.Location = new System.Drawing.Point(106, 42);
+            this.con_txt_dcs_instance.Name = "con_txt_dcs_instance";
+            this.con_txt_dcs_instance.Size = new System.Drawing.Size(207, 20);
+            this.con_txt_dcs_instance.TabIndex = 11;
             // 
-            // con_check_3rd_lotatc2
+            // label7
             // 
-            this.con_check_3rd_lotatc2.AutoSize = true;
-            this.con_check_3rd_lotatc2.Location = new System.Drawing.Point(6, 42);
-            this.con_check_3rd_lotatc2.Name = "con_check_3rd_lotatc2";
-            this.con_check_3rd_lotatc2.Size = new System.Drawing.Size(100, 17);
-            this.con_check_3rd_lotatc2.TabIndex = 1;
-            this.con_check_3rd_lotatc2.Text = "LotATC json file";
-            this.con_check_3rd_lotatc2.UseVisualStyleBackColor = true;
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(41, 19);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(59, 13);
+            this.label7.TabIndex = 10;
+            this.label7.Text = "Server port";
             // 
-            // con_check_3rd_srs2
+            // con_txt_dcs_server_port
             // 
-            this.con_check_3rd_srs2.AutoSize = true;
-            this.con_check_3rd_srs2.Location = new System.Drawing.Point(6, 19);
-            this.con_check_3rd_srs2.Name = "con_check_3rd_srs2";
-            this.con_check_3rd_srs2.Size = new System.Drawing.Size(111, 17);
-            this.con_check_3rd_srs2.TabIndex = 0;
-            this.con_check_3rd_srs2.Text = "DCS SRS json file";
-            this.con_check_3rd_srs2.UseVisualStyleBackColor = true;
+            this.con_txt_dcs_server_port.Location = new System.Drawing.Point(106, 16);
+            this.con_txt_dcs_server_port.Name = "con_txt_dcs_server_port";
+            this.con_txt_dcs_server_port.Size = new System.Drawing.Size(207, 20);
+            this.con_txt_dcs_server_port.TabIndex = 3;
             // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 558);
+            this.ClientSize = new System.Drawing.Size(349, 570);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.con_GroupBox_3);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.con_lab_github);
             this.Controls.Add(this.con_Button_Quit);
-            this.Controls.Add(this.con_GroupBox_3);
             this.Controls.Add(this.con_GroupBox_2);
             this.Controls.Add(this.con_GroupBox_1);
             this.Controls.Add(this.con_Button_Listen_OFF);
@@ -447,10 +443,10 @@
         private System.Windows.Forms.Timer tim_200ms;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.MaskedTextBox con_txt_3rd_lotatc2;
-        private System.Windows.Forms.MaskedTextBox con_txt_3rd_srs2;
-        private System.Windows.Forms.CheckBox con_check_3rd_lotatc2;
-        private System.Windows.Forms.CheckBox con_check_3rd_srs2;
+        private System.Windows.Forms.MaskedTextBox con_txt_dcs_server_port;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.MaskedTextBox con_txt_dcs_instance;
     }
 }
 

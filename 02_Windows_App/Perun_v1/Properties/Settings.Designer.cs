@@ -133,49 +133,25 @@ namespace Perun_v1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OTHER_LOTATC_FILE2 {
+        [global::System.Configuration.DefaultSettingValueAttribute("48620")]
+        public int DCS_Server_Port {
             get {
-                return ((string)(this["OTHER_LOTATC_FILE2"]));
+                return ((int)(this["DCS_Server_Port"]));
             }
             set {
-                this["OTHER_LOTATC_FILE2"] = value;
+                this["DCS_Server_Port"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OTHER_SRS_FILE2 {
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int DCS_Instance {
             get {
-                return ((string)(this["OTHER_SRS_FILE2"]));
+                return ((int)(this["DCS_Instance"]));
             }
             set {
-                this["OTHER_SRS_FILE2"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OTHER_LOTATC_USE2 {
-            get {
-                return ((bool)(this["OTHER_LOTATC_USE2"]));
-            }
-            set {
-                this["OTHER_LOTATC_USE2"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OTHER_SRS_USE2 {
-            get {
-                return ((bool)(this["OTHER_SRS_USE2"]));
-            }
-            set {
-                this["OTHER_SRS_USE2"] = value;
+                this["DCS_Instance"] = value;
             }
         }
     }
