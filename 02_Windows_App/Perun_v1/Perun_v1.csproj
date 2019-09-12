@@ -123,6 +123,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="01_Classes\TCPController.cs" />
     <Compile Include="01_Classes\UDPController.cs" />
     <Compile Include="01_Classes\Globals.cs" />
     <Compile Include="01_Classes\DatabaseController.cs" />
