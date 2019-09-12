@@ -63,10 +63,11 @@ internal class TCPController
                     Console.WriteLine("TCP: Waiting for packet");
                     TcpClient tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
                     NetworkStream ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
+                    //tcpClient.ReceiveBufferSize = 65534;
 
                     while (tcpClient.Connected && !TCPController.boolDone)  //while the client is connected, we look for incoming messages
                     {
-                        arrReceiveByteArray = new byte[1024];     //the messages arrive as byte array
+                        arrReceiveByteArray = new byte[65534];     //the messages arrive as byte array
                         ns.Read(arrReceiveByteArray, 0, arrReceiveByteArray.Length);   //the same networkstream reads the message sent by the client
                         strReceivedData = Encoding.ASCII.GetString(arrReceiveByteArray, 0, arrReceiveByteArray.Length);
                         Console.WriteLine("Sender: {0} Payload: {1}", null, strReceivedData);

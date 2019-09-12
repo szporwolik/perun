@@ -9,7 +9,7 @@ namespace Perun_v1
     public partial class form_Main : Form
     {
         // Variable definitions
-        public string[] arrSendBuffer = new string[100];   // Mysql send buffer
+        public string[] arrSendBuffer = new string[65534];   // Mysql send buffer
         public bool boolLetMeOut = false;                   // Helper to handle system tray
 
         // ################################ Main ################################
