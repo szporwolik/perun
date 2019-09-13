@@ -64,6 +64,10 @@ Core:
 * [Notepad++](https://notepad-plus-plus.org/)
 * [TortoiseGit](https://tortoisegit.org/)
 
+## used 3rd party resources
+
+* [Tango Icon Library](http://tango.freedesktop.org/Tango_Icon_Library)
+
 ## Contributing
 
 Please contact me if you'd like to contribute.
