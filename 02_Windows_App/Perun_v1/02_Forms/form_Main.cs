@@ -10,18 +10,22 @@ namespace Perun_v1
     public partial class form_Main : Form
     {
         // Variable definitions
-        public string[] arrSendBuffer = new string[65534];   // Mysql send buffer
-        public bool boolLetMeOut = false;                   // Helper to handle system tray
-        public DatabaseController dbConnection = new DatabaseController();
+        public string[] arrSendBuffer = new string[65534];                  // MySQL send buffer
+        public bool bLetMeOut = false;                                      // Helper to handle system tray
+
+        public DatabaseController dcConnection = new DatabaseController();  // MySQL controller
+        public TCPController tcpcServer=new TCPController();              // TCP controller
+
+        public bool bSRSStatus;                                             // Use empty/default SRS status
+        public bool bLotATCStatus;                                          // Use empty/default LotATC status
 
         // ################################ Main ################################
         private void form_Main_Load(object sender, EventArgs e)
         {
             // Form loaded - fill controls with default values
-
             Globals.arrLogHistory[0] = DateTime.Now.ToString("HH:mm:ss") + " > " + "Perun started";
-            form_Main_LoadSettings(); // Load settings
-            this.Text = PerunHelper.GetAppVersion(this.Text + " - "); // Display build version in title bar
+            form_Main_LoadSettings();                                       // Load settings
+            this.Text = PerunHelper.GetAppVersion(this.Text + " - ");       // Display build version in title bar
         }
 
         public form_Main()
@@ -62,7 +66,6 @@ namespace Perun_v1
             Properties.Settings.Default.OTHER_SRS_FILE = con_txt_3rd_srs.Text;
             Properties.Settings.Default.OTHER_LOTATC_USE = con_check_3rd_lotatc.Checked;
             Properties.Settings.Default.OTHER_SRS_USE = con_check_3rd_srs.Checked;
-
             Properties.Settings.Default.DCS_Server_Port = Int32.Parse(con_txt_dcs_server_port.Text);
             Properties.Settings.Default.DCS_Instance = Int32.Parse(con_txt_dcs_instance.Text);
 
@@ -92,7 +95,6 @@ namespace Perun_v1
             // Enables controls
             con_Button_Listen_ON.Enabled = true;
             con_Button_Listen_OFF.Enabled = false;
-
             con_txt_mysql_database.Enabled = true;
             con_txt_mysql_username.Enabled = true;
             con_txt_mysql_password.Enabled = true;
@@ -104,28 +106,30 @@ namespace Perun_v1
             con_check_3rd_srs.Enabled = true;
             con_txt_dcs_server_port.Enabled = true;
             con_txt_dcs_instance.Enabled = true;
-
         }
 
         // ################################ User input ################################
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
         {
             // Start listening
-            TCPController.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.arrLogHistory, ref arrSendBuffer);
-            TCPController.thrTCPListener = new Thread(TCPController.StartListen);
-            TCPController.thrTCPListener.Start();
-            TCPController.thrTCPListener.Name = "TCPThread";
+            tcpcServer.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.arrLogHistory, ref arrSendBuffer);
+            tcpcServer.thrTCPListener = new Thread(tcpcServer.StartListen);
+            tcpcServer.thrTCPListener.Start();
+            tcpcServer.thrTCPListener.Name = "TCPThread";
 
-            form_Main_DisableControls(); // Disable controlls
-            form_Main_SaveSettings(); // Save settings
+            form_Main_DisableControls();                                    // Disable controlls
+            form_Main_SaveSettings();                                       // Save settings
 
             // Prepare connection string
-            dbConnection.strMySQLConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
+            dcConnection.strMySQLConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
 
             // Start timmers
             tim_200ms.Enabled = true;
             tim_1000ms.Enabled = true;
             tim_10000ms.Enabled = true;
+
+            // Send initial data
+            tim_10000ms_Tick(null, null);
         }
 
         private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
@@ -133,7 +137,7 @@ namespace Perun_v1
             // Stop listening
             try
             {
-                TCPController.StopListen();
+                tcpcServer.StopListen();
             }
             catch (Exception ex)
             {
@@ -141,6 +145,11 @@ namespace Perun_v1
             }
 
             form_Main_EnableControls(); // Enable controls
+
+            con_img_db.Image = null;
+            con_img_dcs.Image = null;
+            con_img_lotATC.Image = null;
+            con_img_srs.Image = null;
 
             // Stop timmers
             tim_1000ms.Enabled = false;
@@ -194,7 +203,7 @@ namespace Perun_v1
             {
                 form_Main_SaveSettings();
 
-                boolLetMeOut = true; // Save settings on exit
+                bLetMeOut = true; // Save settings on exit
                 this.Close();        // Allow to exit application
             }
             else if (dialogResult == DialogResult.No)
@@ -244,7 +253,7 @@ namespace Perun_v1
         private void form_Main_FormClosing(object sender, FormClosingEventArgs e)
         {
             // Minimize to try on clicking "X"
-            if (e.CloseReason == CloseReason.UserClosing && !boolLetMeOut)
+            if (e.CloseReason == CloseReason.UserClosing && !bLetMeOut)
             {
                 e.Cancel = true;
                 form_Main_SendToTray(); // Send app to system tray
@@ -279,22 +288,45 @@ namespace Perun_v1
             {
                 if (arrSendBuffer[i] != null)
                 {
-                    dbConnection.SendToMySql(arrSendBuffer[i]);
+                    dcConnection.SendToMySql(arrSendBuffer[i]);
                     arrSendBuffer[i] = null;
                 }
             }
 
-            // Update icons
-            if (dbConnection.bStatus)
+            // Update status icons at main form
+            if (dcConnection.bStatus)
             {
                 con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_db");
             } else
             {
                 con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
             }
-            con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_game");
-            con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_srs");
-            con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_lotatc");
+            if (tcpcServer.bStatus)
+            {
+                con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_game");
+            }
+            else
+            {
+                con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+            }
+            if (bSRSStatus)
+            {
+                con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_srs");
+            }
+            else
+            {
+                con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+            }
+            if (bLotATCStatus)
+            {
+                con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_lotatc");
+            }
+            else
+            {
+                con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+            }
+            
+            
         }
 
         private void tim_10000ms_Tick(object sender, EventArgs e)
@@ -356,11 +388,12 @@ namespace Perun_v1
                     }
                     boolSRSdefault = false;
                     PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > SRS data loaded");
-
+                    bSRSStatus = true;
                 }
                 catch
                 {
                     PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > SRS data ERROR");
+                    bSRSStatus = false;
                 }
 
 
@@ -369,7 +402,7 @@ namespace Perun_v1
             {
                 strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";
             }
-            dbConnection.SendToMySql(strSRSJson);
+            dcConnection.SendToMySql(strSRSJson);
 
             // Handle LotATC - TBD clean code for multiinstance
             if (con_check_3rd_lotatc.Checked)
@@ -382,10 +415,12 @@ namespace Perun_v1
                     strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + strLotATCJson + "'}";
                     boolLotATCdefault = false;
                     PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data loaded");
+                    bLotATCStatus = true;
                 }
                 catch
                 {
                     PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data ERROR");
+                    bLotATCStatus = false;
                 }
 
 
@@ -394,7 +429,7 @@ namespace Perun_v1
             {
                 strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";   // No LotATC controller connected
             }
-            dbConnection.SendToMySql(strLotATCJson);
+            dcConnection.SendToMySql(strLotATCJson);
         }
     }
 }

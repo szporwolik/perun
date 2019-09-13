@@ -17,7 +17,6 @@ namespace Perun_v1
 
         static void Main()
         {
-            // Only instance
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.ApplicationExit += new EventHandler(Application_ApplicationExit);

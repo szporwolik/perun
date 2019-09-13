@@ -96,7 +96,7 @@
             this.con_Button_Listen_ON.Name = "con_Button_Listen_ON";
             this.con_Button_Listen_ON.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_ON.TabIndex = 2;
-            this.con_Button_Listen_ON.Text = "Connect";
+            this.con_Button_Listen_ON.Text = "Start";
             this.con_Button_Listen_ON.UseVisualStyleBackColor = true;
             this.con_Button_Listen_ON.Click += new System.EventHandler(this.con_Button_Listen_ON_Click);
             // 
@@ -107,7 +107,7 @@
             this.con_Button_Listen_OFF.Name = "con_Button_Listen_OFF";
             this.con_Button_Listen_OFF.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_OFF.TabIndex = 3;
-            this.con_Button_Listen_OFF.Text = "Disconnect";
+            this.con_Button_Listen_OFF.Text = "Stop";
             this.con_Button_Listen_OFF.UseVisualStyleBackColor = true;
             this.con_Button_Listen_OFF.Click += new System.EventHandler(this.con_Button_Listen_OFF_Click);
             // 
@@ -156,7 +156,6 @@
             // 
             // con_txt_mysql_port
             // 
-            this.con_txt_mysql_port.Enabled = false;
             this.con_txt_mysql_port.Location = new System.Drawing.Point(106, 45);
             this.con_txt_mysql_port.Name = "con_txt_mysql_port";
             this.con_txt_mysql_port.Size = new System.Drawing.Size(207, 20);
