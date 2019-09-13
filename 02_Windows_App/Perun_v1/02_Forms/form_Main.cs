@@ -112,6 +112,7 @@ namespace Perun_v1
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
         {
             // Start listening
+            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "Opening connections");
             tcpcServer.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.arrLogHistory, ref arrSendBuffer);
             tcpcServer.thrTCPListener = new Thread(tcpcServer.StartListen);
             tcpcServer.thrTCPListener.Start();
@@ -135,6 +136,15 @@ namespace Perun_v1
         private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
         {
             // Stop listening
+
+            // Display information
+            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "Closing connections");
+            con_Button_Listen_OFF.Enabled = false;
+            timer1_Tick(null, null);
+            this.Refresh();
+            Application.DoEvents();
+            
+
             try
             {
                 tcpcServer.StopListen();
@@ -144,6 +154,10 @@ namespace Perun_v1
                 Console.WriteLine(ex.ToString());
             }
 
+            while (tcpcServer.thrTCPListener.IsAlive)
+            {
+                Thread.Sleep(100); //ms
+            }
             form_Main_EnableControls(); // Enable controls
 
             con_img_db.Image = null;
@@ -155,6 +169,10 @@ namespace Perun_v1
             tim_1000ms.Enabled = false;
             tim_10000ms.Enabled = false;
             tim_200ms.Enabled = false;
+
+            // Display information about closed connections
+            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "Connections closed");
+            timer1_Tick(null, null);
         }
 
         private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

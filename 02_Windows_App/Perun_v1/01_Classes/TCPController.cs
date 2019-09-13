@@ -41,6 +41,9 @@ public class TCPController
 
     public void StartListen()
     {
+        NetworkStream ns=null;
+        TcpClient tcpClient=null;
+
         while (!bDone)
         {
             Console.WriteLine("TCP Listen start");
@@ -59,8 +62,8 @@ public class TCPController
                     // Start listening
 
                     Console.WriteLine("TCP: Waiting for packet");
-                    TcpClient tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
-                    NetworkStream ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
+                    tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
+                    ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
                     
                     while (tcpClient.Connected && !bDone)  //while the client is connected, we look for incoming messages
                     {
@@ -78,7 +81,7 @@ public class TCPController
                                 numberOfBytesRead = ns.Read(ReadBuffer, 0, ReadBuffer.Length);
                                 CompleteMessage.AppendFormat("{0}", Encoding.ASCII.GetString(ReadBuffer, 0, numberOfBytesRead));
                             }
-                            while (ns.DataAvailable);
+                            while (ns.DataAvailable && !bDone);
                         }
                         strReceivedData = CompleteMessage.ToString();
                         Console.WriteLine("Sender: {0} Payload: {1}", null, strReceivedData);
@@ -120,6 +123,16 @@ public class TCPController
                     PerunHelper.LogHistoryAdd(ref arrLogHistory, "TCP error - connection closed or port in use");
                 }
               
+            }
+
+            if (!(ns is null))
+            {
+                ns.Flush();
+                ns.Close();
+            }
+            if (!(tcpClient is null))
+            {
+                tcpClient.Close();
             }
             if (!(tcpServer is null))
             {
