@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -11,6 +12,7 @@ namespace Perun_v1
         // Variable definitions
         public string[] arrSendBuffer = new string[65534];   // Mysql send buffer
         public bool boolLetMeOut = false;                   // Helper to handle system tray
+        public DatabaseController dbConnection = new DatabaseController();
 
         // ################################ Main ################################
         private void form_Main_Load(object sender, EventArgs e)
@@ -94,7 +96,7 @@ namespace Perun_v1
             con_txt_mysql_database.Enabled = true;
             con_txt_mysql_username.Enabled = true;
             con_txt_mysql_password.Enabled = true;
-            //con_txt_mysql_port.Enabled = true;    // TBD - protect against writting text in the port field
+            con_txt_mysql_port.Enabled = true;    
             con_txt_mysql_server.Enabled = true;
             con_txt_3rd_lotatc.Enabled = true;
             con_txt_3rd_srs.Enabled = true;
@@ -109,12 +111,7 @@ namespace Perun_v1
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
         {
             // Start listening
-            //UDPController.Create(48620, ref Globals.arrLogHistory, ref arrSendBuffer);
-            //UDPController.thrUDPListener = new Thread(UDPController.StartListen);
-            //UDPController.thrUDPListener.Start();
-            //UDPController.thrUDPListener.Name = "UDPThread";
-
-            TCPController.Create(48620, ref Globals.arrLogHistory, ref arrSendBuffer);
+            TCPController.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.arrLogHistory, ref arrSendBuffer);
             TCPController.thrTCPListener = new Thread(TCPController.StartListen);
             TCPController.thrTCPListener.Start();
             TCPController.thrTCPListener.Name = "TCPThread";
@@ -123,7 +120,7 @@ namespace Perun_v1
             form_Main_SaveSettings(); // Save settings
 
             // Prepare connection string
-            DatabaseController.strMySQLConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
+            dbConnection.strMySQLConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
 
             // Start timmers
             tim_200ms.Enabled = true;
@@ -136,7 +133,6 @@ namespace Perun_v1
             // Stop listening
             try
             {
-                //UDPController.StopListen();
                 TCPController.StopListen();
             }
             catch (Exception ex)
@@ -283,10 +279,22 @@ namespace Perun_v1
             {
                 if (arrSendBuffer[i] != null)
                 {
-                    DatabaseController.SendToMySql(arrSendBuffer[i]);
+                    dbConnection.SendToMySql(arrSendBuffer[i]);
                     arrSendBuffer[i] = null;
                 }
             }
+
+            // Update icons
+            if (dbConnection.bStatus)
+            {
+                con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_db");
+            } else
+            {
+                con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+            }
+            con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_game");
+            con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_srs");
+            con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_lotatc");
         }
 
         private void tim_10000ms_Tick(object sender, EventArgs e)
@@ -361,7 +369,7 @@ namespace Perun_v1
             {
                 strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";
             }
-            DatabaseController.SendToMySql(strSRSJson);
+            dbConnection.SendToMySql(strSRSJson);
 
             // Handle LotATC - TBD clean code for multiinstance
             if (con_check_3rd_lotatc.Checked)
@@ -386,7 +394,7 @@ namespace Perun_v1
             {
                 strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";   // No LotATC controller connected
             }
-            DatabaseController.SendToMySql(strLotATCJson);
+            dbConnection.SendToMySql(strLotATCJson);
         }
     }
 }

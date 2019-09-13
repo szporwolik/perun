@@ -181,6 +181,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="03_Resources\perun_logo.ico" />
+    <None Include="Resources\ico_error.png" />
+    <None Include="Resources\ico_srs.png" />
+    <None Include="Resources\ico_lotatc.png" />
+    <None Include="Resources\ico_game.png" />
+    <None Include="Resources\ico_db.png" />
+    <None Include="Resources\img_db.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

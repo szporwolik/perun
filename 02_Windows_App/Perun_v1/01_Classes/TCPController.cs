@@ -46,12 +46,9 @@ internal class TCPController
         {
             try
             {
-                // Start listening to UDP
-
+                // Start listening to TCP
                 tcpServer = new TcpListener(IPAddress.Any, intListenPort);
-
                 string strReceivedData;
-                byte[] arrReceiveByteArray;
 
                 // Start the main loop
                 TCPController.boolDone = false;

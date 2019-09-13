@@ -3,11 +3,13 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 
-internal class DatabaseController
+public class DatabaseController
 {
-    public static string strMySQLConnectionString;              // MySQL connection string
+    public string strMySQLConnectionString;              // MySQL connection string
+    public MySqlConnection connMySQL;
+    public bool bStatus;
 
-    public static void SendToMySql(string strRawUDPFrame)
+    public void SendToMySql(string strRawUDPFrame)
     {
         // Main function to send data to mysql
         dynamic strUDPFrame = JsonConvert.DeserializeObject(strRawUDPFrame); // Deserialize raw data
@@ -84,12 +86,12 @@ internal class DatabaseController
         }
 
         // Connect to mysql and execute sql
-        MySqlConnection connMySQL = new MySqlConnection(DatabaseController.strMySQLConnectionString);
+        connMySQL = new MySqlConnection(strMySQLConnectionString);
         try
         {
             Console.WriteLine("Sending data to MySQL - Begin");
             connMySQL.Open();
-
+            bStatus = true;
             MySqlCommand cmdMySQL = new MySqlCommand(strSQLQueryTxt, connMySQL);
             MySqlDataReader rdrMySQL = cmdMySQL.ExecuteReader();
 
@@ -105,6 +107,7 @@ internal class DatabaseController
             // General exception found
             Console.WriteLine(a_ex.ToString());
             PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - package type: " + strUDPFrameType);
+            bStatus = false;
         }
         catch (MySqlException m_ex)
         {
@@ -122,6 +125,7 @@ internal class DatabaseController
                     PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - " + m_ex.Number);
                     break;
             }
+            bStatus = false;
         }
         connMySQL.Close();
         Console.WriteLine("Sending data to MySQL - Done");

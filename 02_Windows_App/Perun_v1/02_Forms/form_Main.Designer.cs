@@ -65,18 +65,18 @@
             this.con_txt_dcs_instance = new System.Windows.Forms.MaskedTextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.con_txt_dcs_server_port = new System.Windows.Forms.MaskedTextBox();
-            this.con_img_db = new System.Windows.Forms.PictureBox();
-            this.con_img_dcs = new System.Windows.Forms.PictureBox();
-            this.con_img_srs = new System.Windows.Forms.PictureBox();
             this.con_img_lotATC = new System.Windows.Forms.PictureBox();
+            this.con_img_srs = new System.Windows.Forms.PictureBox();
+            this.con_img_dcs = new System.Windows.Forms.PictureBox();
+            this.con_img_db = new System.Windows.Forms.PictureBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_lotATC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).BeginInit();
             this.SuspendLayout();
             // 
             // con_List_Received
@@ -383,37 +383,42 @@
             this.con_txt_dcs_server_port.Size = new System.Drawing.Size(207, 20);
             this.con_txt_dcs_server_port.TabIndex = 3;
             // 
-            // con_img_db
+            // con_img_lotATC
             // 
-            this.con_img_db.Location = new System.Drawing.Point(12, 335);
-            this.con_img_db.Name = "con_img_db";
-            this.con_img_db.Size = new System.Drawing.Size(29, 28);
-            this.con_img_db.TabIndex = 10;
-            this.con_img_db.TabStop = false;
-            // 
-            // con_img_dcs
-            // 
-            this.con_img_dcs.Location = new System.Drawing.Point(47, 335);
-            this.con_img_dcs.Name = "con_img_dcs";
-            this.con_img_dcs.Size = new System.Drawing.Size(29, 28);
-            this.con_img_dcs.TabIndex = 11;
-            this.con_img_dcs.TabStop = false;
+            this.con_img_lotATC.Location = new System.Drawing.Point(307, 335);
+            this.con_img_lotATC.Name = "con_img_lotATC";
+            this.con_img_lotATC.Size = new System.Drawing.Size(29, 28);
+            this.con_img_lotATC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.con_img_lotATC.TabIndex = 13;
+            this.con_img_lotATC.TabStop = false;
             // 
             // con_img_srs
             // 
-            this.con_img_srs.Location = new System.Drawing.Point(82, 335);
+            this.con_img_srs.Location = new System.Drawing.Point(272, 335);
             this.con_img_srs.Name = "con_img_srs";
             this.con_img_srs.Size = new System.Drawing.Size(29, 28);
+            this.con_img_srs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.con_img_srs.TabIndex = 12;
             this.con_img_srs.TabStop = false;
             // 
-            // con_img_lotATC
+            // con_img_dcs
             // 
-            this.con_img_lotATC.Location = new System.Drawing.Point(117, 335);
-            this.con_img_lotATC.Name = "con_img_lotATC";
-            this.con_img_lotATC.Size = new System.Drawing.Size(29, 28);
-            this.con_img_lotATC.TabIndex = 13;
-            this.con_img_lotATC.TabStop = false;
+            this.con_img_dcs.Location = new System.Drawing.Point(237, 335);
+            this.con_img_dcs.Name = "con_img_dcs";
+            this.con_img_dcs.Size = new System.Drawing.Size(29, 28);
+            this.con_img_dcs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.con_img_dcs.TabIndex = 11;
+            this.con_img_dcs.TabStop = false;
+            // 
+            // con_img_db
+            // 
+            this.con_img_db.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.con_img_db.Location = new System.Drawing.Point(202, 335);
+            this.con_img_db.Name = "con_img_db";
+            this.con_img_db.Size = new System.Drawing.Size(29, 28);
+            this.con_img_db.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.con_img_db.TabIndex = 10;
+            this.con_img_db.TabStop = false;
             // 
             // form_Main
             // 
@@ -449,10 +454,10 @@
             this.con_GroupBox_3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_lotATC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
