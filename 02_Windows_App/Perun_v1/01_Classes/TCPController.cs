@@ -64,12 +64,30 @@ internal class TCPController
                     TcpClient tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
                     NetworkStream ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
                     //tcpClient.ReceiveBufferSize = 65534;
-
+                    
                     while (tcpClient.Connected && !TCPController.boolDone)  //while the client is connected, we look for incoming messages
                     {
-                        arrReceiveByteArray = new byte[65534];     //the messages arrive as byte array
-                        ns.Read(arrReceiveByteArray, 0, arrReceiveByteArray.Length);   //the same networkstream reads the message sent by the client
-                        strReceivedData = Encoding.ASCII.GetString(arrReceiveByteArray, 0, arrReceiveByteArray.Length);
+                        //arrReceiveByteArray = new byte[tcpClient.ReceiveBufferSize];     //the messages arrive as byte array
+                        //ns.Read(arrReceiveByteArray, 0, arrReceiveByteArray.Length);   //the same networkstream reads the message sent by the client
+                        //strReceivedData = Encoding.ASCII.GetString(arrReceiveByteArray, 0, arrReceiveByteArray.Length);
+
+                        StringBuilder CompleteMessage = new StringBuilder();
+
+                        if (ns.CanRead)
+                        {
+                            byte[] ReadBuffer = new byte[1024];
+                            CompleteMessage = new StringBuilder();
+                            int numberOfBytesRead = 0;
+
+                            // Incoming message may be larger than the buffer size.
+                            do
+                            {
+                                numberOfBytesRead = ns.Read(ReadBuffer, 0, ReadBuffer.Length);
+                                CompleteMessage.AppendFormat("{0}", Encoding.ASCII.GetString(ReadBuffer, 0, numberOfBytesRead));
+                            }
+                            while (ns.DataAvailable);
+                        }
+                        strReceivedData = CompleteMessage.ToString();
                         Console.WriteLine("Sender: {0} Payload: {1}", null, strReceivedData);
 
                         dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame

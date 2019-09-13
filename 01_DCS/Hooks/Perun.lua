@@ -11,7 +11,7 @@ Perun.RefreshStatus = 15 												-- (int) base refresh rate in seconds to se
 Perun.RefreshMission = 60 												-- (int) refresh rate in seconds to send mission information  (values lower than 60 may affect performance!)
 Perun.TCPTargetPort = 48620												-- (int) TCP port to send data to
 Perun.TCPPerunHost = "localhost"										-- (string) IP adress of the Perun instance or "localhost"
-Perun.Instance = 2														-- (int) Id number of instance (if multiple DCS instances are to run at the same PC)
+Perun.Instance = 1														-- (int) Id number of instance (if multiple DCS instances are to run at the same PC)
 Perun.JsonStatusLocation = "Scripts\\Json\\" 							-- (string) folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
 Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"						-- (string) Message send to players connecting the server - Line 1
 Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"		-- (string) Message send to players connecting the server - Line 2
@@ -172,7 +172,8 @@ Perun.ConnectToPerun = function ()
 end
 
 Perun.SendPacket = function (data_id,temp)
-	_, err = Perun.TCP:send(temp)
+	_, err = Perun.TCP:send(temp) 
+
 	if err then
 		Perun.AddLog("Packed drop " .. data_id .. ", error: " .. err)
 		Perun.ConnectToPerun()
