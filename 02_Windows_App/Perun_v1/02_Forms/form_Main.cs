@@ -385,7 +385,7 @@ namespace Perun_v1
             bool boolSRSdefault = true;
             bool boolLotATCdefault = true;
 
-            // Handle SRS - TBD clean code for multiinstance
+            // Handle SRS 
             if (con_check_3rd_srs.Checked)
             {
                 try
@@ -451,7 +451,7 @@ namespace Perun_v1
             }
             dcConnection.SendToMySql(strSRSJson);
 
-            // Handle LotATC - TBD clean code for multiinstance
+            // Handle LotATC 
             if (con_check_3rd_lotatc.Checked)
             {
                 try
