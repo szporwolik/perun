@@ -48,7 +48,24 @@ namespace Perun_v1
                     con_txt_dcs_instance.Text = args[2];
                 }
             }
-
+            if (args.Length > 3)
+            {
+                // srs
+                if (args[3] != null)
+                {
+                    con_txt_3rd_srs.Text = args[3];
+                    con_check_3rd_srs.Checked = true;
+                }
+            }
+            if (args.Length > 4)
+            {
+                // lotatc
+                if (args[4] != null)
+                {
+                    con_txt_3rd_lotatc.Text = args[4];
+                    con_check_3rd_lotatc.Checked = true;
+                }
+            }
         }
 
         public form_Main()
