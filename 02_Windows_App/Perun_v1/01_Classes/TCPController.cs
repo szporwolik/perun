@@ -64,7 +64,8 @@ public class TCPController
                     Console.WriteLine("TCP: Waiting for packet");
                     tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
                     ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
-                    
+                    //ns.ReadTimeout = 100;
+
                     while (tcpClient.Connected && !bDone)  //while the client is connected, we look for incoming messages
                     {
                         StringBuilder CompleteMessage = new StringBuilder();
