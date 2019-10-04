@@ -24,8 +24,31 @@ namespace Perun_v1
         {
             // Form loaded - fill controls with default values
             Globals.arrLogHistory[0] = DateTime.Now.ToString("HH:mm:ss") + " > " + "Perun started";
-            form_Main_LoadSettings();                                       // Load settings
-            this.Text = PerunHelper.GetAppVersion(this.Text + " - ");       // Display build version in title bar
+            
+            Globals.strPerunTitleText = PerunHelper.GetAppVersion(this.Text + " - ");       // Display build version in title bar
+            this.Text = Globals.strPerunTitleText;
+
+            form_Main_LoadSettings();                                      // Load settings
+
+            // Use command line parameters
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                // server port
+                if (args[1] != null)
+                {
+                    con_txt_dcs_server_port.Text = args[1];
+                }
+            }
+            if (args.Length > 2)
+            {
+                // instance id
+                if (args[2] != null)
+                {
+                    con_txt_dcs_instance.Text = args[2];
+                }
+            }
+
         }
 
         public form_Main()
@@ -131,6 +154,9 @@ namespace Perun_v1
 
             // Send initial data
             tim_10000ms_Tick(null, null);
+
+            // Set title bar
+            this.Text = "[#"+ con_txt_dcs_instance.Text + "] " + Globals.strPerunTitleText;
         }
 
         private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
@@ -173,6 +199,9 @@ namespace Perun_v1
             // Display information about closed connections
             PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "Connections closed");
             timer1_Tick(null, null);
+
+            // Set title bar
+            this.Text = Globals.strPerunTitleText;
         }
 
         private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
