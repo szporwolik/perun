@@ -21,7 +21,7 @@ Core:
    * DCS World stable or DCS World beta
  * **(Optional)** For MySQL Export:
    * MySQL server with read/write access (tested with v5.7.21)
-   * .NET Framework 4.6.1
+   * .NET Framework 4.8
 
 3rd party applications support:
  * for [DCS SRS](https://github.com/ciribob/DCS-SimpleRadioStandalone/releases) integration location of the clients-list.json file will be required (by default: SRS Server folder), "Auto Export List" option has to be enabled - see [SRS documentation](https://github.com/ciribob/DCS-SimpleRadioStandalone/wiki)
