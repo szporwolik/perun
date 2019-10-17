@@ -5,14 +5,14 @@
 
 # Perun for DCS World
 
-This toolset extracts data from DCS World server and sends information to the local Json file and UDP port for further processing. 
+Included lua script extracts data from DCS World multiplayer server and sends information to TCP port and JSON file for further processing. 
 
-Provided windows app puts received UDP packets to MySQL database. Additionaly Perun windows application can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
+Provided windows app puts received TCP packets to MySQL database; additionaly Perun windows application can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
 
-However, this software is intended to be used by experienced users - the output is Json data and MySQL; you will need to process/display it yourself.
+However, this software is intended to be used by experienced users - the output is MySQL data and/or JSON file; you will need to process/display it yourself.
 
 ![Perun in action](https://i.imgur.com/vHw8Xu5.png)
-![Data flow](https://i.imgur.com/sHDQoLM.png)
+![Data flow](https://i.imgur.com/JbNu77l.png)
 
 ### Prerequisites
 
@@ -20,7 +20,7 @@ Core:
  * For JSON Export:
    * DCS World stable or DCS World beta
  * **(Optional)** For MySQL Export:
-   * MySQL server with read/write access (tested with v5.7.21)
+   * MySQL database with read/write access (tested with v5.7.21)
    * .NET Framework 4.8.0
 
 3rd party applications support:
@@ -29,9 +29,9 @@ Core:
 
 ### Installing
 
-* Download latest [release](https://github.com/szporwolik/perun/releases), **optionaly** together with windows binary file for MySQL export - [DOWNLOAD](http://share.porwolik.com/ftp/perun/Perun.htm)
+* Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
-* **optionaly** Create MySQL server using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL)
+* **optionaly** Create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL)
 * **optionaly** Run the Win32 application
 	* set MySQL connection data
 	* point LotATC json file location
@@ -40,9 +40,9 @@ Core:
 * Start DCS World and host multiplayer session
   * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
   * by default the TCP port 48620 is in use as target port
-* Data shall be filling your MySQL database
+* Data shall now be filling your MySQL database
 
-## Data packets
+## Data packets (for expert users)
 * ```ID: 1```, contains version/diagnostic information
 * ```ID: 2```, contains status data in the following sections
 	* mission - minimal information about mission
@@ -62,7 +62,6 @@ Core:
 
 * [VisualStudio 2017 Community](https://visualstudio.microsoft.com/vs/community/) 
 * [Notepad++](https://notepad-plus-plus.org/)
-* [TortoiseGit](https://tortoisegit.org/)
 
 ## used 3rd party resources
 
