@@ -11,7 +11,7 @@ Provided windows app puts received UDP packets to MySQL database. Additionaly Pe
 
 However, this software is intended to be used by experienced users - the output is Json data and MySQL; you will need to process/display it yourself.
 
-![Perun in action](https://i.imgur.com/ougQMPq.png)
+![Perun in action](https://i.imgur.com/vHw8Xu5.png)
 ![Data flow](https://i.imgur.com/sHDQoLM.png)
 
 ### Prerequisites
