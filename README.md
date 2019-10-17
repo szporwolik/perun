@@ -14,7 +14,7 @@ However, this software is intended to be used by experienced users - the output 
 ![Perun in action](https://i.imgur.com/vHw8Xu5.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
 
-### Prerequisites
+## Prerequisites
 
 Core:
  * For JSON Export:
@@ -27,22 +27,24 @@ Core:
  * for [DCS SRS](https://github.com/ciribob/DCS-SimpleRadioStandalone/releases) integration location of the clients-list.json file will be required (by default: SRS Server folder), "Auto Export List" option has to be enabled - see [SRS documentation](https://github.com/ciribob/DCS-SimpleRadioStandalone/wiki)
  * for [LotATC](https://www.lotatc.com/) you will need location of stats.json file and proper LotATC configuration with JSON data export enabled - see [LotATC documentation](https://www.lotatc.com/documentation/server_configuration.html)
 
-### Installing
+## Installing
 
 * Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
-* **optionaly** Create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL)
-* **optionaly** Run the Win32 application
-	* set MySQL connection data
-	* point LotATC json file location
-	* point DCS SRS json file location
-	* click connect and leave the app running in the background
+* **optionaly** create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL)
+
+## Running
 * Start DCS World and host multiplayer session
   * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
   * by default the TCP port 48620 is in use as target port
-* Data shall now be filling your MySQL database
+* **optionaly** run the Win32 application
+	* set MySQL connection data
+	* **optionaly** point LotATC json file location
+	* **optionaly** point DCS SRS json file location
+	* click connect and leave the app running in the background
+	* **data shall now be filling your MySQL database**
 
-## Windows APP - command line arguments (for expert users)
+### Windows APP - command line arguments (for expert users)
 Windows app supports command line arguments, what may be handy in case of multiple instance of DCS servers running at the same machine.
 
 The following arguments are accepted (keep the order!):
@@ -56,7 +58,8 @@ Example for windows shortcut:
 C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved Games\DCS\Mods\tech\LotAtc\stats.json"
 ```
 
-## Data packets - send to TCP port (for expert users)
+# API documentation (for expert users)
+## Data packets - send from lua to TCP port 
 * ```ID: 1```, contains version/diagnostic information
 * ```ID: 2```, contains status data in the following sections
 	* mission - minimal information about mission
@@ -72,6 +75,7 @@ C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved
 * ```ID: 100```, DCS SRS's client-list.json
 * ```ID: 101```, LotATC's stats.json
 
+# Project information
 ## Built With
 
 * [VisualStudio 2017 Community](https://visualstudio.microsoft.com/vs/community/) 
