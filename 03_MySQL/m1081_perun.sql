@@ -1,26 +1,13 @@
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
---
--- Baza danych: `m1081_perun`
---
-CREATE DATABASE IF NOT EXISTS `m1081_perun` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `m1081_perun`;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `pe_DataMissionHashes`
---
 
 DROP TABLE IF EXISTS `pe_DataMissionHashes`;
 CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
@@ -33,12 +20,6 @@ CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
   KEY `pe_DataMissionHashes_instance` (`pe_DataMissionHashes_instance`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `pe_DataPlayers`
---
-
 DROP TABLE IF EXISTS `pe_DataPlayers`;
 CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
   `pe_DataPlayers_id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -50,12 +31,6 @@ CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
   UNIQUE KEY `UNIQUE_UCID` (`pe_DataPlayers_ucid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `pe_DataRaw`
---
-
 DROP TABLE IF EXISTS `pe_DataRaw`;
 CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
   `pe_dataraw_type` tinyint(4) NOT NULL,
@@ -65,12 +40,6 @@ CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
   PRIMARY KEY (`pe_dataraw_type`,`pe_dataraw_instance`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `pe_DataTypes`
---
-
 DROP TABLE IF EXISTS `pe_DataTypes`;
 CREATE TABLE IF NOT EXISTS `pe_DataTypes` (
   `pe_DataTypes_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -79,12 +48,6 @@ CREATE TABLE IF NOT EXISTS `pe_DataTypes` (
   PRIMARY KEY (`pe_DataTypes_id`),
   UNIQUE KEY `UNIQUE_TYPE_NAME` (`pe_DataTypes_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `pe_LogChat`
---
 
 DROP TABLE IF EXISTS `pe_LogChat`;
 CREATE TABLE IF NOT EXISTS `pe_LogChat` (
@@ -96,14 +59,9 @@ CREATE TABLE IF NOT EXISTS `pe_LogChat` (
   `pe_LogChat_all` varchar(10) NOT NULL,
   PRIMARY KEY (`pe_LogChat_id`),
   KEY `pe_LogChat_missionhash_id` (`pe_LogChat_missionhash_id`),
-  KEY `pe_LogChat_playerid` (`pe_LogChat_playerid`)
+  KEY `pe_LogChat_playerid` (`pe_LogChat_playerid`),
+  KEY `pe_LogChat_datetime` (`pe_LogChat_datetime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `pe_LogEvent`
---
 
 DROP TABLE IF EXISTS `pe_LogEvent`;
 CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
@@ -115,14 +73,9 @@ CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   `pe_LogEvent_arg1` varchar(150) DEFAULT NULL,
   `pe_LogEvent_arg2` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`pe_LogEvent_id`),
-  KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`)
+  KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`),
+  KEY `pe_LogEvent_datetime` (`pe_LogEvent_datetime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `pe_LogLogins`
---
 
 DROP TABLE IF EXISTS `pe_LogLogins`;
 CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
@@ -133,14 +86,9 @@ CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
   `pe_LogLogins_name` varchar(150) NOT NULL,
   `pe_LogLogins_ip` varchar(100) NOT NULL,
   PRIMARY KEY (`pe_LogLogins_id`),
-  KEY `pe_LogLogins_playerid` (`pe_LogLogins_playerid`)
+  KEY `pe_LogLogins_playerid` (`pe_LogLogins_playerid`),
+  KEY `pe_LogLogins_datetime` (`pe_LogLogins_datetime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `pe_LogStats`
---
 
 DROP TABLE IF EXISTS `pe_LogStats`;
 CREATE TABLE IF NOT EXISTS `pe_LogStats` (
@@ -172,9 +120,51 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `ps_farp_landings` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_other_landings` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `ps_other_takeoffs` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `pe_LogStats_mstatus` enum('?','RTB','MIA','KIA') DEFAULT NULL,
+  `ps_takeoffs` int(10) UNSIGNED DEFAULT '0',
+  `ps_landings` int(10) UNSIGNED DEFAULT '0',
+  `ps_kills_AA` int(10) UNSIGNED DEFAULT '0',
+  `ps_kills_AG` int(10) UNSIGNED DEFAULT '0',
+  `ps_kills_AS` int(10) UNSIGNED DEFAULT '0',
+  `ps_kills_AAA` int(10) UNSIGNED DEFAULT '0',
   PRIMARY KEY (`pe_LogStats_id`),
-  UNIQUE KEY `UNIQUE_STATS_PER_MISSION_AND_UCID_AND_TYPE` (`pe_LogStats_playerid`,`pe_LogStats_missionhash_id`,`pe_LogStats_typeid`) USING BTREE
+  UNIQUE KEY `UNIQUE_STATS_PER_MISSION_AND_UCID_AND_TYPE` (`pe_LogStats_playerid`,`pe_LogStats_missionhash_id`,`pe_LogStats_typeid`) USING BTREE,
+  KEY `pe_LogStats_missionhash_id` (`pe_LogStats_missionhash_id`),
+  KEY `pe_LogStats_playerid` (`pe_LogStats_playerid`),
+  KEY `pe_LogStats_typeid` (`pe_LogStats_typeid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TRIGGER IF EXISTS `pe_LogStats_UPDATE`;
+DELIMITER $$
+CREATE TRIGGER `pe_LogStats_UPDATE` BEFORE UPDATE ON `pe_LogStats` FOR EACH ROW BEGIN
+
+	SET NEW.ps_takeoffs = NEW.ps_airfield_takeoffs + NEW.ps_farp_takeoffs + NEW.ps_other_takeoffs + NEW.ps_ship_takeoffs;
+    SET NEW.ps_landings = NEW.ps_airfield_landings + NEW.ps_farp_landings + NEW.ps_other_landings + NEW.ps_ship_landings;
+    SET NEW.ps_kills_AA =  NEW.ps_kills_planes + NEW.ps_kills_helicopters;
+    SET NEW.ps_kills_AG =  NEW.ps_kills_armor + NEW.ps_kills_unarmed + NEW.ps_kills_fortification;
+    SET NEW.ps_kills_AS =  NEW.ps_kills_ships;
+    SET NEW.ps_kills_AAA =  NEW.ps_kills_air_defense;
+
+    IF NEW.ps_ejections > 0 THEN
+    	SET NEW.pe_LogStats_mstatus = "MIA";
+    ELSEIF NEW.ps_deaths > 0 THEN
+    	SET NEW.pe_LogStats_mstatus = "KIA";
+    ELSEIF NEW.ps_landings >= NEW.ps_takeoffs THEN
+    	IF NEW.ps_takeoffs > 0 or NEW.ps_landings > 0 THEN
+    		SET NEW.pe_LogStats_mstatus = "RTB";
+        ELSE 
+        	SET NEW.pe_LogStats_mstatus = "?";
+        END IF;
+    ELSEIF NEW.ps_takeoffs > NEW.ps_landings and NEW.ps_ejections=0 and NEW.ps_deaths=0 THEN
+SET NEW.pe_LogStats_mstatus = "MIA";
+    ELSE
+    	SET NEW.pe_LogStats_mstatus = "?";
+	END IF;						
+END
+$$
+DELIMITER ;
+
+
+ALTER TABLE `pe_DataPlayers` ADD FULLTEXT KEY `pe_DataPlayers_ucid` (`pe_DataPlayers_ucid`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
