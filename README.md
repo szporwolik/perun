@@ -31,7 +31,7 @@ Core:
 
 * Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
-* **optionaly** create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL)
+* **optionaly** create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
 
 ## Running
 * Start DCS World and host multiplayer session
@@ -59,6 +59,16 @@ C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved
 ```
 
 # API documentation (for expert users)
+## MySQL database structure
+* table: pe_DataMissionHashes - holds mission hashes, unique hashes created per each mission start at server
+* table: pe_DataPlayers - holds players UCIDs together with last login information
+* table: pe_DataRaw - holds raw data received from perun windows app, containing debug/version information together with DCS SRS and LotATC data
+* table: pe_DataTypes - names of all model depende class names detected in DCS
+* table: pe_LogChat - holds chat history
+* table: pe_LogEvent - holds event history
+* table: pe_LogLogins - holds login to server event history
+* table: pe_LogStats - holds static information
+
 ## Data packets - send from lua to TCP port 
 * ```ID: 1```, contains version/diagnostic information
 * ```ID: 2```, contains status data in the following sections
