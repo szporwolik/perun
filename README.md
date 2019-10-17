@@ -42,7 +42,21 @@ Core:
   * by default the TCP port 48620 is in use as target port
 * Data shall now be filling your MySQL database
 
-## Data packets (for expert users)
+## Windows APP - command line arguments (for expert users)
+Windows app supports command line arguments, what may be handy in case of multiple instance of DCS servers running at the same machine.
+
+The following arguments are accepted (keep the order!):
+* server port (shall be the same as in the lua file!)
+* instance ID (shall be the same as in the lua file!)
+* path to SRS client-list.json
+* path to LotATC stats.json
+
+Example for windows shortcut:
+```
+C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved Games\DCS\Mods\tech\LotAtc\stats.json"
+```
+
+## Data packets - send to TCP port (for expert users)
 * ```ID: 1```, contains version/diagnostic information
 * ```ID: 2```, contains status data in the following sections
 	* mission - minimal information about mission
