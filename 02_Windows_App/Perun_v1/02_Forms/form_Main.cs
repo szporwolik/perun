@@ -166,6 +166,9 @@ namespace Perun_v1
             // Prepare connection string
             dcConnection.strMySQLConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
 
+            // Force icons update
+            Globals.bStatusIconsForce = true;
+
             // Start timmers
             tim_200ms.Enabled = true;
             tim_1000ms.Enabled = true;
@@ -221,7 +224,14 @@ namespace Perun_v1
 
             // Set title bar
             this.Text = Globals.strPerunTitleText;
-        }
+
+            // Set helpers for updates
+            Globals.bLogHistoryUpdate = false;
+            Globals.bdcConnection = false;
+            Globals.btcpcServer = false;
+            Globals.bSRSStatus = false;
+            Globals.bLotATCStatus = false;
+    }
 
         private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -367,7 +377,7 @@ namespace Perun_v1
             }
 
             // Update status icons at main form
-            if (dcConnection.bStatus != Globals.bdcConnection) {
+            if ((dcConnection.bStatus != Globals.bdcConnection) || Globals.bStatusIconsForce) {
                 if (dcConnection.bStatus)
                 {
                     con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_db");
@@ -378,7 +388,7 @@ namespace Perun_v1
                 Globals.bdcConnection = dcConnection.bStatus;
             }
 
-            if (tcpcServer.bStatus != Globals.btcpcServer) {
+            if ((tcpcServer.bStatus != Globals.btcpcServer) || Globals.bStatusIconsForce) {
                 if (tcpcServer.bStatus)
                 {
                     con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_game");
@@ -389,7 +399,7 @@ namespace Perun_v1
                 }
                 Globals.btcpcServer = tcpcServer.bStatus;
             }
-            if (bSRSStatus != Globals.bSRSStatus) {
+            if ((bSRSStatus != Globals.bSRSStatus) || Globals.bStatusIconsForce) {
                 if (bSRSStatus)
                 {
                     con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_srs");
@@ -400,7 +410,7 @@ namespace Perun_v1
                 }
                 Globals.bSRSStatus = bSRSStatus;
             }
-            if (bLotATCStatus != Globals.bLotATCStatus)
+            if ((bLotATCStatus != Globals.bLotATCStatus) || Globals.bStatusIconsForce)
             {
                 if (bLotATCStatus)
                 {
@@ -412,7 +422,7 @@ namespace Perun_v1
                 }
                 Globals.bLotATCStatus = bLotATCStatus;
             }
-            
+            Globals.bStatusIconsForce = false;
         }
 
         private void tim_10000ms_Tick(object sender, EventArgs e)
@@ -517,5 +527,6 @@ namespace Perun_v1
             }
             dcConnection.SendToMySql(strLotATCJson);
         }
+
     }
 }
