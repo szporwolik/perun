@@ -1,5 +1,6 @@
 ﻿// This class gathers all helper functions
 using System;
+using System.Reflection;
 
 internal class PerunHelper
 {
@@ -20,6 +21,10 @@ internal class PerunHelper
         {
             System.Deployment.Application.ApplicationDeployment cd = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;
             Globals.strPerunVersion = cd.CurrentVersion.ToString();
+        }
+        else
+        {
+            Globals.strPerunVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
         return strBeginning+"v" + Globals.strPerunVersion;
     }
