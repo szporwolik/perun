@@ -367,38 +367,51 @@ namespace Perun_v1
             }
 
             // Update status icons at main form
-            if (dcConnection.bStatus)
-            {
-                con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_db");
-            } else
-            {
-                con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+            if (dcConnection.bStatus != Globals.bdcConnection) {
+                if (dcConnection.bStatus)
+                {
+                    con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_db");
+                } else
+                {
+                    con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                }
+                Globals.bdcConnection = dcConnection.bStatus;
             }
-            if (tcpcServer.bStatus)
-            {
-                con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_game");
+
+            if (tcpcServer.bStatus != Globals.btcpcServer) {
+                if (tcpcServer.bStatus)
+                {
+                    con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_game");
+                }
+                else
+                {
+                    con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                }
+                Globals.btcpcServer = tcpcServer.bStatus;
             }
-            else
-            {
-                con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+            if (bSRSStatus != Globals.bSRSStatus) {
+                if (bSRSStatus)
+                {
+                    con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_srs");
+                }
+                else
+                {;
+                    con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                }
+                Globals.bSRSStatus = bSRSStatus;
             }
-            if (bSRSStatus)
+            if (bLotATCStatus != Globals.bLotATCStatus)
             {
-                con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_srs");
+                if (bLotATCStatus)
+                {
+                    con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_lotatc");
+                }
+                else
+                {
+                    con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                }
+                Globals.bLotATCStatus = bLotATCStatus;
             }
-            else
-            {
-                con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
-            }
-            if (bLotATCStatus)
-            {
-                con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_lotatc");
-            }
-            else
-            {
-                con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
-            }
-            
             
         }
 
