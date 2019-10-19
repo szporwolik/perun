@@ -126,6 +126,7 @@ public class DatabaseController
                         break;
                     default:
                         PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - " + m_ex.Number);
+                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - " + m_ex.Message);
                         break;
                 }
                 bStatus = false;
