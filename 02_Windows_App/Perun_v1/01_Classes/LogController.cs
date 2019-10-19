@@ -26,7 +26,14 @@ class LogController
         }
         else
         {
-            fileStream = new FileStream(logFilePath, FileMode.Append);
+            try
+            {
+                fileStream = new FileStream(logFilePath, FileMode.Append);
+            }
+            catch
+            {
+
+            }
         }
         log = new StreamWriter(fileStream);
         log.WriteLine(strLog);

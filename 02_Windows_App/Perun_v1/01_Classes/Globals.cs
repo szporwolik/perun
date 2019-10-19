@@ -10,8 +10,14 @@ internal class Globals
     public static int intInstanceId = 0;                // Instance ID
     public static bool bStatusIconsForce = true;        // Force icons reload
     public static bool bdcConnection = false;           // Historic db connection status
-    public static bool btcpcServer = false;             // Historic tcp connection status
+    public static bool bTCPServer = false;             // Historic tcp connection status
     public static bool bSRSStatus = false;              // Historic srs connection status
     public static bool bLotATCStatus = false;           // Historic lotatc connection status
+    public static bool bClientConnected = false;        // Is TCP connection alive
+    public static int intMysqlErros = 0;                // Error counter
+    public static int intGameErros = 0;                 // Error counter
+    public static int intGameErrosHistory = 0;                 // Error counter
+    public static int intSRSErros = 0;                  // Error counter
+    public static int intLotATCErros = 0;               // Error counter
 }
 

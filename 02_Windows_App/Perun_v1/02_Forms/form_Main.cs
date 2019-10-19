@@ -157,8 +157,15 @@ namespace Perun_v1
             Globals.intInstanceId= Int32.Parse(con_txt_dcs_instance.Text);
             Globals.bStatusIconsForce = true;
 
-            // Start listening
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Globals.intInstanceId + " > " + "Opening connections");
+            Globals.intMysqlErros = 0;                // Reset error counter
+            Globals.intGameErros = 0;                 // Reset error counter
+            Globals.intSRSErros = 0;                  // Reset error counter
+            Globals.intLotATCErros = 0;                   // Reset error counter
+
+            Globals.bClientConnected = false;   //no connection
+
+        // Start listening
+        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Globals.intInstanceId + " > " + "Opening connections");
             tcpcServer.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.arrLogHistory, ref arrSendBuffer);
             tcpcServer.thrTCPListener = new Thread(tcpcServer.StartListen);
             tcpcServer.thrTCPListener.Start();
@@ -209,10 +216,10 @@ namespace Perun_v1
             }
             form_Main_EnableControls(); // Enable controls
 
-            con_img_db.Image = null;
-            con_img_dcs.Image = null;
-            con_img_lotATC.Image = null;
-            con_img_srs.Image = null;
+            con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
+            con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
+            con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
+            con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
 
             // Stop timmers
             tim_1000ms.Enabled = false;
@@ -232,9 +239,10 @@ namespace Perun_v1
             // Set helpers for updates
             Globals.bLogHistoryUpdate = false;
             Globals.bdcConnection = false;
-            Globals.btcpcServer = false;
+            Globals.bTCPServer = false;
             Globals.bSRSStatus = false;
             Globals.bLotATCStatus = false;
+            Globals.bClientConnected = false;
     }
 
         private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -384,45 +392,70 @@ namespace Perun_v1
             if ((dcConnection.bStatus != Globals.bdcConnection) || Globals.bStatusIconsForce) {
                 if (dcConnection.bStatus)
                 {
-                    con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_db");
+                    if (Globals.intMysqlErros == 0)
+                    {
+                        con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
+                    } else
+                    {
+                        con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_game");
+                    }
                 } else
                 {
-                    con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                    con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_error");
                 }
                 Globals.bdcConnection = dcConnection.bStatus;
             }
 
-            if ((tcpcServer.bStatus != Globals.btcpcServer) || Globals.bStatusIconsForce) {
-                if (tcpcServer.bStatus)
+            if ((Globals.bClientConnected != Globals.bTCPServer) || Globals.bStatusIconsForce || Globals.intGameErros != Globals.intGameErrosHistory) {
+                if(Globals.bClientConnected)
                 {
-                    con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_game");
+                    if (Globals.intGameErros == 0 )
+                    {
+                        con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
+                    } else
+                    {
+                        con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_game");
+                    }
                 }
                 else
                 {
-                    con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                    con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_error");
                 }
-                Globals.btcpcServer = tcpcServer.bStatus;
+                Globals.bTCPServer = Globals.bClientConnected;
+                Globals.intGameErrosHistory = Globals.intGameErros;
             }
             if ((bSRSStatus != Globals.bSRSStatus) || Globals.bStatusIconsForce) {
-                if (bSRSStatus)
+                if (bSRSStatus && con_check_3rd_srs.Checked)
                 {
-                    con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_srs");
+                    if (Globals.intSRSErros == 0)
+                    {
+                        con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
+                    } else
+                    {
+                        con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_game");
+                    }
                 }
                 else
-                {;
-                    con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                {
+                    con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_error");
                 }
                 Globals.bSRSStatus = bSRSStatus;
             }
             if ((bLotATCStatus != Globals.bLotATCStatus) || Globals.bStatusIconsForce)
             {
-                if (bLotATCStatus)
+                if (bLotATCStatus && con_check_3rd_lotatc.Checked)
                 {
-                    con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_lotatc");
+                    if (Globals.intLotATCErros == 0)
+                    {
+                        con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
+                    } else
+                    {
+                        con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_game");
+                    }
                 }
                 else
                 {
-                    con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                    con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_error");
                 }
                 Globals.bLotATCStatus = bLotATCStatus;
             }
@@ -490,10 +523,11 @@ namespace Perun_v1
                     PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > SRS data loaded");
                     bSRSStatus = true;
                 }
-                catch
+                catch (Exception exc_srs)
                 {
-                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > SRS data ERROR");
+                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > SRS data ERROR > " + exc_srs.Message);
                     bSRSStatus = false;
+                    Globals.intSRSErros++;
                 }
 
 
@@ -517,10 +551,11 @@ namespace Perun_v1
                     PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data loaded");
                     bLotATCStatus = true;
                 }
-                catch
+                catch(Exception exc_lotatc)
                 {
-                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data ERROR");
+                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data ERROR > " + exc_lotatc.Message);
                     bLotATCStatus = false;
+                    Globals.intLotATCErros++;
                 }
 
 
@@ -530,7 +565,19 @@ namespace Perun_v1
                 strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";   // No LotATC controller connected
             }
             dcConnection.SendToMySql(strLotATCJson);
+
+            // Let's do not risk int overload
+            Globals.intMysqlErros = (Globals.intMysqlErros > 999) ? 999 : Globals.intMysqlErros;
+            Globals.intGameErros = (Globals.intGameErros > 999) ? 999 : Globals.intGameErros;
+            Globals.intSRSErros = (Globals.intSRSErros > 999) ? 999 : Globals.intSRSErros;
+            Globals.intLotATCErros = (Globals.intLotATCErros > 999) ? 999 : Globals.intLotATCErros;
+
         }
 
+
+        private void con_List_Received_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

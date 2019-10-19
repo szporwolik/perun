@@ -109,24 +109,25 @@ public class DatabaseController
             {
                 // General exception found
                 Console.WriteLine(a_ex.ToString());
-                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - package type: " + strUDPFrameType);
+                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - package type: " + strUDPFrameType);
+                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL >" + a_ex.Message);
                 bStatus = false;
             }
             catch (MySqlException m_ex)
             {
                 // MySQL exception found
-                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - package type: " + strUDPFrameType);
+                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - package type: " + strUDPFrameType);
                 switch (m_ex.Number)
                 {
                     case 1042: // Unable to connect to any of the specified MySQL hosts (Check Server,Port)
-                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - unable to connect");
+                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - unable to connect >" + m_ex.Message);
                         break;
                     case 0: // Access denied (Check DB name,username,password)
-                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - access denied");
+                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - access denied > " + m_ex.Message);
                         break;
                     default:
-                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - " + m_ex.Number);
-                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - " + m_ex.Message);
+                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL > " + m_ex.Number);
+                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL > " + m_ex.Message);
                         break;
                 }
                 bStatus = false;
@@ -134,9 +135,9 @@ public class DatabaseController
             connMySQL.Close();
             Console.WriteLine("Sending data to MySQL - Done");
         }
-        catch (ArgumentException)
+        catch (ArgumentException x_ex)
         {
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - wrong connection parameters");
+            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - unable to connect > " + x_ex.Message);
         }
        
 
