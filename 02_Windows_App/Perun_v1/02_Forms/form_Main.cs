@@ -153,8 +153,12 @@ namespace Perun_v1
         // ################################ User input ################################
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
         {
+            // Set globals
+            Globals.intInstanceId= Int32.Parse(con_txt_dcs_instance.Text);
+            Globals.bStatusIconsForce = true;
+
             // Start listening
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "Opening connections");
+            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Globals.intInstanceId + " > " + "Opening connections");
             tcpcServer.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.arrLogHistory, ref arrSendBuffer);
             tcpcServer.thrTCPListener = new Thread(tcpcServer.StartListen);
             tcpcServer.thrTCPListener.Start();
@@ -165,9 +169,6 @@ namespace Perun_v1
 
             // Prepare connection string
             dcConnection.strMySQLConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
-
-            // Force icons update
-            Globals.bStatusIconsForce = true;
 
             // Start timmers
             tim_200ms.Enabled = true;
@@ -186,7 +187,7 @@ namespace Perun_v1
             // Stop listening
 
             // Display information
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "Closing connections");
+            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Globals.intInstanceId +" > " + "Closing connections");
             con_Button_Listen_OFF.Enabled = false;
             timer1_Tick(null, null);
             this.Refresh();
@@ -219,11 +220,14 @@ namespace Perun_v1
             tim_200ms.Enabled = false;
 
             // Display information about closed connections
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "Connections closed");
+            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + Globals.intInstanceId +" > " + "Connections closed");
             timer1_Tick(null, null);
 
             // Set title bar
             this.Text = Globals.strPerunTitleText;
+
+            // Set globals
+            Globals.intInstanceId = 0;
 
             // Set helpers for updates
             Globals.bLogHistoryUpdate = false;

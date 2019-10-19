@@ -16,7 +16,7 @@ public class TCPController
     public string[] arrSendBuffer;   // Mysql send buffer
     public Thread thrTCPListener;    // Seperate thread for TCP
     public bool bStatus;             // TCP connecion status
-
+    
     public void Create(int par_intListenPort, ref string[] par_arrLogHistory, ref string[] par_arrSendBuffer)
     {
         // Create class
@@ -92,7 +92,7 @@ public class TCPController
                             dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
                             string strRawTCPFrameType = dynamicRawTCPFrame.type;
 
-                            PerunHelper.LogHistoryAdd(ref arrLogHistory, "TCP packet received, type: " + strRawTCPFrameType);
+                            PerunHelper.LogHistoryAdd(ref arrLogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
 
                             // Add to mySQL send buffer (find first empty slot)
                             for (int i = 0; i < arrSendBuffer.Length - 1; i++)

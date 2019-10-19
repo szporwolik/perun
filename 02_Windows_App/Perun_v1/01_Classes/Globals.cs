@@ -7,7 +7,7 @@ internal class Globals
     public static string[] arrLogHistory = new string[10];      // Log history for GUI
     public static bool bLogHistoryUpdate = true;               // Mark if log control require update
     public static string strPerunTitleText = "";
-
+    public static int intInstanceId = 0;                // Instance ID
     public static bool bStatusIconsForce = true;        // Force icons reload
     public static bool bdcConnection = false;           // Historic db connection status
     public static bool btcpcServer = false;             // Historic tcp connection status
