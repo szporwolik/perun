@@ -60,22 +60,26 @@ public class TCPController
                 while (!bDone)
                 {
                     // Start listening
-
+                    Console.WriteLine("TCP: Waiting for connection");
+                    Globals.bClientConnected = false;
                     // Wait for pending connection
                     if (tcpServer.Pending())
                     {
-                        Console.WriteLine("TCP: Waiting for packet");
+                        Console.WriteLine("TCP: Connected");
                         tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
                         ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
-                                                    //ns.ReadTimeout = 100;
-                        Globals.bClientConnected = true;
+                        ns.ReadTimeout = 6000;
+                        tcpClient.ReceiveTimeout = 6000;
+      
+
                         while (tcpClient.Connected && !bDone)  //while the client is connected, we look for incoming messages
                         {
                             StringBuilder CompleteMessage = new StringBuilder();
                             Globals.bClientConnected = true;
-
+                            
                             if (ns.CanRead)
                             {
+                                Console.WriteLine("TCP: Can read");
                                 byte[] ReadBuffer = new byte[1024];
                                 CompleteMessage = new StringBuilder();
                                 int numberOfBytesRead = 0;
@@ -83,10 +87,15 @@ public class TCPController
                                 // Incoming message may be larger than the buffer size.
                                 do
                                 {
+                                    Console.WriteLine("TCP: Read");
                                     numberOfBytesRead = ns.Read(ReadBuffer, 0, ReadBuffer.Length);
                                     CompleteMessage.AppendFormat("{0}", Encoding.ASCII.GetString(ReadBuffer, 0, numberOfBytesRead));
+                                    if (numberOfBytesRead == 0)
+                                    {
+                                        break;
+                                    }
                                 }
-                                while (ns.DataAvailable && !bDone);
+                                while (ns.DataAvailable && ns.CanRead && tcpClient.Connected);
                             }
                             strReceivedData = CompleteMessage.ToString();
                             Console.WriteLine("Sender: {0} Payload: {1}", null, strReceivedData);
@@ -99,12 +108,15 @@ public class TCPController
                                 PerunHelper.LogHistoryAdd(ref arrLogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
 
                                 // Add to mySQL send buffer (find first empty slot)
-                                for (int i = 0; i < arrSendBuffer.Length - 1; i++)
+                                if (Int32.Parse(strRawTCPFrameType) != 0)
                                 {
-                                    if (arrSendBuffer[i] == null)
+                                    for (int i = 0; i < arrSendBuffer.Length - 1; i++)
                                     {
-                                        arrSendBuffer[i] = strReceivedData;
-                                        break;
+                                        if (arrSendBuffer[i] == null)
+                                        {
+                                            arrSendBuffer[i] = strReceivedData;
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -116,6 +128,7 @@ public class TCPController
                             }
                         }
                     }
+                    System.Threading.Thread.Sleep(500);
                 }
                 tcpServer.Stop();
                 bStatus = false;
@@ -123,12 +136,12 @@ public class TCPController
             catch (Exception e)
             {
                 // General exception found
-                if (e.HResult != -2147467259)
-                {
+                //if (e.HResult != -2147467259)
+                //{
                     Globals.intGameErros++;
                     Console.WriteLine(e.ToString());
                     PerunHelper.LogHistoryAdd(ref arrLogHistory, "#" + Globals.intInstanceId + " > TCP error - connection closed or port in use > " + e.Message);
-                }
+                //}
               
             }
 

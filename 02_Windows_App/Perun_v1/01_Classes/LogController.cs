@@ -35,8 +35,15 @@ class LogController
 
             }
         }
-        log = new StreamWriter(fileStream);
-        log.WriteLine(strLog);
-        log.Close();
+        try
+        {
+            log = new StreamWriter(fileStream);
+            log.WriteLine(strLog);
+            log.Close();
+        }
+        catch
+        {
+
+        }
     }
 }
