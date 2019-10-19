@@ -117,6 +117,7 @@ namespace Perun_v1
             // Disables controls
             con_Button_Listen_ON.Enabled = false;
             con_Button_Listen_OFF.Enabled = true;
+            con_Button_Quit.Enabled = false;
             con_txt_mysql_database.Enabled = false;
             con_txt_mysql_username.Enabled = false;
             con_txt_mysql_password.Enabled = false;
@@ -135,6 +136,7 @@ namespace Perun_v1
             // Enables controls
             con_Button_Listen_ON.Enabled = true;
             con_Button_Listen_OFF.Enabled = false;
+            con_Button_Quit.Enabled = true;
             con_txt_mysql_database.Enabled = true;
             con_txt_mysql_username.Enabled = true;
             con_txt_mysql_password.Enabled = true;
@@ -163,6 +165,9 @@ namespace Perun_v1
 
             // Prepare connection string
             dcConnection.strMySQLConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
+
+            // Force icons update
+            Globals.bStatusIconsForce = true;
 
             // Start timmers
             tim_200ms.Enabled = true;
@@ -199,7 +204,7 @@ namespace Perun_v1
 
             while (tcpcServer.thrTCPListener.IsAlive)
             {
-                Thread.Sleep(100); //ms
+                Thread.Sleep(10); //ms
             }
             form_Main_EnableControls(); // Enable controls
 
@@ -219,7 +224,14 @@ namespace Perun_v1
 
             // Set title bar
             this.Text = Globals.strPerunTitleText;
-        }
+
+            // Set helpers for updates
+            Globals.bLogHistoryUpdate = false;
+            Globals.bdcConnection = false;
+            Globals.btcpcServer = false;
+            Globals.bSRSStatus = false;
+            Globals.bLotATCStatus = false;
+    }
 
         private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -335,13 +347,20 @@ namespace Perun_v1
         {
             // Main timer to sync GUI with background tasks and flush buffers
             // Refresh Log Window
-            con_List_Received.Items.Clear();
-            foreach (string i in Globals.arrLogHistory)
+            if (Globals.bLogHistoryUpdate)
             {
-                if (i != null)
+                con_List_Received.Items.Clear();
+                foreach (string i in Globals.arrLogHistory)
                 {
-                    con_List_Received.Items.Add(i);
+                    if (i != null)
+                    {
+                        con_List_Received.Items.Add(i);
+                    }
                 }
+                Globals.bLogHistoryUpdate = false;
+            } else
+            {
+                // Do nothing , control does not require update
             }
         }
 
@@ -358,39 +377,52 @@ namespace Perun_v1
             }
 
             // Update status icons at main form
-            if (dcConnection.bStatus)
-            {
-                con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_db");
-            } else
-            {
-                con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+            if ((dcConnection.bStatus != Globals.bdcConnection) || Globals.bStatusIconsForce) {
+                if (dcConnection.bStatus)
+                {
+                    con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_db");
+                } else
+                {
+                    con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                }
+                Globals.bdcConnection = dcConnection.bStatus;
             }
-            if (tcpcServer.bStatus)
-            {
-                con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_game");
+
+            if ((tcpcServer.bStatus != Globals.btcpcServer) || Globals.bStatusIconsForce) {
+                if (tcpcServer.bStatus)
+                {
+                    con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_game");
+                }
+                else
+                {
+                    con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                }
+                Globals.btcpcServer = tcpcServer.bStatus;
             }
-            else
-            {
-                con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+            if ((bSRSStatus != Globals.bSRSStatus) || Globals.bStatusIconsForce) {
+                if (bSRSStatus)
+                {
+                    con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_srs");
+                }
+                else
+                {;
+                    con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                }
+                Globals.bSRSStatus = bSRSStatus;
             }
-            if (bSRSStatus)
+            if ((bLotATCStatus != Globals.bLotATCStatus) || Globals.bStatusIconsForce)
             {
-                con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_srs");
+                if (bLotATCStatus)
+                {
+                    con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_lotatc");
+                }
+                else
+                {
+                    con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
+                }
+                Globals.bLotATCStatus = bLotATCStatus;
             }
-            else
-            {
-                con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
-            }
-            if (bLotATCStatus)
-            {
-                con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_lotatc");
-            }
-            else
-            {
-                con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("ico_error");
-            }
-            
-            
+            Globals.bStatusIconsForce = false;
         }
 
         private void tim_10000ms_Tick(object sender, EventArgs e)
@@ -495,5 +527,6 @@ namespace Perun_v1
             }
             dcConnection.SendToMySql(strLotATCJson);
         }
+
     }
 }
