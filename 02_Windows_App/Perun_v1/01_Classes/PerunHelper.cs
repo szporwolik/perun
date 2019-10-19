@@ -13,6 +13,7 @@ internal class PerunHelper
         }
 
         arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " > " + strEntryToAdd; // Add entry at the last position
+        Globals.bLogHistoryUpdate = true;
     }
     public static string GetAppVersion(string strBeginning)
     {

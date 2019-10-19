@@ -201,7 +201,7 @@ namespace Perun_v1
 
             while (tcpcServer.thrTCPListener.IsAlive)
             {
-                Thread.Sleep(100); //ms
+                Thread.Sleep(10); //ms
             }
             form_Main_EnableControls(); // Enable controls
 
@@ -337,13 +337,20 @@ namespace Perun_v1
         {
             // Main timer to sync GUI with background tasks and flush buffers
             // Refresh Log Window
-            con_List_Received.Items.Clear();
-            foreach (string i in Globals.arrLogHistory)
+            if (Globals.bLogHistoryUpdate)
             {
-                if (i != null)
+                con_List_Received.Items.Clear();
+                foreach (string i in Globals.arrLogHistory)
                 {
-                    con_List_Received.Items.Add(i);
+                    if (i != null)
+                    {
+                        con_List_Received.Items.Add(i);
+                    }
                 }
+                Globals.bLogHistoryUpdate = false;
+            } else
+            {
+                // Do nothing , control does not require update
             }
         }
 
