@@ -117,6 +117,7 @@ namespace Perun_v1
             // Disables controls
             con_Button_Listen_ON.Enabled = false;
             con_Button_Listen_OFF.Enabled = true;
+            con_Button_Quit.Enabled = false;
             con_txt_mysql_database.Enabled = false;
             con_txt_mysql_username.Enabled = false;
             con_txt_mysql_password.Enabled = false;
@@ -135,6 +136,7 @@ namespace Perun_v1
             // Enables controls
             con_Button_Listen_ON.Enabled = true;
             con_Button_Listen_OFF.Enabled = false;
+            con_Button_Quit.Enabled = true;
             con_txt_mysql_database.Enabled = true;
             con_txt_mysql_username.Enabled = true;
             con_txt_mysql_password.Enabled = true;
