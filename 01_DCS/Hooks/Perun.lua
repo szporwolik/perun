@@ -9,18 +9,18 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
 Perun.RefreshStatus = 15 												-- (int) base refresh rate in seconds to send status update (values lower than 60 may affect performance!)
 Perun.RefreshMission = 60 												-- (int) refresh rate in seconds to send mission information  (values lower than 60 may affect performance!)
-Perun.UDPTargetPort = 48620												-- (int) UDP port to send data to
-Perun.UDPSourcePort = 48621												-- (int) UDP port to send data from 
+Perun.TCPTargetPort = 48621												-- (int) TCP port to send data to
+Perun.TCPPerunHost = "localhost"										-- (string) IP adress of the Perun instance or "localhost"
 Perun.Instance = 1														-- (int) Id number of instance (if multiple DCS instances are to run at the same PC)
 Perun.JsonStatusLocation = "Scripts\\Json\\" 							-- (string) folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
-Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"						-- (string) Message send to players connecting the server - Line 1
-Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"		-- (string) Message send to players connecting the server - Line 2
+Perun.MOTD_L1 = "Welcome to our server!"								-- (string) Message send to players connecting the server - Line 1
+Perun.MOTD_L2 = "Please use SRS radio."									-- (string) Message send to players connecting the server - Line 2
 
 -- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
 
 
 -- Variable init
-Perun.Version = "v0.6.0"
+Perun.Version = "v0.8.0"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -33,7 +33,7 @@ Perun.lastSentMission =0
 Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
 Perun.socket  = require("socket")
 Perun.IsServer = true --DCS.isServer( )								-- TBD looks like DCS API error, always returning True
-Perun.UDPSourcePort  = Perun.UDPSourcePort + Perun.Instance - 1
+Perun.TCPSourcePort  = Perun.TCPTargetPort + 10 + Perun.Instance - 1
 
 -- ########### Helper function definitions ###########
 function stripChars(str)
@@ -153,9 +153,33 @@ Perun.SideID2Name = function(id)
 end
 
 -- ########### Main code ###########
+
 Perun.AddLog = function(text)
     -- Adds logs to DCS.log file
     net.log("Perun : ".. text)
+end
+
+Perun.ConnectToPerun = function ()
+	Perun.AddLog("Connecting to TCP server")
+	Perun.TCP = assert(Perun.socket.tcp())
+	Perun.TCP:settimeout(2000)
+	_, err = Perun.TCP:connect(Perun.TCPPerunHost, Perun.TCPTargetPort)
+	if err then
+		Perun.AddLog("TCP connection error : " .. err)
+	else
+		Perun.AddLog("Connected to TCP server")
+	end
+end
+
+Perun.SendPacket = function (data_id,temp)
+	_, err = Perun.TCP:send(temp) 
+
+	if err then
+		Perun.AddLog("Packed drop " .. data_id .. ", error: " .. err)
+		Perun.ConnectToPerun()
+	else
+		Perun.AddLog("Packet send " .. data_id)
+	end
 end
 
 Perun.UpdateJsonStatus = function()
@@ -184,8 +208,7 @@ Perun.Send = function(data_id, data_package)
     temp=net.lua2json(TempData)
     temp=stripChars(temp)
 
-    Perun.UDP:send(temp)
-    Perun.AddLog("Packet send "..data_id)
+    Perun.SendPacket(data_id,temp)
 end
 
 Perun.UpdateStatusPart = function(part_id, data_package)
@@ -259,6 +282,7 @@ end
 Perun.UpdateMission = function()
     -- Main function for mission information updates
     Perun.MissionData=DCS.getCurrentMission()
+	-- Perun.Send(4,Perun.MissionData)
 end
 
 Perun.LogChat = function(playerID,msg,all)
@@ -655,11 +679,7 @@ end
 
 -- ########### Finalize and set callbacks ###########
 if Perun.IsServer then
-	Perun.UDP = assert(Perun.socket.udp())
-	Perun.UDP:settimeout(0)
-	Perun.UDP:setsockname("*", Perun.UDPSourcePort)
-	Perun.UDP:setpeername("127.0.0.1",Perun.UDPTargetPort)
-
 	DCS.setUserCallbacks(Perun)
-	net.log("Loaded - Perun - VladMordock - " .. Perun.Version )
+	net.log("Perun by VladMordock was loaded: " .. Perun.Version )
+	Perun.ConnectToPerun()
 end

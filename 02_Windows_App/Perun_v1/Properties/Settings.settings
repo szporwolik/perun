@@ -29,17 +29,11 @@
     <Setting Name="MYSQL_Port" Type="System.String" Scope="User">
       <Value Profile="(Default)">3306</Value>
     </Setting>
-    <Setting Name="OTHER_LOTATC_FILE2" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="DCS_Server_Port" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">48620</Value>
     </Setting>
-    <Setting Name="OTHER_SRS_FILE2" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="OTHER_LOTATC_USE2" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="OTHER_SRS_USE2" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="DCS_Instance" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>

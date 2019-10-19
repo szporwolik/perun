@@ -3,20 +3,22 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 
-internal class DatabaseController
+public class DatabaseController
 {
-    public static string strMySQLConnectionString;              // MySQL connection string
+    public string strMySQLConnectionString;              // MySQL connection string
+    public MySqlConnection connMySQL;
+    public bool bStatus;
 
-    public static void SendToMySql(string strRawUDPFrame)
+    public void SendToMySql(string strRawUDPFrame)
     {
         // Main function to send data to mysql
         dynamic strUDPFrame = JsonConvert.DeserializeObject(strRawUDPFrame); // Deserialize raw data
         string strUDPFrameType = strUDPFrame.type;
         string strUDPFrameTimestamp = strUDPFrame.timestamp;
         string strUDPFrameInstance = strUDPFrame.instance;
-        string strUDPFramePayload = "";
-        string strUDPFramePayload_Perun = "";
-        string strSQLQueryTxt = "";
+        string strUDPFramePayload;
+        string strUDPFramePayload_Perun;
+        string strSQLQueryTxt;
         
 
         // Some frames may come without timestamp, use database currrent timestampe then
@@ -84,46 +86,58 @@ internal class DatabaseController
         }
 
         // Connect to mysql and execute sql
-        MySqlConnection connMySQL = new MySqlConnection(DatabaseController.strMySQLConnectionString);
         try
         {
-            Console.WriteLine("Sending data to MySQL - Begin");
-            connMySQL.Open();
+            connMySQL = new MySqlConnection(strMySQLConnectionString);
 
-            MySqlCommand cmdMySQL = new MySqlCommand(strSQLQueryTxt, connMySQL);
-            MySqlDataReader rdrMySQL = cmdMySQL.ExecuteReader();
+            try
+            {
+                Console.WriteLine("Sending data to MySQL - Begin");
+                connMySQL.Open();
+                bStatus = true;
+                MySqlCommand cmdMySQL = new MySqlCommand(strSQLQueryTxt, connMySQL);
+                MySqlDataReader rdrMySQL = cmdMySQL.ExecuteReader();
 
-            while (rdrMySQL.Read())
-            {
-                Console.WriteLine(rdrMySQL[0] + " -- " + rdrMySQL[1]);
+                while (rdrMySQL.Read())
+                {
+                    Console.WriteLine(rdrMySQL[0] + " -- " + rdrMySQL[1]);
+                }
+                rdrMySQL.Close();
+                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > MySQL updated, package type: " + strUDPFrameType);
             }
-            rdrMySQL.Close();
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#"+strUDPFrameInstance + " > MySQL updated, package type: " + strUDPFrameType);
-        }
-        catch (ArgumentException a_ex)
-        {
-            // General exception found
-            Console.WriteLine(a_ex.ToString());
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - package type: " + strUDPFrameType);
-        }
-        catch (MySqlException m_ex)
-        {
-            // MySQL exception found
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - package type: " + strUDPFrameType);
-            switch (m_ex.Number)
+            catch (ArgumentException a_ex)
             {
-                case 1042: // Unable to connect to any of the specified MySQL hosts (Check Server,Port)
-                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - unable to connect");
-                    break;
-                case 0: // Access denied (Check DB name,username,password)
-                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - access denied");
-                    break;
-                default:
-                    PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - " + m_ex.Number);
-                    break;
+                // General exception found
+                Console.WriteLine(a_ex.ToString());
+                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - package type: " + strUDPFrameType);
+                bStatus = false;
             }
+            catch (MySqlException m_ex)
+            {
+                // MySQL exception found
+                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - package type: " + strUDPFrameType);
+                switch (m_ex.Number)
+                {
+                    case 1042: // Unable to connect to any of the specified MySQL hosts (Check Server,Port)
+                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - unable to connect");
+                        break;
+                    case 0: // Access denied (Check DB name,username,password)
+                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - access denied");
+                        break;
+                    default:
+                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - " + m_ex.Number);
+                        break;
+                }
+                bStatus = false;
+            }
+            connMySQL.Close();
+            Console.WriteLine("Sending data to MySQL - Done");
         }
-        connMySQL.Close();
-        Console.WriteLine("Sending data to MySQL - Done");
+        catch (ArgumentException)
+        {
+            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "ERROR MySQL - wrong connection parameters");
+        }
+       
+
     }
 }

@@ -5,44 +5,71 @@
 
 # Perun for DCS World
 
-This toolset extracts data from DCS World server and sends information to the local Json file and UDP port for further processing. 
+Included lua script extracts data from DCS World multiplayer server and sends information to TCP port and JSON file for further processing. 
 
-Provided windows app puts received UDP packets to MySQL database. Additionaly Perun windows application can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
+Provided windows app puts received TCP packets to MySQL database; additionaly Perun windows application can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
 
-However, this software is intended to be used by experienced users - the output is Json data and MySQL; you will need to process/display it yourself.
+However, this software is intended to be used by experienced users - the output is MySQL data and/or JSON file; you will need to process/display it yourself.
 
-![Perun in action](https://i.imgur.com/ougQMPq.png)
+![Perun in action](https://i.imgur.com/vHw8Xu5.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
 
-### Prerequisites
+## Prerequisites
 
 Core:
  * For JSON Export:
    * DCS World stable or DCS World beta
  * **(Optional)** For MySQL Export:
-   * MySQL server with read/write access (tested with v5.7.21)
-   * .NET Framework 4.8
+   * MySQL database with read/write access (tested with v5.7.21)
+   * .NET Framework 4.8.0
 
 3rd party applications support:
  * for [DCS SRS](https://github.com/ciribob/DCS-SimpleRadioStandalone/releases) integration location of the clients-list.json file will be required (by default: SRS Server folder), "Auto Export List" option has to be enabled - see [SRS documentation](https://github.com/ciribob/DCS-SimpleRadioStandalone/wiki)
  * for [LotATC](https://www.lotatc.com/) you will need location of stats.json file and proper LotATC configuration with JSON data export enabled - see [LotATC documentation](https://www.lotatc.com/documentation/server_configuration.html)
 
-### Installing
+## Installing
 
-* Download latest [release](https://github.com/szporwolik/perun/releases), **optionaly** together with windows binary file for MySQL export - [DOWNLOAD](http://share.porwolik.com/ftp/perun/Perun.htm)
+* Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
-* **optionaly** Create MySQL server using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL)
-* **optionaly** Run the Win32 application
-	* set MySQL connection data
-	* point LotATC json file location
-	* point DCS SRS json file location
-	* click connect and leave the app running in the background
+* **optionaly** create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
+
+## Running
 * Start DCS World and host multiplayer session
   * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
-  * by default the UDP port 48620 is in use as target port
-* Data shall be filling your MySQL database
+  * by default the TCP port 48620 is in use as target port
+* **optionaly** run the Win32 application
+	* set MySQL connection data
+	* **optionaly** point LotATC json file location
+	* **optionaly** point DCS SRS json file location
+	* click connect and leave the app running in the background
+	* **data shall now be filling your MySQL database**
 
-## Data packets
+### Windows APP - command line arguments (for expert users)
+Windows app supports command line arguments, what may be handy in case of multiple instance of DCS servers running at the same machine.
+
+The following arguments are accepted (keep the order!):
+* server port (shall be the same as in the lua file!)
+* instance ID (shall be the same as in the lua file!)
+* path to SRS client-list.json
+* path to LotATC stats.json
+
+Example for windows shortcut:
+```
+C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved Games\DCS\Mods\tech\LotAtc\stats.json"
+```
+
+# API documentation (for expert users)
+## MySQL database structure
+* table: pe_DataMissionHashes - holds mission hashes, unique hashes created per each mission start at server
+* table: pe_DataPlayers - holds players UCIDs together with last login information
+* table: pe_DataRaw - holds raw data received from perun windows app, containing debug/version information together with DCS SRS and LotATC data
+* table: pe_DataTypes - names of all model depende class names detected in DCS
+* table: pe_LogChat - holds chat history
+* table: pe_LogEvent - holds event history
+* table: pe_LogLogins - holds login to server event history
+* table: pe_LogStats - holds static information
+
+## Data packets - send from lua to TCP port 
 * ```ID: 1```, contains version/diagnostic information
 * ```ID: 2```, contains status data in the following sections
 	* mission - minimal information about mission
@@ -50,19 +77,23 @@ Core:
 * ```ID: 3```, available slots list and coalitions
 	* coalitions - available coalitions
 	* slots - available slots
-* ```ID: 4```, stores mission data **WIP: not yet implemented**
+* ```ID: 4```, stores mission data 
 * ```ID: 50```, chat event
 * ```ID: 51```, game event
-* ```ID: 52```, player stats **WIP: not yet implemented**
+* ```ID: 52```, player stats 
 * ```ID: 53```, player login to DCS server
 * ```ID: 100```, DCS SRS's client-list.json
 * ```ID: 101```, LotATC's stats.json
 
+# Project information
 ## Built With
 
 * [VisualStudio 2017 Community](https://visualstudio.microsoft.com/vs/community/) 
 * [Notepad++](https://notepad-plus-plus.org/)
-* [TortoiseGit](https://tortoisegit.org/)
+
+## used 3rd party resources
+
+* [Tango Icon Library](http://tango.freedesktop.org/Tango_Icon_Library)
 
 ## Contributing
 
