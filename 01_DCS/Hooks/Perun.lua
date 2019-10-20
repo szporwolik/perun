@@ -9,18 +9,18 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
 Perun.RefreshStatus = 15 												-- (int) base refresh rate in seconds to send status update (values lower than 60 may affect performance!)
 Perun.RefreshMission = 60 												-- (int) refresh rate in seconds to send mission information  (values lower than 60 may affect performance!)
-Perun.TCPTargetPort = 48621												-- (int) TCP port to send data to
+Perun.TCPTargetPort = 48622												-- (int) TCP port to send data to
 Perun.TCPPerunHost = "localhost"										-- (string) IP adress of the Perun instance or "localhost"
-Perun.Instance = 1														-- (int) Id number of instance (if multiple DCS instances are to run at the same PC)
+Perun.Instance = 2														-- (int) Id number of instance (if multiple DCS instances are to run at the same PC)
 Perun.JsonStatusLocation = "Scripts\\Json\\" 							-- (string) folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
-Perun.MOTD_L1 = "Welcome to our server!"								-- (string) Message send to players connecting the server - Line 1
-Perun.MOTD_L2 = "Please use SRS radio."									-- (string) Message send to players connecting the server - Line 2
+Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"						-- (string) Message send to players connecting the server - Line 1
+Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"		-- (string) Message send to players connecting the server - Line 2
 
 -- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
 
 
 -- Variable init
-Perun.Version = "v0.8.0"
+Perun.Version = "v0.8.2"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -30,15 +30,16 @@ Perun.StatDataLastType = {}
 Perun.MissionHash=""
 Perun.lastSentStatus =0
 Perun.lastSentMission =0
+Perun.lastSentKeepAlive =0
+Perun.lastReconnect = 0
 Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
 Perun.socket  = require("socket")
 Perun.IsServer = true --DCS.isServer( )								-- TBD looks like DCS API error, always returning True
-Perun.TCPSourcePort  = Perun.TCPTargetPort + 10 + Perun.Instance - 1
 
 -- ########### Helper function definitions ###########
 function stripChars(str)
     -- remove accents characters from string
-    -- via https://stackoverflow.com/questions/50459102/replace-accented-characters-in-string-to-standard-with-lua TBD: rewrite
+    -- via https://stackoverflow.com/questions/50459102/replace-accented-characters-in-string-to-standard-with-lua
     tableAccents = {}
     tableAccents["à"] = "a"
     tableAccents["á"] = "a"
@@ -152,34 +153,16 @@ Perun.SideID2Name = function(id)
     return sides[id]
 end
 
+Perun.UpdateStatusPart = function(part_id, data_package)
+    -- Helper for status update container
+    Perun.StatusData[part_id] = data_package
+end
+
 -- ########### Main code ###########
 
 Perun.AddLog = function(text)
     -- Adds logs to DCS.log file
     net.log("Perun : ".. text)
-end
-
-Perun.ConnectToPerun = function ()
-	Perun.AddLog("Connecting to TCP server")
-	Perun.TCP = assert(Perun.socket.tcp())
-	Perun.TCP:settimeout(2000)
-	_, err = Perun.TCP:connect(Perun.TCPPerunHost, Perun.TCPTargetPort)
-	if err then
-		Perun.AddLog("TCP connection error : " .. err)
-	else
-		Perun.AddLog("Connected to TCP server")
-	end
-end
-
-Perun.SendPacket = function (data_id,temp)
-	_, err = Perun.TCP:send(temp) 
-
-	if err then
-		Perun.AddLog("Packed drop " .. data_id .. ", error: " .. err)
-		Perun.ConnectToPerun()
-	else
-		Perun.AddLog("Packet send " .. data_id)
-	end
 end
 
 Perun.UpdateJsonStatus = function()
@@ -195,10 +178,28 @@ Perun.UpdateJsonStatus = function()
     perun_export = io.open(Perun.JsonStatusLocation .. "perun_status_data.json", "w")
     perun_export:write(_temp .. "\n")
     perun_export:close()
+	Perun.AddLog("Updated JSON")
 end
 
-Perun.Send = function(data_id, data_package)
-    -- Sends data package
+Perun.ConnectToPerun = function ()
+	-- Connects to Perun server
+	Perun.AddLog("Connecting to TCP server")
+	Perun.TCP = assert(Perun.socket.tcp())
+	Perun.TCP:settimeout(5000)
+	
+	_, err = Perun.TCP:connect(Perun.TCPPerunHost, Perun.TCPTargetPort)
+	if err then
+		Perun.AddLog("TCP connection error : " .. err)
+	else
+		Perun.AddLog("Connected to TCP server")
+		Perun.TCP:setoption("keepalive")
+		Perun.lastReconnect = _now
+	end
+end
+
+Perun.SendToPerun = function(data_id, data_package)
+    -- Prepares and sends data package
+	-- Prepare data
     TempData={}
     TempData["type"]=data_id
     TempData["payload"]=data_package
@@ -208,12 +209,25 @@ Perun.Send = function(data_id, data_package)
     temp=net.lua2json(TempData)
     temp=stripChars(temp)
 
-    Perun.SendPacket(data_id,temp)
-end
-
-Perun.UpdateStatusPart = function(part_id, data_package)
-    -- Helper for status update container
-    Perun.StatusData[part_id] = data_package
+    -- TCP Part - sending
+	Perun.AddLog("Sending packet: " .. data_id)
+	intStatus = nil
+	intTries =0
+	err=nil
+	while intStatus == nil and intTries < 3 do
+		intStatus, err = Perun.TCP:send(temp) 
+		if err then
+			Perun.AddLog("Packed not send : " .. data_id .. " , error: " .. err .. ", tries: " .. intTries)
+			Perun.ConnectToPerun()
+		else
+			Perun.AddLog("Packet send : " .. data_id .. " , tries:" .. intTries)
+		end
+		intTries=intTries+1
+		err = nil
+	end
+	if err then
+		Perun.AddLog("Packed dropped : " .. data_id)
+	end 
 end
 
 Perun.UpdateStatus = function()
@@ -223,14 +237,14 @@ Perun.UpdateStatus = function()
 		-- Update version data
 		Perun.ServerData['v_dcs_hook']=Perun.Version
 
-		-- Update server data
+		-- Update clients data data
 		_table=net.get_player_list()
 		_count = 0
 		for _ in pairs(_table) do _count = _count + 1 end
 		Perun.ServerData['c_players']=_count
 
 		-- Send
-		Perun.Send(1,Perun.ServerData)
+		Perun.SendToPerun(1,Perun.ServerData)
 
     -- Status data - update all subsections
 		-- 1 - Mission
@@ -253,7 +267,7 @@ Perun.UpdateStatus = function()
 		Perun.UpdateStatusPart("players",_temp2)
 
 		-- Send
-		Perun.Send(2,Perun.StatusData)
+		Perun.SendToPerun(2,Perun.StatusData)
 
     -- Update slots data
 		Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
@@ -275,18 +289,18 @@ Perun.UpdateStatus = function()
 			
 		end
 		-- Send
-		Perun.Send(3,Perun.SlotsData)
+		Perun.SendToPerun(3,Perun.SlotsData)
 end
 
 
 Perun.UpdateMission = function()
     -- Main function for mission information updates
     Perun.MissionData=DCS.getCurrentMission()
-	-- Perun.Send(4,Perun.MissionData)
+	-- Perun.SendToPerun(4,Perun.MissionData) -- TBD can cause data transmission troubles
 end
 
 Perun.LogChat = function(playerID,msg,all)
-    -- Log chat messages
+    -- Logs chat messages
 
     data={}
     data['player']= net.get_player_info(playerID, "name")
@@ -296,11 +310,11 @@ Perun.LogChat = function(playerID,msg,all)
     data['datetime']=os.date('%Y-%m-%d %H:%M:%S')
     data['missionhash']=Perun.MissionHash
 
-    Perun.Send(50,data)
+    Perun.SendToPerun(50,data)
 end
 
 Perun.LogEvent = function(log_type,log_content,log_arg_1,log_arg_2)
-    -- Log chat messages
+    -- Logs chat messages
 
     data={}
     data['log_type']= log_type
@@ -310,7 +324,7 @@ Perun.LogEvent = function(log_type,log_content,log_arg_1,log_arg_2)
     data['log_datetime']=os.date('%Y-%m-%d %H:%M:%S')
     data['log_missionhash']=Perun.MissionHash
 
-    Perun.Send(51,data)
+    Perun.SendToPerun(51,data)
 end
 
 Perun.LogStatsCount = function(argPlayerID,argAction,argType)
@@ -358,6 +372,7 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argType)
 		Perun.StatData[_ucid]['ps_ejections']=Perun.StatData[_ucid]['ps_ejections']+1
 	elseif  argAction == "pilot_death" then
 		if DCS.getModelTime() > 300 then
+			-- we do not track deaths during first 5 minutes due to spawning issues TBD
 			Perun.StatData[_ucid]['ps_deaths']=Perun.StatData[_ucid]['ps_deaths']+1
 		end
 	elseif  argAction == "friendly_fire" then
@@ -453,7 +468,7 @@ Perun.LogStats = function(playerID)
     data['stat_datetime']=os.date('%Y-%m-%d %H:%M:%S')
     data['stat_missionhash']=Perun.MissionHash
 
-    Perun.Send(52,data)
+    Perun.SendToPerun(52,data)
 end
 
 Perun.LogLogin = function(playerID)
@@ -465,7 +480,7 @@ Perun.LogLogin = function(playerID)
     data['login_name']=net.get_player_info(playerID, 'name')
     data['login_datetime']=os.date('%Y-%m-%d %H:%M:%S')
 
-    Perun.Send(53,data)
+    Perun.SendToPerun(53,data)
 end
 
 --- ########### Event callbacks ###########
@@ -510,6 +525,12 @@ Perun.onSimulationFrame = function()
 
         Perun.UpdateStatus()
     end
+	
+	-- Send keepalive
+	if _now > Perun.lastSentKeepAlive + 5 then
+		Perun.lastSentKeepAlive = _now
+		Perun.SendToPerun(0,nil)
+	end
 end
 
 Perun.onPlayerStart = function (id)
