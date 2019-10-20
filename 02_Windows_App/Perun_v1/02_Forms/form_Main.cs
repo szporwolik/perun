@@ -187,6 +187,9 @@ namespace Perun_v1
 
             // Set title bar
             this.Text = "[#"+ con_txt_dcs_instance.Text + "] " + Globals.strPerunTitleText;
+
+            // Set notification icon text
+            trayIconMain.Text = this.Text;
         }
 
         private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
@@ -232,6 +235,7 @@ namespace Perun_v1
 
             // Set title bar
             this.Text = Globals.strPerunTitleText;
+            trayIconMain.Text = this.Text;
 
             // Set globals
             Globals.intInstanceId = 0;
@@ -298,16 +302,6 @@ namespace Perun_v1
             {
                 //do nothing
             }
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            // Try to run of 2nd instance
-            if (m.Msg == NativeMethods.WM_SHOWME)
-            {
-                form_Main_BringFromTray();
-            }
-            base.WndProc(ref m);
         }
 
         private void form_Main_SendToTray()

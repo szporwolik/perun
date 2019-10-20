@@ -129,7 +129,6 @@
     <Compile Include="01_Classes\Globals.cs" />
     <Compile Include="01_Classes\DatabaseController.cs" />
     <Compile Include="01_Classes\PerunHelper.cs" />
-    <Compile Include="01_Classes\NativeMethods.cs" />
     <Compile Include="02_Forms\form_Main.cs">
       <SubType>Form</SubType>
     </Compile>
