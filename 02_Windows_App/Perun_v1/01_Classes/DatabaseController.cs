@@ -37,7 +37,7 @@ public class DatabaseController
             strUDPFrame.payload["v_win"] = "v" + Globals.strPerunVersion; // Inject app version information
         }
 
-        // Specific SQL 
+        // Specific SQL per each frame type
         if (strUDPFrameType == "50")
         {
             // Add entry to chat log
