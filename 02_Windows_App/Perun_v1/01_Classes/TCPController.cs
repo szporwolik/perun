@@ -5,49 +5,49 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 
 public class TCPController
 {
     // Main class for TCP listener
-    public int intListenPort;        // Port to connect to
-    public bool bDone;            // Helper to exit main loop without killing thread
-    public string[] arrLogHistory;   // Log history for GUI
-    public string[] arrSendBuffer;   // Mysql send buffer
-    public Thread thrTCPListener;    // Seperate thread for TCP
-    public bool bStatus;             // TCP connecion status
+    public int intListenPort;           // Port to connect to
+    public bool bCloseConnection;       // Helper to exit main loop without killing thread
+    public string[] arrGUILogHistory;   // Log history for GUI
+    public string[] arrMySQLSendBuffer; // MySQL send buffer
+    public Thread thrTCPListener;       // Seperate thread for TCP
 
     public void Create(int par_intListenPort, ref string[] par_arrLogHistory, ref string[] par_arrSendBuffer)
     {
-        // Create class
+        // Create class and map creation arguments to class
         intListenPort = par_intListenPort;
-        arrLogHistory = par_arrLogHistory;
-        arrSendBuffer = par_arrSendBuffer;
-        bDone = false;
-        bStatus = false;
+        arrGUILogHistory = par_arrLogHistory;
+        arrMySQLSendBuffer = par_arrSendBuffer;
+        bCloseConnection = false;
     }
 
     public void StopListen()
     {
-        // Finish listening
-        bDone = true;
-        bStatus = false;
+        // Stop listening
+        bCloseConnection = true;
 
-        for (int i = 0; i < arrSendBuffer.Length - 1; i++)
+        // Clear send buffer
+        for (int i = 0; i < arrMySQLSendBuffer.Length - 1; i++)
         {
-            arrSendBuffer[i] = null;
+            arrMySQLSendBuffer[i] = null;
         }
     }
 
     public void StartListen()
     {
-        NetworkStream ns=null;
-        TcpClient tcpClient=null;
+        // Start listening
+        NetworkStream nsReadStream = null;
+        TcpClient tcpClient = null;
+        bool bTCPConnectionOnline = false;
 
-        while (!bDone)
+        // Main loop - do until diconnect button is clicked
+        while (!bCloseConnection)
         {
             Console.WriteLine("TCP Listen start");
-            TcpListener tcpServer = new TcpListener(IPAddress.Any, intListenPort); ;    // Listener object 
+            TcpListener tcpServer = new TcpListener(IPAddress.Any, intListenPort); ;    // Create listener object 
 
             try
             {
@@ -56,80 +56,106 @@ public class TCPController
 
                 // Start the main loop
                 tcpServer.Start();
-                bStatus = true;
-                while (!bDone)
+
+                // While user do not clicked Disconnect button
+                while (!bCloseConnection)
                 {
                     // Start listening
+                    Console.WriteLine("TCP: Waiting for connection");
+                    Globals.bClientConnected = false;
 
-                    Console.WriteLine("TCP: Waiting for packet");
-                    tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
-                    ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
-                    //ns.ReadTimeout = 100;
-
-                    while (tcpClient.Connected && !bDone)  //while the client is connected, we look for incoming messages
+                    // Wait for pending connection
+                    if (tcpServer.Pending())
                     {
-                        StringBuilder CompleteMessage = new StringBuilder();
+                        Console.WriteLine("TCP: Connected");
+                        bTCPConnectionOnline = true;
+                        tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
+                        nsReadStream = tcpClient.GetStream(); //networkstream is used to send/receive messages
+                        nsReadStream.ReadTimeout = 6000;
+                        tcpClient.ReceiveTimeout = 6000;
 
-                        if (ns.CanRead)
+
+                        while (tcpClient.Connected && !bCloseConnection && bTCPConnectionOnline)  //while the client is connected, we look for incoming messages
                         {
-                            byte[] ReadBuffer = new byte[1024];
-                            CompleteMessage = new StringBuilder();
-                            int numberOfBytesRead = 0;
+                            StringBuilder CompleteMessage = new StringBuilder();
+                            Globals.bClientConnected = true;
 
-                            // Incoming message may be larger than the buffer size.
-                            do
+                            if (nsReadStream.CanRead)
                             {
-                                numberOfBytesRead = ns.Read(ReadBuffer, 0, ReadBuffer.Length);
-                                CompleteMessage.AppendFormat("{0}", Encoding.ASCII.GetString(ReadBuffer, 0, numberOfBytesRead));
-                            }
-                            while (ns.DataAvailable && !bDone);
-                        }
-                        strReceivedData = CompleteMessage.ToString();
-                        Console.WriteLine("Sender: {0} Payload: {1}", null, strReceivedData);
+                                Console.WriteLine("TCP: Can read");
+                                byte[] ReadBuffer = new byte[1024];
+                                CompleteMessage = new StringBuilder();
+                                int numberOfBytesRead = 0;
 
-                        try
-                        {
-                            dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
-                            string strRawTCPFrameType = dynamicRawTCPFrame.type;
-
-                            PerunHelper.LogHistoryAdd(ref arrLogHistory, "TCP packet received, type: " + strRawTCPFrameType);
-
-                            // Add to mySQL send buffer (find first empty slot)
-                            for (int i = 0; i < arrSendBuffer.Length - 1; i++)
-                            {
-                                if (arrSendBuffer[i] == null)
+                                // Incoming message may be larger than the buffer size.
+                                do
                                 {
-                                    arrSendBuffer[i] = strReceivedData;
-                                    break;
+                                    Console.WriteLine("TCP: Read");
+                                    numberOfBytesRead = nsReadStream.Read(ReadBuffer, 0, ReadBuffer.Length);
+                                    CompleteMessage.AppendFormat("{0}", Encoding.ASCII.GetString(ReadBuffer, 0, numberOfBytesRead));
+                                    if (numberOfBytesRead == 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                                while (nsReadStream.DataAvailable && nsReadStream.CanRead && tcpClient.Connected);
+                            }
+                            strReceivedData = CompleteMessage.ToString();
+                            Console.WriteLine("Sender: {0} Payload: {1}", null, strReceivedData);
+
+                            try
+                            {
+                                if (strReceivedData != "")
+                                {
+                                    dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
+                                    string strRawTCPFrameType = dynamicRawTCPFrame.type;
+
+                                    PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
+
+                                    // Add to mySQL send buffer (find first empty slot)
+                                    if (Int32.Parse(strRawTCPFrameType) != 0)
+                                    {
+                                        for (int i = 0; i < arrMySQLSendBuffer.Length - 1; i++)
+                                        {
+                                            if (arrMySQLSendBuffer[i] == null)
+                                            {
+                                                arrMySQLSendBuffer[i] = strReceivedData;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    bTCPConnectionOnline = false;
                                 }
                             }
-                        }
-                        catch(Exception e)
-                        {
-                            Console.WriteLine(e.ToString());
-                            PerunHelper.LogHistoryAdd(ref arrLogHistory, "TCP ERROR incorrect JSON");
+                            catch (Exception e)
+                            {
+                                Globals.intGameErros++;
+                                Console.WriteLine(e.ToString());
+                                PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP ERROR incorrect JSON > " + e.Message);
+                                bTCPConnectionOnline = false;
+                            }
                         }
                     }
-
+                    System.Threading.Thread.Sleep(500);
                 }
                 tcpServer.Stop();
-                bStatus = false;
             }
             catch (Exception e)
             {
-                // General exception found
-                if (e.HResult != -2147467259)
-                {
-                    Console.WriteLine(e.ToString());
-                    PerunHelper.LogHistoryAdd(ref arrLogHistory, "TCP error - connection closed or port in use");
-                }
-              
+                Globals.intGameErros++;
+                Console.WriteLine(e.ToString());
+                PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP error - connection closed or port in use > " + e.Message);
+                bTCPConnectionOnline = false;
             }
 
-            if (!(ns is null))
+            // Clean up and prepare for next connection
+            if (!(nsReadStream is null))
             {
-                ns.Flush();
-                ns.Close();
+                nsReadStream.Flush();
+                nsReadStream.Close();
             }
             if (!(tcpClient is null))
             {
@@ -139,7 +165,6 @@ public class TCPController
             {
                 tcpServer.Stop();
             }
-            bStatus = false;
             Console.WriteLine("TCP listen stop");
         }
     }

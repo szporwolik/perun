@@ -34,7 +34,7 @@
             this.con_Button_Listen_ON = new System.Windows.Forms.Button();
             this.con_Button_Listen_OFF = new System.Windows.Forms.Button();
             this.con_GroupBox_1 = new System.Windows.Forms.GroupBox();
-            this.tim_1000ms = new System.Windows.Forms.Timer(this.components);
+            this.tim_GUI = new System.Windows.Forms.Timer(this.components);
             this.con_GroupBox_2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.con_txt_mysql_port = new System.Windows.Forms.TextBox();
@@ -57,22 +57,21 @@
             this.trayIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.openFileDialog_SRS = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog_LotATC = new System.Windows.Forms.OpenFileDialog();
-            this.tim_10000ms = new System.Windows.Forms.Timer(this.components);
-            this.tim_200ms = new System.Windows.Forms.Timer(this.components);
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.tim_3rdparties = new System.Windows.Forms.Timer(this.components);
+            this.tim_MySQL = new System.Windows.Forms.Timer(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.con_txt_dcs_instance = new System.Windows.Forms.MaskedTextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.con_txt_dcs_server_port = new System.Windows.Forms.MaskedTextBox();
-            this.con_img_lotATC = new System.Windows.Forms.PictureBox();
-            this.con_img_srs = new System.Windows.Forms.PictureBox();
-            this.con_img_dcs = new System.Windows.Forms.PictureBox();
-            this.con_img_db = new System.Windows.Forms.PictureBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
+            this.con_img_lotATC = new System.Windows.Forms.PictureBox();
+            this.con_img_srs = new System.Windows.Forms.PictureBox();
+            this.con_img_dcs = new System.Windows.Forms.PictureBox();
+            this.con_img_db = new System.Windows.Forms.PictureBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -89,10 +88,11 @@
             this.con_List_Received.FormattingEnabled = true;
             this.con_List_Received.Items.AddRange(new object[] {
             "Not connected"});
-            this.con_List_Received.Location = new System.Drawing.Point(6, 19);
+            this.con_List_Received.Location = new System.Drawing.Point(11, 19);
             this.con_List_Received.Name = "con_List_Received";
-            this.con_List_Received.Size = new System.Drawing.Size(307, 147);
+            this.con_List_Received.Size = new System.Drawing.Size(307, 134);
             this.con_List_Received.TabIndex = 0;
+            this.con_List_Received.SelectedIndexChanged += new System.EventHandler(this.con_List_Received_SelectedIndexChanged);
             // 
             // con_Button_Listen_ON
             // 
@@ -118,17 +118,17 @@
             // con_GroupBox_1
             // 
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
-            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 369);
+            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 385);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
-            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 176);
+            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 162);
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "Data log";
             // 
-            // tim_1000ms
+            // tim_GUI
             // 
-            this.tim_1000ms.Interval = 1000;
-            this.tim_1000ms.Tick += new System.EventHandler(this.timer1_Tick);
+            this.tim_GUI.Interval = 200;
+            this.tim_GUI.Tick += new System.EventHandler(this.Tim_GUI_Tick);
             // 
             // con_GroupBox_2
             // 
@@ -327,19 +327,14 @@
             // 
             this.openFileDialog_LotATC.FileName = "openFileDialog1";
             // 
-            // tim_10000ms
+            // tim_3rdparties
             // 
-            this.tim_10000ms.Interval = 30000;
-            this.tim_10000ms.Tick += new System.EventHandler(this.tim_10000ms_Tick);
+            this.tim_3rdparties.Interval = 30000;
+            this.tim_3rdparties.Tick += new System.EventHandler(this.tim_3rdparties_Tick);
             // 
-            // tim_200ms
+            // tim_MySQL
             // 
-            this.tim_200ms.Tick += new System.EventHandler(this.tim_200ms_Tick);
-            // 
-            // notifyIcon1
-            // 
-            this.notifyIcon1.Text = "notifyIcon1";
-            this.notifyIcon1.Visible = true;
+            this.tim_MySQL.Tick += new System.EventHandler(this.Tim_MySQL_Tick);
             // 
             // groupBox1
             // 
@@ -386,8 +381,53 @@
             this.con_txt_dcs_server_port.Size = new System.Drawing.Size(207, 20);
             this.con_txt_dcs_server_port.TabIndex = 3;
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(21, 369);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(61, 13);
+            this.label9.TabIndex = 1;
+            this.label9.Text = "Database";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(117, 369);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(39, 13);
+            this.label10.TabIndex = 14;
+            this.label10.Text = "Game";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(205, 369);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(32, 13);
+            this.label11.TabIndex = 15;
+            this.label11.Text = "SRS";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(282, 369);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(49, 13);
+            this.label12.TabIndex = 16;
+            this.label12.Text = "LotATC";
+            // 
             // con_img_lotATC
             // 
+            this.con_img_lotATC.Image = global::Perun_v1.Properties.Resources.status_disconnected;
             this.con_img_lotATC.Location = new System.Drawing.Point(292, 335);
             this.con_img_lotATC.Name = "con_img_lotATC";
             this.con_img_lotATC.Size = new System.Drawing.Size(29, 28);
@@ -397,7 +437,8 @@
             // 
             // con_img_srs
             // 
-            this.con_img_srs.Location = new System.Drawing.Point(208, 335);
+            this.con_img_srs.Image = global::Perun_v1.Properties.Resources.status_disconnected;
+            this.con_img_srs.Location = new System.Drawing.Point(207, 335);
             this.con_img_srs.Name = "con_img_srs";
             this.con_img_srs.Size = new System.Drawing.Size(29, 28);
             this.con_img_srs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -406,7 +447,8 @@
             // 
             // con_img_dcs
             // 
-            this.con_img_dcs.Location = new System.Drawing.Point(135, 335);
+            this.con_img_dcs.Image = global::Perun_v1.Properties.Resources.status_disconnected;
+            this.con_img_dcs.Location = new System.Drawing.Point(122, 335);
             this.con_img_dcs.Name = "con_img_dcs";
             this.con_img_dcs.Size = new System.Drawing.Size(29, 28);
             this.con_img_dcs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -416,48 +458,13 @@
             // con_img_db
             // 
             this.con_img_db.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.con_img_db.Location = new System.Drawing.Point(69, 335);
+            this.con_img_db.Image = global::Perun_v1.Properties.Resources.status_disconnected;
+            this.con_img_db.Location = new System.Drawing.Point(37, 335);
             this.con_img_db.Name = "con_img_db";
             this.con_img_db.Size = new System.Drawing.Size(29, 28);
             this.con_img_db.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.con_img_db.TabIndex = 10;
             this.con_img_db.TabStop = false;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(15, 335);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(56, 13);
-            this.label9.TabIndex = 1;
-            this.label9.Text = "Database:";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(101, 335);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(38, 13);
-            this.label10.TabIndex = 14;
-            this.label10.Text = "Game:";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(170, 335);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(32, 13);
-            this.label11.TabIndex = 15;
-            this.label11.Text = "SRS:";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(243, 335);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(46, 13);
-            this.label12.TabIndex = 16;
-            this.label12.Text = "LotATC:";
             // 
             // form_Main
             // 
@@ -484,10 +491,9 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "form_Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Perun for DCS World";
+            this.Text = "Perun for DCS";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.form_Main_FormClosing);
             this.Load += new System.EventHandler(this.form_Main_Load);
             this.con_GroupBox_1.ResumeLayout(false);
@@ -512,7 +518,7 @@
         private System.Windows.Forms.Button con_Button_Listen_ON;
         private System.Windows.Forms.Button con_Button_Listen_OFF;
         private System.Windows.Forms.GroupBox con_GroupBox_1;
-        private System.Windows.Forms.Timer tim_1000ms;
+        private System.Windows.Forms.Timer tim_GUI;
         private System.Windows.Forms.GroupBox con_GroupBox_2;
         private System.Windows.Forms.GroupBox con_GroupBox_3;
         private System.Windows.Forms.TextBox con_txt_mysql_database;
@@ -533,11 +539,10 @@
         private System.Windows.Forms.NotifyIcon trayIconMain;
         private System.Windows.Forms.OpenFileDialog openFileDialog_SRS;
         private System.Windows.Forms.OpenFileDialog openFileDialog_LotATC;
-        private System.Windows.Forms.Timer tim_10000ms;
+        private System.Windows.Forms.Timer tim_3rdparties;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox con_txt_mysql_port;
-        private System.Windows.Forms.Timer tim_200ms;
-        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.Timer tim_MySQL;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.MaskedTextBox con_txt_dcs_server_port;
         private System.Windows.Forms.Label label7;

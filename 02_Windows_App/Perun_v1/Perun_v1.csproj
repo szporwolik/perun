@@ -34,7 +34,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>Perun.htm</WebPage>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>0.8.1.%2a</ApplicationVersion>
+    <ApplicationVersion>0.8.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -124,11 +124,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="01_Classes\LogController.cs" />
     <Compile Include="01_Classes\TCPController.cs" />
     <Compile Include="01_Classes\Globals.cs" />
     <Compile Include="01_Classes\DatabaseController.cs" />
     <Compile Include="01_Classes\PerunHelper.cs" />
-    <Compile Include="01_Classes\NativeMethods.cs" />
     <Compile Include="02_Forms\form_Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -182,6 +182,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="03_Resources\perun_logo.ico" />
+    <None Include="Resources\status-connectedx.png" />
+    <None Include="Resources\status-disconnected-game.png" />
+    <None Include="Resources\status-disconnected-error.png" />
+    <None Include="Resources\status-disconnected.png" />
+    <None Include="Resources\status-connected.png" />
     <None Include="Resources\ico_error.png" />
     <None Include="Resources\ico_srs.png" />
     <None Include="Resources\ico_lotatc.png" />

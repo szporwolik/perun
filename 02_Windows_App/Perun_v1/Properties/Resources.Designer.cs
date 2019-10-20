@@ -63,9 +63,9 @@ namespace Perun_v1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ico_db {
+        internal static System.Drawing.Bitmap status_connected {
             get {
-                object obj = ResourceManager.GetObject("ico_db", resourceCulture);
+                object obj = ResourceManager.GetObject("status_connected", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace Perun_v1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ico_error {
+        internal static System.Drawing.Bitmap status_connected_error {
             get {
-                object obj = ResourceManager.GetObject("ico_error", resourceCulture);
+                object obj = ResourceManager.GetObject("status_connected_error", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace Perun_v1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ico_game {
+        internal static System.Drawing.Bitmap status_disconnected {
             get {
-                object obj = ResourceManager.GetObject("ico_game", resourceCulture);
+                object obj = ResourceManager.GetObject("status_disconnected", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,19 +93,9 @@ namespace Perun_v1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ico_lotatc {
+        internal static System.Drawing.Bitmap status_disconnected_error {
             get {
-                object obj = ResourceManager.GetObject("ico_lotatc", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap ico_srs {
-            get {
-                object obj = ResourceManager.GetObject("ico_srs", resourceCulture);
+                object obj = ResourceManager.GetObject("status_disconnected_error", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

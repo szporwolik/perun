@@ -20,7 +20,7 @@ Core:
  * For JSON Export:
    * DCS World stable or DCS World beta
  * **(Optional)** For MySQL Export:
-   * MySQL database with read/write access (tested with v5.7.21)
+   * MySQL database with read/write access running at min. 5.7 server (tested with v5.7.21; native JSON support is required)
    * .NET Framework 4.8.0
 
 3rd party applications support:
@@ -71,16 +71,24 @@ C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved
 
 ## Data packets - send from lua to TCP port 
 * ```ID: 1```, contains version/diagnostic information
+	* perun version - for server administration usage
+	* player count - actual number of connected players
 * ```ID: 2```, contains status data in the following sections
-	* mission - minimal information about mission
+	* mission name - name of the mission file
+	* model time - simulation time
+	* real time - real time
+	* pause - information if server is paused
+	* multiplayer - information if this is multiplayer game (always true for dedicated server usage)
+	* theather - information about area of operation
+	* weather - basic weather information
 	* players - connected players
 * ```ID: 3```, available slots list and coalitions
 	* coalitions - available coalitions
 	* slots - available slots
-* ```ID: 4```, stores mission data 
+* ```ID: 4```, stores mission data ; idea is to have whole DCS.getCurrentMission() result - currenlty commented out due to performance issues
 * ```ID: 50```, chat event
 * ```ID: 51```, game event
-* ```ID: 52```, player stats 
+* ```ID: 52```, player stats ; note that as DSC native stats are not reliable, seperate stats couting methods are used
 * ```ID: 53```, player login to DCS server
 * ```ID: 100```, DCS SRS's client-list.json
 * ```ID: 101```, LotATC's stats.json
