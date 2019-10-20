@@ -10,13 +10,11 @@ namespace Perun_v1
         /// Main entry point to app
         /// </summary>
 
-        // Mutex to block multiple instances
-        //static Mutex mutex = new Mutex(true, "{5a710507-92e9-4664-9b91-918b8b82f107}");
-
         [STAThread]
 
         static void Main()
         {
+               // Main entry point to the app
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
