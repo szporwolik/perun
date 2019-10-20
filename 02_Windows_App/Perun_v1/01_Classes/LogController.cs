@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 class LogController
 {
-    // TBD - via https://stackoverflow.com/questions/20185015/how-to-write-log-file-in-c
+    // TBD - done via https://stackoverflow.com/questions/20185015/how-to-write-log-file-in-c
     public static void WriteLog(string strLog)
     {
         StreamWriter log;
@@ -32,7 +32,7 @@ class LogController
             }
             catch
             {
-
+                // Do nothing
             }
         }
         try
@@ -43,7 +43,7 @@ class LogController
         }
         catch
         {
-
+            // Do nothing
         }
     }
 }
