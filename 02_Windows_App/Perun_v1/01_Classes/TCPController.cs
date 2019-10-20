@@ -43,7 +43,7 @@ public class TCPController
     {
         NetworkStream ns=null;
         TcpClient tcpClient=null;
-
+        bool bTCPConnectionOnline = false;
         while (!bDone)
         {
             Console.WriteLine("TCP Listen start");
@@ -66,13 +66,14 @@ public class TCPController
                     if (tcpServer.Pending())
                     {
                         Console.WriteLine("TCP: Connected");
+                        bTCPConnectionOnline = true;
                         tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
                         ns = tcpClient.GetStream(); //networkstream is used to send/receive messages
                         ns.ReadTimeout = 6000;
                         tcpClient.ReceiveTimeout = 6000;
       
 
-                        while (tcpClient.Connected && !bDone)  //while the client is connected, we look for incoming messages
+                        while (tcpClient.Connected && !bDone && bTCPConnectionOnline)  //while the client is connected, we look for incoming messages
                         {
                             StringBuilder CompleteMessage = new StringBuilder();
                             Globals.bClientConnected = true;
@@ -102,22 +103,28 @@ public class TCPController
 
                             try
                             {
-                                dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
-                                string strRawTCPFrameType = dynamicRawTCPFrame.type;
-
-                                PerunHelper.LogHistoryAdd(ref arrLogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
-
-                                // Add to mySQL send buffer (find first empty slot)
-                                if (Int32.Parse(strRawTCPFrameType) != 0)
+                                if (strReceivedData != "")
                                 {
-                                    for (int i = 0; i < arrSendBuffer.Length - 1; i++)
+                                    dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
+                                    string strRawTCPFrameType = dynamicRawTCPFrame.type;
+
+                                    PerunHelper.LogHistoryAdd(ref arrLogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
+
+                                    // Add to mySQL send buffer (find first empty slot)
+                                    if (Int32.Parse(strRawTCPFrameType) != 0)
                                     {
-                                        if (arrSendBuffer[i] == null)
+                                        for (int i = 0; i < arrSendBuffer.Length - 1; i++)
                                         {
-                                            arrSendBuffer[i] = strReceivedData;
-                                            break;
+                                            if (arrSendBuffer[i] == null)
+                                            {
+                                                arrSendBuffer[i] = strReceivedData;
+                                                break;
+                                            }
                                         }
                                     }
+                                } else
+                                {
+                                    bTCPConnectionOnline = false;
                                 }
                             }
                             catch (Exception e)
@@ -125,6 +132,7 @@ public class TCPController
                                 Globals.intGameErros++;
                                 Console.WriteLine(e.ToString());
                                 PerunHelper.LogHistoryAdd(ref arrLogHistory, "#" + Globals.intInstanceId + " > TCP ERROR incorrect JSON > " + e.Message);
+                                bTCPConnectionOnline = false;
                             }
                         }
                     }
@@ -141,8 +149,9 @@ public class TCPController
                     Globals.intGameErros++;
                     Console.WriteLine(e.ToString());
                     PerunHelper.LogHistoryAdd(ref arrLogHistory, "#" + Globals.intInstanceId + " > TCP error - connection closed or port in use > " + e.Message);
+                    bTCPConnectionOnline = false;
                 //}
-              
+
             }
 
             if (!(ns is null))
