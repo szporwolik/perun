@@ -103,31 +103,31 @@ public class DatabaseController
                     Console.WriteLine(rdrMySQL[0] + " -- " + rdrMySQL[1]);
                 }
                 rdrMySQL.Close();
-                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > MySQL updated, package type: " + strUDPFrameType);
+                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + strUDPFrameInstance + " > MySQL updated, package type: " + strUDPFrameType);
             }
             catch (ArgumentException a_ex)
             {
                 // General exception found
                 Console.WriteLine(a_ex.ToString());
-                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - package type: " + strUDPFrameType);
-                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL >" + a_ex.Message);
+                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - package type: " + strUDPFrameType);
+                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL >" + a_ex.Message);
                 bStatus = false;
             }
             catch (MySqlException m_ex)
             {
                 // MySQL exception found
-                PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - package type: " + strUDPFrameType);
+                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - package type: " + strUDPFrameType);
                 switch (m_ex.Number)
                 {
                     case 1042: // Unable to connect to any of the specified MySQL hosts (Check Server,Port)
-                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - unable to connect >" + m_ex.Message);
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - unable to connect >" + m_ex.Message);
                         break;
                     case 0: // Access denied (Check DB name,username,password)
-                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - access denied > " + m_ex.Message);
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - access denied > " + m_ex.Message);
                         break;
                     default:
-                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL > " + m_ex.Number);
-                        PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL > " + m_ex.Message);
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL > " + m_ex.Number);
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL > " + m_ex.Message);
                         break;
                 }
                 bStatus = false;
@@ -137,7 +137,7 @@ public class DatabaseController
         }
         catch (ArgumentException x_ex)
         {
-            PerunHelper.LogHistoryAdd(ref Globals.arrLogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - unable to connect > " + x_ex.Message);
+            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + strUDPFrameInstance + " > ERROR MySQL - unable to connect > " + x_ex.Message);
         }
        
 

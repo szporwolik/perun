@@ -34,7 +34,7 @@
             this.con_Button_Listen_ON = new System.Windows.Forms.Button();
             this.con_Button_Listen_OFF = new System.Windows.Forms.Button();
             this.con_GroupBox_1 = new System.Windows.Forms.GroupBox();
-            this.tim_1000ms = new System.Windows.Forms.Timer(this.components);
+            this.tim_GUI = new System.Windows.Forms.Timer(this.components);
             this.con_GroupBox_2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.con_txt_mysql_port = new System.Windows.Forms.TextBox();
@@ -57,9 +57,8 @@
             this.trayIconMain = new System.Windows.Forms.NotifyIcon(this.components);
             this.openFileDialog_SRS = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog_LotATC = new System.Windows.Forms.OpenFileDialog();
-            this.tim_10000ms = new System.Windows.Forms.Timer(this.components);
-            this.tim_200ms = new System.Windows.Forms.Timer(this.components);
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.tim_3rdparties = new System.Windows.Forms.Timer(this.components);
+            this.tim_MySQL = new System.Windows.Forms.Timer(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.con_txt_dcs_instance = new System.Windows.Forms.MaskedTextBox();
@@ -126,10 +125,10 @@
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "Data log";
             // 
-            // tim_1000ms
+            // tim_GUI
             // 
-            this.tim_1000ms.Interval = 1000;
-            this.tim_1000ms.Tick += new System.EventHandler(this.timer1_Tick);
+            this.tim_GUI.Interval = 200;
+            this.tim_GUI.Tick += new System.EventHandler(this.Tim_GUI_Tick);
             // 
             // con_GroupBox_2
             // 
@@ -328,19 +327,14 @@
             // 
             this.openFileDialog_LotATC.FileName = "openFileDialog1";
             // 
-            // tim_10000ms
+            // tim_3rdparties
             // 
-            this.tim_10000ms.Interval = 30000;
-            this.tim_10000ms.Tick += new System.EventHandler(this.tim_10000ms_Tick);
+            this.tim_3rdparties.Interval = 30000;
+            this.tim_3rdparties.Tick += new System.EventHandler(this.tim_3rdparties_Tick);
             // 
-            // tim_200ms
+            // tim_MySQL
             // 
-            this.tim_200ms.Tick += new System.EventHandler(this.tim_200ms_Tick);
-            // 
-            // notifyIcon1
-            // 
-            this.notifyIcon1.Text = "notifyIcon1";
-            this.notifyIcon1.Visible = true;
+            this.tim_MySQL.Tick += new System.EventHandler(this.Tim_MySQL_Tick);
             // 
             // groupBox1
             // 
@@ -499,7 +493,7 @@
             this.MaximizeBox = false;
             this.Name = "form_Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Perun for DCS World";
+            this.Text = "Perun for DCS";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.form_Main_FormClosing);
             this.Load += new System.EventHandler(this.form_Main_Load);
             this.con_GroupBox_1.ResumeLayout(false);
@@ -524,7 +518,7 @@
         private System.Windows.Forms.Button con_Button_Listen_ON;
         private System.Windows.Forms.Button con_Button_Listen_OFF;
         private System.Windows.Forms.GroupBox con_GroupBox_1;
-        private System.Windows.Forms.Timer tim_1000ms;
+        private System.Windows.Forms.Timer tim_GUI;
         private System.Windows.Forms.GroupBox con_GroupBox_2;
         private System.Windows.Forms.GroupBox con_GroupBox_3;
         private System.Windows.Forms.TextBox con_txt_mysql_database;
@@ -545,11 +539,10 @@
         private System.Windows.Forms.NotifyIcon trayIconMain;
         private System.Windows.Forms.OpenFileDialog openFileDialog_SRS;
         private System.Windows.Forms.OpenFileDialog openFileDialog_LotATC;
-        private System.Windows.Forms.Timer tim_10000ms;
+        private System.Windows.Forms.Timer tim_3rdparties;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox con_txt_mysql_port;
-        private System.Windows.Forms.Timer tim_200ms;
-        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.Timer tim_MySQL;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.MaskedTextBox con_txt_dcs_server_port;
         private System.Windows.Forms.Label label7;

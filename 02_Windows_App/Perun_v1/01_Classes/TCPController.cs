@@ -110,7 +110,7 @@ public class TCPController
                                     dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
                                     string strRawTCPFrameType = dynamicRawTCPFrame.type;
 
-                                    PerunHelper.LogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
+                                    PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
 
                                     // Add to mySQL send buffer (find first empty slot)
                                     if (Int32.Parse(strRawTCPFrameType) != 0)
@@ -133,7 +133,7 @@ public class TCPController
                             {
                                 Globals.intGameErros++;
                                 Console.WriteLine(e.ToString());
-                                PerunHelper.LogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP ERROR incorrect JSON > " + e.Message);
+                                PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP ERROR incorrect JSON > " + e.Message);
                                 bTCPConnectionOnline = false;
                             }
                         }
@@ -146,7 +146,7 @@ public class TCPController
             {
                 Globals.intGameErros++;
                 Console.WriteLine(e.ToString());
-                PerunHelper.LogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP error - connection closed or port in use > " + e.Message);
+                PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP error - connection closed or port in use > " + e.Message);
                 bTCPConnectionOnline = false;
             }
 

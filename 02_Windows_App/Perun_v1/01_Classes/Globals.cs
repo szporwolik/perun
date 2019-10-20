@@ -4,8 +4,8 @@ using MySql.Data.MySqlClient;
 internal class Globals
 {
     public static string strPerunVersion = "DEBUG";                 // Helper for pulling version definition
-    public static string[] arrLogHistory = new string[10];          // Log history for GUI
-    public static bool bLogHistoryUpdate = true;                    // Flag if log control requires update
+    public static string[] arrGUILogHistory = new string[10];       // Log history for GUI
+    public static bool bGUILogHistoryUpdate = true;                 // Flag if log control requires update
     public static string strPerunTitleText = "";                    // Helper to update title
     public static int intInstanceId = 0;                            // Kepp the instance ID
     public static bool bStatusIconsForce = true;                    // Force main window icons reload

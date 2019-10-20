@@ -4,7 +4,7 @@ using System.Reflection;
 
 internal class PerunHelper
 {
-    public static void LogHistoryAdd(ref string[] arrLogHistory, string strEntryToAdd)
+    public static void GUILogHistoryAdd(ref string[] arrLogHistory, string strEntryToAdd)
     {
         // Rotate log history
         for (int i = 0; i < arrLogHistory.Length - 1; i++)
@@ -19,7 +19,7 @@ internal class PerunHelper
         LogController.WriteLog(arrLogHistory[arrLogHistory.Length - 1]);
 
         // Update control at my window
-        Globals.bLogHistoryUpdate = true;
+        Globals.bGUILogHistoryUpdate = true;
     }
     public static string GetAppVersion(string strBeginning)
     {
