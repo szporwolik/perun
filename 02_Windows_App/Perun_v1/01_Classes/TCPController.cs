@@ -4,6 +4,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 public class TCPController
@@ -42,6 +43,7 @@ public class TCPController
         NetworkStream nsReadStream = null;
         TcpClient tcpClient = null;
         bool bTCPConnectionOnline = false;
+        string strReceiveBuffer;
 
         // Main loop - do until diconnect button is clicked
         while (!bCloseConnection)
@@ -71,9 +73,9 @@ public class TCPController
                         bTCPConnectionOnline = true;
                         tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
                         nsReadStream = tcpClient.GetStream(); //networkstream is used to send/receive messages
-                        nsReadStream.ReadTimeout = 6000;
-                        tcpClient.ReceiveTimeout = 6000;
-
+                        nsReadStream.ReadTimeout = 10000;
+                        tcpClient.ReceiveTimeout = 10000;
+                       
 
                         while (tcpClient.Connected && !bCloseConnection && bTCPConnectionOnline)  //while the client is connected, we look for incoming messages
                         {
@@ -103,39 +105,62 @@ public class TCPController
                             strReceivedData = CompleteMessage.ToString();
                             Console.WriteLine("Sender: {0} Payload: {1}", null, strReceivedData);
 
-                            try
+                            string pattern = @"(\<SOT\>)+?.*?(\<EOT\>)+?";
+
+                            foreach (Match match in Regex.Matches(strReceivedData, pattern))
                             {
-                                if (strReceivedData != "")
+                                strReceiveBuffer = match.Value;
+
+                                Console.WriteLine("Found '{0}' at position {1} end {2}",match.Value, match.Index,match.Length);
+                                Console.WriteLine("Prepared {0}", strReceiveBuffer.Substring(5, match.Length-10));
+
+                                strReceivedData = strReceiveBuffer.Substring(5, match.Length - 10);
+                                try
                                 {
-                                    dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
-                                    string strRawTCPFrameType = dynamicRawTCPFrame.type;
-
-                                    PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
-
-                                    // Add to mySQL send buffer (find first empty slot)
-                                    if (Int32.Parse(strRawTCPFrameType) != 0)
+                                    if (strReceivedData != "")
                                     {
-                                        for (int i = 0; i < arrMySQLSendBuffer.Length - 1; i++)
+                                        dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
+                                        string strRawTCPFrameType = dynamicRawTCPFrame.type;
+
+                                        PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
+
+                                        // Add to mySQL send buffer (find first empty slot)
+                                        if (Int32.Parse(strRawTCPFrameType) != 0)
                                         {
-                                            if (arrMySQLSendBuffer[i] == null)
+                                            for (int i = 0; i < arrMySQLSendBuffer.Length - 1; i++)
                                             {
-                                                arrMySQLSendBuffer[i] = strReceivedData;
-                                                break;
+                                                if (arrMySQLSendBuffer[i] == null)
+                                                {
+                                                    arrMySQLSendBuffer[i] = strReceivedData;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
+                                    else
+                                    {
+                                        bTCPConnectionOnline = false;
+                                    }
                                 }
-                                else
+                                catch (Exception e)
                                 {
+                                    Globals.intGameErros++;
+                                    Console.WriteLine(e.ToString());
+                                    PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP ERROR incorrect JSON > " + e.Message);
                                     bTCPConnectionOnline = false;
                                 }
-                            }
-                            catch (Exception e)
-                            {
-                                Globals.intGameErros++;
-                                Console.WriteLine(e.ToString());
-                                PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP ERROR incorrect JSON > " + e.Message);
-                                bTCPConnectionOnline = false;
+
+                                // Send empty byte to check if connection is still alive
+                                try
+                                {
+                                    tcpClient.Client.Send(new byte[] { 0 }, 1, 0);
+                                }
+                                catch (SocketException e)
+                                {
+                                    Console.WriteLine(e.ToString());
+                                    PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP ERROR cannot send > " + e.Message);
+                                }
+
                             }
                         }
                     }
