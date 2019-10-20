@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace Perun_v1
@@ -14,7 +13,7 @@ namespace Perun_v1
 
         static void Main()
         {
-               // Main entry point to the app
+            // Main entry point to the app
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.ApplicationExit += new EventHandler(Application_ApplicationExit);

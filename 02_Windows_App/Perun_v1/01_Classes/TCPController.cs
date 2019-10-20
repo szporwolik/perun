@@ -14,7 +14,7 @@ public class TCPController
     public string[] arrGUILogHistory;   // Log history for GUI
     public string[] arrMySQLSendBuffer; // MySQL send buffer
     public Thread thrTCPListener;       // Seperate thread for TCP
-    
+
     public void Create(int par_intListenPort, ref string[] par_arrLogHistory, ref string[] par_arrSendBuffer)
     {
         // Create class and map creation arguments to class
@@ -39,8 +39,8 @@ public class TCPController
     public void StartListen()
     {
         // Start listening
-        NetworkStream nsReadStream=null;
-        TcpClient tcpClient=null;
+        NetworkStream nsReadStream = null;
+        TcpClient tcpClient = null;
         bool bTCPConnectionOnline = false;
 
         // Main loop - do until diconnect button is clicked
@@ -73,13 +73,13 @@ public class TCPController
                         nsReadStream = tcpClient.GetStream(); //networkstream is used to send/receive messages
                         nsReadStream.ReadTimeout = 6000;
                         tcpClient.ReceiveTimeout = 6000;
-      
+
 
                         while (tcpClient.Connected && !bCloseConnection && bTCPConnectionOnline)  //while the client is connected, we look for incoming messages
                         {
                             StringBuilder CompleteMessage = new StringBuilder();
                             Globals.bClientConnected = true;
-                            
+
                             if (nsReadStream.CanRead)
                             {
                                 Console.WriteLine("TCP: Can read");
@@ -124,7 +124,8 @@ public class TCPController
                                             }
                                         }
                                     }
-                                } else
+                                }
+                                else
                                 {
                                     bTCPConnectionOnline = false;
                                 }

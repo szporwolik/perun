@@ -1,5 +1,4 @@
 ﻿// This class gathers all global variable
-using MySql.Data.MySqlClient;
 
 internal class Globals
 {

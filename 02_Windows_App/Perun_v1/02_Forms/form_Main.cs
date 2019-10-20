@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 
 namespace Perun_v1
 {
@@ -14,7 +14,7 @@ namespace Perun_v1
         public bool bAllowAppClosure = false;                               // Helper to handle system tray
 
         public DatabaseController dcConnection = new DatabaseController();  // MySQL controller
-        public TCPController tcpServer=new TCPController();                // TCP controller
+        public TCPController tcpServer = new TCPController();                // TCP controller
 
         public bool bSRSStatus;                                             // Use empty/default SRS status
         public bool bLotATCStatus;                                          // Use empty/default LotATC status
@@ -26,48 +26,48 @@ namespace Perun_v1
             Globals.arrGUILogHistory[0] = DateTime.Now.ToString("HH:mm:ss") + " > " + "Perun started";
 
             // Display build version in title bar
-            Globals.strPerunTitleText = PerunHelper.GetAppVersion(this.Text + " - ");      
+            Globals.strPerunTitleText = PerunHelper.GetAppVersion(this.Text + " - ");
             this.Text = Globals.strPerunTitleText;
 
             // Load settings from registry
-            form_Main_LoadSettings();                                     
+            form_Main_LoadSettings();
 
             // Use command line parameters
-                string[] args = Environment.GetCommandLineArgs();
-                if (args.Length > 1)
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                // Get argument server port
+                if (args[1] != null)
                 {
-                    // Get argument server port
-                    if (args[1] != null)
-                    {
-                        con_txt_dcs_server_port.Text = args[1];
-                    }
+                    con_txt_dcs_server_port.Text = args[1];
                 }
-                if (args.Length > 2)
+            }
+            if (args.Length > 2)
+            {
+                // Get argument instance id
+                if (args[2] != null)
                 {
-                    // Get argument instance id
-                    if (args[2] != null)
-                    {
-                        con_txt_dcs_instance.Text = args[2];
-                    }
+                    con_txt_dcs_instance.Text = args[2];
                 }
-                if (args.Length > 3)
+            }
+            if (args.Length > 3)
+            {
+                // Get argument DCS SRS file path
+                if (args[3] != null)
                 {
-                    // Get argument DCS SRS file path
-                    if (args[3] != null)
-                    {
-                        con_txt_3rd_srs.Text = args[3];
-                        con_check_3rd_srs.Checked = true;
-                    }
+                    con_txt_3rd_srs.Text = args[3];
+                    con_check_3rd_srs.Checked = true;
                 }
-                if (args.Length > 4)
+            }
+            if (args.Length > 4)
+            {
+                // Get argument lotATC file path
+                if (args[4] != null)
                 {
-                    // Get argument lotATC file path
-                    if (args[4] != null)
-                    {
-                        con_txt_3rd_lotatc.Text = args[4];
-                        con_check_3rd_lotatc.Checked = true;
-                    }
+                    con_txt_3rd_lotatc.Text = args[4];
+                    con_check_3rd_lotatc.Checked = true;
                 }
+            }
         }
 
         public form_Main()
@@ -141,7 +141,7 @@ namespace Perun_v1
             con_txt_mysql_database.Enabled = true;
             con_txt_mysql_username.Enabled = true;
             con_txt_mysql_password.Enabled = true;
-            con_txt_mysql_port.Enabled = true;    
+            con_txt_mysql_port.Enabled = true;
             con_txt_mysql_server.Enabled = true;
             con_txt_3rd_lotatc.Enabled = true;
             con_txt_3rd_srs.Enabled = true;
@@ -156,7 +156,7 @@ namespace Perun_v1
         {
             // Start listening
             // Set globals
-            Globals.intInstanceId= Int32.Parse(con_txt_dcs_instance.Text);
+            Globals.intInstanceId = Int32.Parse(con_txt_dcs_instance.Text);
             Globals.bStatusIconsForce = true;
 
             Globals.intMysqlErros = 0;                // Reset error counter
@@ -196,7 +196,7 @@ namespace Perun_v1
         {
             // Stop listening
             // Prepare GUI
-            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId +" > " + "Closing connections");
+            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "Closing connections");
             con_Button_Listen_OFF.Enabled = false;
             Tim_GUI_Tick(null, null);
             this.Refresh();
@@ -229,7 +229,7 @@ namespace Perun_v1
             con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
 
             // Display information about closed connections
-            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId +" > " + "Connections closed");
+            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "Connections closed");
             Tim_GUI_Tick(null, null);
 
             // Set title bar
@@ -246,7 +246,7 @@ namespace Perun_v1
             Globals.bSRSStatus = false;
             Globals.bLotATCStatus = false;
             Globals.bClientConnected = false;
-    }
+        }
 
         private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -351,7 +351,7 @@ namespace Perun_v1
         private void Tim_GUI_Tick(object sender, EventArgs e)
         {
             // Main timer to sync GUI with background tasks and flush buffers
-            
+
             // Refresh Log Window
             if (Globals.bGUILogHistoryUpdate)
             {
@@ -364,7 +364,8 @@ namespace Perun_v1
                     }
                 }
                 Globals.bGUILogHistoryUpdate = false;
-            } else
+            }
+            else
             {
                 // Do nothing , control does not require update
             }
@@ -553,7 +554,7 @@ namespace Perun_v1
                     PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data loaded");
                     bLotATCStatus = true;
                 }
-                catch(Exception exc_lotatc)
+                catch (Exception exc_lotatc)
                 {
                     PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data ERROR > " + exc_lotatc.Message);
                     bLotATCStatus = false;

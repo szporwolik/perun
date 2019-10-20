@@ -14,7 +14,7 @@ internal class PerunHelper
 
         // Add new entry
         arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("yyyy-dd-MM HH:mm:ss") + " > " + strEntryToAdd; // Add entry at the last position
-        
+
         // Add the entry to log file
         LogController.WriteLog(arrLogHistory[arrLogHistory.Length - 1]);
 
@@ -35,6 +35,6 @@ internal class PerunHelper
             // For other cases
             Globals.strPerunVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
-        return strBeginning+"v" + Globals.strPerunVersion;
+        return strBeginning + "v" + Globals.strPerunVersion;
     }
 }
