@@ -20,7 +20,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"
 
 
 -- Variable init
-Perun.Version = "v0.8.2"
+Perun.Version = "v0.8.3"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -192,7 +192,7 @@ Perun.ConnectToPerun = function ()
 		Perun.AddLog("TCP connection error : " .. err)
 	else
 		Perun.AddLog("Connected to TCP server")
-		Perun.TCP:setoption("keepalive")
+		-- Perun.TCP:setoption("keepalive")
 		Perun.lastReconnect = _now
 	end
 end
@@ -207,7 +207,7 @@ Perun.SendToPerun = function(data_id, data_package)
 	TempData["instance"]=Perun.Instance
 	
     temp=net.lua2json(TempData)
-    temp=stripChars(temp)
+    temp="<SOT>" .. stripChars(temp) .. "<EOT>"
 
     -- TCP Part - sending
 	Perun.AddLog("Sending packet: " .. data_id)
@@ -527,7 +527,7 @@ Perun.onSimulationFrame = function()
     end
 	
 	-- Send keepalive
-	if _now > Perun.lastSentKeepAlive + 5 then
+	if _now > Perun.lastSentKeepAlive + 3 then
 		Perun.lastSentKeepAlive = _now
 		Perun.SendToPerun(0,nil)
 	end
