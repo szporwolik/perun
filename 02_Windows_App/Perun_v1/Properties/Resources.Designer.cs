@@ -73,6 +73,16 @@ namespace Perun_v1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap status_connected_error {
+            get {
+                object obj = ResourceManager.GetObject("status_connected_error", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap status_disconnected {
             get {
                 object obj = ResourceManager.GetObject("status_disconnected", resourceCulture);
@@ -86,16 +96,6 @@ namespace Perun_v1.Properties {
         internal static System.Drawing.Bitmap status_disconnected_error {
             get {
                 object obj = ResourceManager.GetObject("status_disconnected_error", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap status_disconnected_game {
-            get {
-                object obj = ResourceManager.GetObject("status_disconnected_game", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -397,7 +397,7 @@ namespace Perun_v1
                         con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
                     } else
                     {
-                        con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_game");
+                        con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected_error");
                     }
                 } else
                 {
@@ -414,7 +414,7 @@ namespace Perun_v1
                         con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
                     } else
                     {
-                        con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_game");
+                        con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected_error");
                     }
                 }
                 else
@@ -432,7 +432,7 @@ namespace Perun_v1
                         con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
                     } else
                     {
-                        con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_game");
+                        con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected_error");
                     }
                 }
                 else
@@ -450,7 +450,7 @@ namespace Perun_v1
                         con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
                     } else
                     {
-                        con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_game");
+                        con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected_error");
                     }
                 }
                 else
