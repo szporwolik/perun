@@ -76,6 +76,7 @@
             this.con_img_srs = new System.Windows.Forms.PictureBox();
             this.con_img_dcs = new System.Windows.Forms.PictureBox();
             this.con_img_db = new System.Windows.Forms.PictureBox();
+            this.con_Button_Add_Marker = new System.Windows.Forms.Button();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -512,11 +513,24 @@
             this.con_img_db.TabIndex = 10;
             this.con_img_db.TabStop = false;
             // 
+            // con_Button_Add_Marker
+            // 
+            this.con_Button_Add_Marker.Enabled = false;
+            this.con_Button_Add_Marker.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_Button_Add_Marker.Location = new System.Drawing.Point(12, 414);
+            this.con_Button_Add_Marker.Name = "con_Button_Add_Marker";
+            this.con_Button_Add_Marker.Size = new System.Drawing.Size(114, 20);
+            this.con_Button_Add_Marker.TabIndex = 21;
+            this.con_Button_Add_Marker.Text = "Add log marker";
+            this.con_Button_Add_Marker.UseVisualStyleBackColor = true;
+            this.con_Button_Add_Marker.Click += new System.EventHandler(this.con_Button_Add_Marker_Click);
+            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(349, 653);
+            this.Controls.Add(this.con_Button_Add_Marker);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.con_img_logo);
@@ -611,6 +625,7 @@
         private System.Windows.Forms.PictureBox con_img_logo;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button con_Button_Add_Marker;
     }
 }
 

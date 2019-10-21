@@ -126,6 +126,7 @@ namespace Perun_v1
             con_Button_Listen_OFF.Enabled = true;
             con_Button_Quit.Enabled = false;
             con_Button_Reset_Flags.Enabled = true;
+            con_Button_Add_Marker.Enabled = true;
             con_txt_mysql_database.Enabled = false;
             con_txt_mysql_username.Enabled = false;
             con_txt_mysql_password.Enabled = false;
@@ -146,6 +147,7 @@ namespace Perun_v1
             con_Button_Listen_OFF.Enabled = false;
             con_Button_Quit.Enabled = true;
             con_Button_Reset_Flags.Enabled = false;
+            con_Button_Add_Marker.Enabled = false;
             con_txt_mysql_database.Enabled = true;
             con_txt_mysql_username.Enabled = true;
             con_txt_mysql_password.Enabled = true;
@@ -594,6 +596,7 @@ namespace Perun_v1
 
         private void con_Button_Reset_Flags_Click(object sender, EventArgs e)
         {
+            // Reset error flags
             DialogResult dialogResult = MessageBox.Show("Are you sure to reset error flags?", "Question", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
             if (dialogResult == DialogResult.Yes)
             {
@@ -608,7 +611,7 @@ namespace Perun_v1
                 Globals.bStatusIconsForce = true;
 
                 // Add information
-                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "Reseted error counter");
+                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "Resetted error counter");
             }
             else if (dialogResult == DialogResult.No)
             {
@@ -617,5 +620,11 @@ namespace Perun_v1
 
 
     }
+
+        private void con_Button_Add_Marker_Click(object sender, EventArgs e)
+        {
+            // Added user marker
+            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "User marker");
+        }
     }
 }
