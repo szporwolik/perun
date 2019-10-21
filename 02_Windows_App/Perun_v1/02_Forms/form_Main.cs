@@ -125,6 +125,7 @@ namespace Perun_v1
             con_Button_Listen_ON.Enabled = false;
             con_Button_Listen_OFF.Enabled = true;
             con_Button_Quit.Enabled = false;
+            con_Button_Reset_Flags.Enabled = true;
             con_txt_mysql_database.Enabled = false;
             con_txt_mysql_username.Enabled = false;
             con_txt_mysql_password.Enabled = false;
@@ -144,6 +145,7 @@ namespace Perun_v1
             con_Button_Listen_ON.Enabled = true;
             con_Button_Listen_OFF.Enabled = false;
             con_Button_Quit.Enabled = true;
+            con_Button_Reset_Flags.Enabled = false;
             con_txt_mysql_database.Enabled = true;
             con_txt_mysql_username.Enabled = true;
             con_txt_mysql_password.Enabled = true;
@@ -155,6 +157,7 @@ namespace Perun_v1
             con_check_3rd_srs.Enabled = true;
             con_txt_dcs_server_port.Enabled = true;
             con_txt_dcs_instance.Enabled = true;
+            
         }
 
         // ################################ User input ################################
@@ -588,5 +591,31 @@ namespace Perun_v1
         {
 
         }
+
+        private void con_Button_Reset_Flags_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult = MessageBox.Show("Are you sure to reset error flags?", "Question", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+            if (dialogResult == DialogResult.Yes)
+            {
+                // Reset errors counter
+                Globals.intMysqlErros = 0;                            // MySQL - Error counter
+                Globals.intGameErros = 0;                             // TCP connection - Error counter
+                Globals.intGameErrosHistory = 0;                      // TCP connection - historic value of Error counter
+                Globals.intSRSErros = 0;                              // DCS SRS - error counter
+                Globals.intLotATCErros = 0;                           // LotATC - error counter
+
+                // Force icons reload
+                Globals.bStatusIconsForce = true;
+
+                // Add information
+                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "Reseted error counter");
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                // Do nothing
+            }
+
+
+    }
     }
 }

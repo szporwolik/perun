@@ -72,6 +72,8 @@
             this.con_img_srs = new System.Windows.Forms.PictureBox();
             this.con_img_dcs = new System.Windows.Forms.PictureBox();
             this.con_img_db = new System.Windows.Forms.PictureBox();
+            this.con_Button_Reset_Flags = new System.Windows.Forms.Button();
+            this.con_img_logo = new System.Windows.Forms.PictureBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -80,6 +82,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).BeginInit();
             this.SuspendLayout();
             // 
             // con_List_Received
@@ -96,7 +99,7 @@
             // 
             // con_Button_Listen_ON
             // 
-            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 553);
+            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 602);
             this.con_Button_Listen_ON.Name = "con_Button_Listen_ON";
             this.con_Button_Listen_ON.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_ON.TabIndex = 2;
@@ -107,7 +110,7 @@
             // con_Button_Listen_OFF
             // 
             this.con_Button_Listen_OFF.Enabled = false;
-            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 553);
+            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 602);
             this.con_Button_Listen_OFF.Name = "con_Button_Listen_OFF";
             this.con_Button_Listen_OFF.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_OFF.TabIndex = 3;
@@ -118,7 +121,7 @@
             // con_GroupBox_1
             // 
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
-            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 385);
+            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 434);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
             this.con_GroupBox_1.Size = new System.Drawing.Size(324, 162);
             this.con_GroupBox_1.TabIndex = 4;
@@ -142,7 +145,7 @@
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_database);
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_server);
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_password);
-            this.con_GroupBox_2.Location = new System.Drawing.Point(12, 27);
+            this.con_GroupBox_2.Location = new System.Drawing.Point(14, 54);
             this.con_GroupBox_2.Name = "con_GroupBox_2";
             this.con_GroupBox_2.Size = new System.Drawing.Size(324, 154);
             this.con_GroupBox_2.TabIndex = 5;
@@ -236,7 +239,7 @@
             this.con_GroupBox_3.Controls.Add(this.con_txt_3rd_srs);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_lotatc);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_srs);
-            this.con_GroupBox_3.Location = new System.Drawing.Point(12, 261);
+            this.con_GroupBox_3.Location = new System.Drawing.Point(14, 288);
             this.con_GroupBox_3.Name = "con_GroupBox_3";
             this.con_GroupBox_3.Size = new System.Drawing.Size(324, 68);
             this.con_GroupBox_3.TabIndex = 6;
@@ -281,7 +284,7 @@
             // 
             // con_Button_Quit
             // 
-            this.con_Button_Quit.Location = new System.Drawing.Point(251, 553);
+            this.con_Button_Quit.Location = new System.Drawing.Point(251, 602);
             this.con_Button_Quit.Name = "con_Button_Quit";
             this.con_Button_Quit.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Quit.TabIndex = 7;
@@ -292,7 +295,7 @@
             // con_lab_github
             // 
             this.con_lab_github.AutoSize = true;
-            this.con_lab_github.Location = new System.Drawing.Point(141, 9);
+            this.con_lab_github.Location = new System.Drawing.Point(155, 38);
             this.con_lab_github.Name = "con_lab_github";
             this.con_lab_github.Size = new System.Drawing.Size(181, 13);
             this.con_lab_github.TabIndex = 8;
@@ -303,7 +306,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 9);
+            this.label5.Location = new System.Drawing.Point(12, 38);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(120, 13);
             this.label5.TabIndex = 9;
@@ -342,7 +345,7 @@
             this.groupBox1.Controls.Add(this.con_txt_dcs_instance);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.con_txt_dcs_server_port);
-            this.groupBox1.Location = new System.Drawing.Point(12, 187);
+            this.groupBox1.Location = new System.Drawing.Point(14, 214);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(324, 68);
             this.groupBox1.TabIndex = 7;
@@ -386,7 +389,7 @@
             this.label9.AutoSize = true;
             this.label9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(21, 369);
+            this.label9.Location = new System.Drawing.Point(21, 396);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(61, 13);
             this.label9.TabIndex = 1;
@@ -397,7 +400,7 @@
             this.label10.AutoSize = true;
             this.label10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(117, 369);
+            this.label10.Location = new System.Drawing.Point(117, 396);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(39, 13);
             this.label10.TabIndex = 14;
@@ -408,7 +411,7 @@
             this.label11.AutoSize = true;
             this.label11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(205, 369);
+            this.label11.Location = new System.Drawing.Point(205, 396);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(32, 13);
             this.label11.TabIndex = 15;
@@ -419,7 +422,7 @@
             this.label12.AutoSize = true;
             this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(282, 369);
+            this.label12.Location = new System.Drawing.Point(282, 396);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(49, 13);
             this.label12.TabIndex = 16;
@@ -427,7 +430,7 @@
             // 
             // con_img_lotATC
             // 
-            this.con_img_lotATC.Location = new System.Drawing.Point(292, 335);
+            this.con_img_lotATC.Location = new System.Drawing.Point(292, 362);
             this.con_img_lotATC.Name = "con_img_lotATC";
             this.con_img_lotATC.Size = new System.Drawing.Size(29, 28);
             this.con_img_lotATC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -436,7 +439,7 @@
             // 
             // con_img_srs
             // 
-            this.con_img_srs.Location = new System.Drawing.Point(207, 335);
+            this.con_img_srs.Location = new System.Drawing.Point(207, 362);
             this.con_img_srs.Name = "con_img_srs";
             this.con_img_srs.Size = new System.Drawing.Size(29, 28);
             this.con_img_srs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -445,7 +448,7 @@
             // 
             // con_img_dcs
             // 
-            this.con_img_dcs.Location = new System.Drawing.Point(122, 335);
+            this.con_img_dcs.Location = new System.Drawing.Point(122, 362);
             this.con_img_dcs.Name = "con_img_dcs";
             this.con_img_dcs.Size = new System.Drawing.Size(29, 28);
             this.con_img_dcs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -455,18 +458,42 @@
             // con_img_db
             // 
             this.con_img_db.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.con_img_db.Location = new System.Drawing.Point(37, 335);
+            this.con_img_db.Location = new System.Drawing.Point(37, 362);
             this.con_img_db.Name = "con_img_db";
             this.con_img_db.Size = new System.Drawing.Size(29, 28);
             this.con_img_db.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.con_img_db.TabIndex = 10;
             this.con_img_db.TabStop = false;
             // 
+            // con_Button_Reset_Flags
+            // 
+            this.con_Button_Reset_Flags.Enabled = false;
+            this.con_Button_Reset_Flags.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(224, 414);
+            this.con_Button_Reset_Flags.Name = "con_Button_Reset_Flags";
+            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(114, 20);
+            this.con_Button_Reset_Flags.TabIndex = 17;
+            this.con_Button_Reset_Flags.Text = "Reset error flags";
+            this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
+            this.con_Button_Reset_Flags.Click += new System.EventHandler(this.con_Button_Reset_Flags_Click);
+            // 
+            // con_img_logo
+            // 
+            this.con_img_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.con_img_logo.Location = new System.Drawing.Point(12, 7);
+            this.con_img_logo.Name = "con_img_logo";
+            this.con_img_logo.Size = new System.Drawing.Size(29, 28);
+            this.con_img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.con_img_logo.TabIndex = 18;
+            this.con_img_logo.TabStop = false;
+            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 604);
+            this.ClientSize = new System.Drawing.Size(349, 653);
+            this.Controls.Add(this.con_img_logo);
+            this.Controls.Add(this.con_Button_Reset_Flags);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
@@ -503,6 +530,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -552,6 +580,8 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button con_Button_Reset_Flags;
+        private System.Windows.Forms.PictureBox con_img_logo;
     }
 }
 
