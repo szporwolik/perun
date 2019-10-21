@@ -115,16 +115,16 @@ public class DatabaseController
                         PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Slots data updated", 1, 0, "3");
                         break;
                     case 50:
-                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Player "+ strTCPFrame.payload.player + " chat message saved", 1, 0, "50");
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Player's \""+ strTCPFrame.payload.player + "\" chat message saved", 1, 0, "50");
                         break;
                     case 51:
-                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Game event: "+ strTCPFrame.payload.log_content, 1, 0, "51");
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Game event: \""+ strTCPFrame.payload.log_content +"\"", 1, 0, "51");
                         break;
                     case 52:
-                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Player "+ strTCPFrame.payload.stat_name + " stats saved", 1, 0, "52");
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Player's \""+ strTCPFrame.payload.stat_name + "\" stats saved", 1, 0, "52");
                         break;
                     case 53:
-                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Player "+ strTCPFrame.payload.login_name + " logged in", 1, 0, "53");
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Player \""+ strTCPFrame.payload.login_name + "\" logged in", 1, 0, "53");
                         break;
                     case 100:
                         PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data send", 1,0,"100");
