@@ -534,12 +534,12 @@ namespace Perun_v1
                         strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'false'}}"; // No SRS clients connected
                     }
                     boolSRSdefault = false;
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data loaded",3);
+                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data loaded",3,0,"100",true);
                     bSRSStatus = true;
                 }
                 catch (Exception exc_srs)
                 {
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data ERROR , error: " + exc_srs.Message,3,1);
+                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data ERROR , error: " + exc_srs.Message,3,1,"100");
                     bSRSStatus = false;
                     Globals.intSRSErros++;
                 }
@@ -562,12 +562,12 @@ namespace Perun_v1
 
                     strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + strLotATCJson + "'}";
                     boolLotATCdefault = false;
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data loaded",3);
+                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data loaded",3,0,"101",true);
                     bLotATCStatus = true;
                 }
                 catch (Exception exc_lotatc)
                 {
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message,3,1);
+                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message,3,1,"101");
                     bLotATCStatus = false;
                     Globals.intLotATCErros++;
                 }

@@ -4,7 +4,7 @@ using System.Reflection;
 
 internal class PerunHelper
 {
-    public static void GUILogHistoryAdd(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0)
+    public static void GUILogHistoryAdd(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
         // Declare values
         string strDirection;
@@ -29,17 +29,22 @@ internal class PerunHelper
         // Set marker for user flags (markers)
         strMarker = (intMarker>0) ? "X" : " ";
 
-        // Rotate log history
-        for (int i = 0; i < arrLogHistory.Length - 1; i++)
+        // Set frame type 
+        strType=strType.PadLeft(3, ' ');
+
+        if (!bSkipGui)
         {
-            arrLogHistory[i] = arrLogHistory[i + 1]; // Shift one down
+            // Rotate log history
+            for (int i = 0; i < arrLogHistory.Length - 1; i++)
+            {
+                arrLogHistory[i] = arrLogHistory[i + 1]; // Shift one down
+            }
+
+            // Add new entry
+            arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + strDirection + " " + strEntryToAdd; // Add entry at the last position
         }
-
-        // Add new entry
-        arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + strDirection  + " " + strEntryToAdd; // Add entry at the last position
-
         // Add the entry to log file
-        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.intInstanceId + " | " + strMarker + " | " + strDirection + " | " + strEntryToAdd);
+        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.intInstanceId + " | " + strMarker + " | "+ strDirection + " | "+ strType + " | " + strEntryToAdd);
 
         // Update control at my window
         Globals.bGUILogHistoryUpdate = true;
