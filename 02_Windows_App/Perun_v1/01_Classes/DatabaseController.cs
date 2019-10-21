@@ -103,7 +103,19 @@ public class DatabaseController
                     Console.WriteLine(rdrMySQL[0] + " -- " + rdrMySQL[1]);
                 }
                 rdrMySQL.Close();
-                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "MySQL updated, package type: " + strUDPFrameType,1);
+                switch (Int32.Parse(strUDPFrameType))
+                {
+                    case 100:
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data send to MySQL", 1);
+                        break;
+                    case 101:
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data send to MySQL", 1);
+                        break;
+                    default:
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "MySQL updated, package type: " + strUDPFrameType, 1);
+                        break;
+                }
+                
             }
             catch (ArgumentException a_ex)
             {
