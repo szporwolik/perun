@@ -187,7 +187,7 @@ namespace Perun_v1
             dcConnection.strMySQLConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
 
             // Start listening
-            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "Opening connections");
+            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Opening connections",0,1);
             tcpServer.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.arrGUILogHistory, ref arrMySQLSendBuffer);
             tcpServer.thrTCPListener = new Thread(tcpServer.StartListen);
             tcpServer.thrTCPListener.Start();
@@ -207,7 +207,7 @@ namespace Perun_v1
         {
             // Stop listening
             // Prepare GUI
-            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "Closing connections");
+            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Closing connections",0,1);
             con_Button_Listen_OFF.Enabled = false;
             Tim_GUI_Tick(null, null);
             this.Refresh();
@@ -240,7 +240,7 @@ namespace Perun_v1
             con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
 
             // Display information about closed connections
-            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "Connections closed");
+            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Connections closed",0,1);
             Tim_GUI_Tick(null, null);
 
             // Set title bar
@@ -534,12 +534,12 @@ namespace Perun_v1
                         strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'false'}}"; // No SRS clients connected
                     }
                     boolSRSdefault = false;
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > SRS data loaded");
+                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data loaded",3);
                     bSRSStatus = true;
                 }
                 catch (Exception exc_srs)
                 {
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > SRS data ERROR > " + exc_srs.Message);
+                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data ERROR , error: " + exc_srs.Message,3,1);
                     bSRSStatus = false;
                     Globals.intSRSErros++;
                 }
@@ -562,12 +562,12 @@ namespace Perun_v1
 
                     strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + strLotATCJson + "'}";
                     boolLotATCdefault = false;
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data loaded");
+                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data loaded",3);
                     bLotATCStatus = true;
                 }
                 catch (Exception exc_lotatc)
                 {
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Int32.Parse(con_txt_dcs_instance.Text) + " > LotATC data ERROR > " + exc_lotatc.Message);
+                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message,3,1);
                     bLotATCStatus = false;
                     Globals.intLotATCErros++;
                 }
@@ -611,7 +611,7 @@ namespace Perun_v1
                 Globals.bStatusIconsForce = true;
 
                 // Add information
-                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "Resetted error counter");
+                PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Resetted error counter",0,1);
             }
             else if (dialogResult == DialogResult.No)
             {
@@ -624,7 +624,7 @@ namespace Perun_v1
         private void con_Button_Add_Marker_Click(object sender, EventArgs e)
         {
             // Added user marker
-            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "#" + Globals.intInstanceId + " > " + "User marker");
+            PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "User Marker",0,1);
         }
     }
 }

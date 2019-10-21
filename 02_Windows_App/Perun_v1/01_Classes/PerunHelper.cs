@@ -4,8 +4,31 @@ using System.Reflection;
 
 internal class PerunHelper
 {
-    public static void GUILogHistoryAdd(ref string[] arrLogHistory, string strEntryToAdd)
+    public static void GUILogHistoryAdd(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0)
     {
+        // Declare values
+        string strDirection;
+        string strMarker;
+        // Set direction marker
+        switch (intDirection)
+        {
+            case 1:
+                strDirection = ">";
+                break;
+            case 2:
+                strDirection = "<";
+                break;
+            case 3:
+                strDirection = "^";
+                break;
+            default:
+                strDirection = " ";
+                break;
+        }
+
+        // Set marker for user flags (markers)
+        strMarker = (intMarker>0) ? "X" : " ";
+
         // Rotate log history
         for (int i = 0; i < arrLogHistory.Length - 1; i++)
         {
@@ -13,10 +36,10 @@ internal class PerunHelper
         }
 
         // Add new entry
-        arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " > " + strEntryToAdd; // Add entry at the last position
+        arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + strDirection  + " " + strEntryToAdd; // Add entry at the last position
 
         // Add the entry to log file
-        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + arrLogHistory[arrLogHistory.Length - 1]);
+        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.intInstanceId + " | " + strMarker + " | " + strDirection + " | " + strEntryToAdd);
 
         // Update control at my window
         Globals.bGUILogHistoryUpdate = true;

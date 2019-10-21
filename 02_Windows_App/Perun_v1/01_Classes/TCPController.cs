@@ -122,7 +122,7 @@ public class TCPController
                                         dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
                                         string strRawTCPFrameType = dynamicRawTCPFrame.type;
 
-                                        PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + "> TCP packet received, type: " + strRawTCPFrameType);
+                                        PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "TCP packet received, type: " + strRawTCPFrameType,2);
 
                                         // Add to mySQL send buffer (find first empty slot)
                                         if (Int32.Parse(strRawTCPFrameType) != 0)
@@ -146,7 +146,7 @@ public class TCPController
                                 {
                                     Globals.intGameErros++;
                                     Console.WriteLine(e.ToString());
-                                    PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP ERROR incorrect JSON > " + e.Message);
+                                    PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "ERROR while message parsing , error: " + e.Message,2,1);
                                     bTCPConnectionOnline = false;
                                 }
 
@@ -158,7 +158,7 @@ public class TCPController
                                 catch (SocketException e)
                                 {
                                     Console.WriteLine(e.ToString());
-                                    PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP ERROR cannot send > " + e.Message);
+                                    PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "TCP ERROR cannot check connection, error: " + e.Message,2,1);
                                 }
 
                             }
@@ -172,7 +172,7 @@ public class TCPController
             {
                 Globals.intGameErros++;
                 Console.WriteLine(e.ToString());
-                PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "#" + Globals.intInstanceId + " > TCP error - connection closed or port in use > " + e.Message);
+                PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "TCP error - connection closed or port in use, error: " + e.Message,1,1);
                 bTCPConnectionOnline = false;
             }
 
