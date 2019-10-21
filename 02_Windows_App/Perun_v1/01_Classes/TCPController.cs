@@ -122,11 +122,11 @@ public class TCPController
                                         dynamic dynamicRawTCPFrame = JsonConvert.DeserializeObject(strReceivedData); // Deserialize received frame
                                         string strRawTCPFrameType = dynamicRawTCPFrame.type;
 
-                                        PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "TCP packet received, type: " + strRawTCPFrameType,2);
-
-                                        // Add to mySQL send buffer (find first empty slot)
+                                        // Check if this is NOT keep alive
                                         if (Int32.Parse(strRawTCPFrameType) != 0)
                                         {
+                                            // Add to mySQL send buffer (find first empty slot)
+                                            PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "TCP packet received, type: " + strRawTCPFrameType, 2);
                                             for (int i = 0; i < arrMySQLSendBuffer.Length - 1; i++)
                                             {
                                                 if (arrMySQLSendBuffer[i] == null)
@@ -135,6 +135,10 @@ public class TCPController
                                                     break;
                                                 }
                                             }
+                                        } else
+                                        {
+                                            // Keep alive
+                                            PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "Keep-alive received", 2);
                                         }
                                     }
                                     else
