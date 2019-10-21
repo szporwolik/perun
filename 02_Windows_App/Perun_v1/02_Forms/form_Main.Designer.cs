@@ -68,21 +68,23 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
+            this.con_Button_Reset_Flags = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.con_img_logo = new System.Windows.Forms.PictureBox();
             this.con_img_lotATC = new System.Windows.Forms.PictureBox();
             this.con_img_srs = new System.Windows.Forms.PictureBox();
             this.con_img_dcs = new System.Windows.Forms.PictureBox();
             this.con_img_db = new System.Windows.Forms.PictureBox();
-            this.con_Button_Reset_Flags = new System.Windows.Forms.Button();
-            this.con_img_logo = new System.Windows.Forms.PictureBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_lotATC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).BeginInit();
             this.SuspendLayout();
             // 
             // con_List_Received
@@ -295,9 +297,10 @@
             // con_lab_github
             // 
             this.con_lab_github.AutoSize = true;
-            this.con_lab_github.Location = new System.Drawing.Point(155, 38);
+            this.con_lab_github.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_lab_github.Location = new System.Drawing.Point(183, 39);
             this.con_lab_github.Name = "con_lab_github";
-            this.con_lab_github.Size = new System.Drawing.Size(181, 13);
+            this.con_lab_github.Size = new System.Drawing.Size(155, 12);
             this.con_lab_github.TabIndex = 8;
             this.con_lab_github.TabStop = true;
             this.con_lab_github.Text = "https://github.com/szporwolik/perun";
@@ -306,9 +309,10 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 38);
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(183, 27);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(120, 13);
+            this.label5.Size = new System.Drawing.Size(102, 12);
             this.label5.TabIndex = 9;
             this.label5.Text = "Manual and bugtracker:";
             // 
@@ -428,6 +432,49 @@
             this.label12.TabIndex = 16;
             this.label12.Text = "LotATC";
             // 
+            // con_Button_Reset_Flags
+            // 
+            this.con_Button_Reset_Flags.Enabled = false;
+            this.con_Button_Reset_Flags.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(224, 414);
+            this.con_Button_Reset_Flags.Name = "con_Button_Reset_Flags";
+            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(114, 20);
+            this.con_Button_Reset_Flags.TabIndex = 17;
+            this.con_Button_Reset_Flags.Text = "Reset error flags";
+            this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
+            this.con_Button_Reset_Flags.Click += new System.EventHandler(this.con_Button_Reset_Flags_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(63, 7);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(74, 25);
+            this.label13.TabIndex = 19;
+            this.label13.Text = "Perun";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(65, 32);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(88, 13);
+            this.label14.TabIndex = 20;
+            this.label14.Text = "for DCS World";
+            // 
+            // con_img_logo
+            // 
+            this.con_img_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.con_img_logo.Image = global::Perun_v1.Properties.Resources.perun_logo;
+            this.con_img_logo.Location = new System.Drawing.Point(12, 7);
+            this.con_img_logo.Name = "con_img_logo";
+            this.con_img_logo.Size = new System.Drawing.Size(45, 41);
+            this.con_img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.con_img_logo.TabIndex = 18;
+            this.con_img_logo.TabStop = false;
+            // 
             // con_img_lotATC
             // 
             this.con_img_lotATC.Location = new System.Drawing.Point(292, 362);
@@ -465,33 +512,13 @@
             this.con_img_db.TabIndex = 10;
             this.con_img_db.TabStop = false;
             // 
-            // con_Button_Reset_Flags
-            // 
-            this.con_Button_Reset_Flags.Enabled = false;
-            this.con_Button_Reset_Flags.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(224, 414);
-            this.con_Button_Reset_Flags.Name = "con_Button_Reset_Flags";
-            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(114, 20);
-            this.con_Button_Reset_Flags.TabIndex = 17;
-            this.con_Button_Reset_Flags.Text = "Reset error flags";
-            this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
-            this.con_Button_Reset_Flags.Click += new System.EventHandler(this.con_Button_Reset_Flags_Click);
-            // 
-            // con_img_logo
-            // 
-            this.con_img_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.con_img_logo.Location = new System.Drawing.Point(12, 7);
-            this.con_img_logo.Name = "con_img_logo";
-            this.con_img_logo.Size = new System.Drawing.Size(29, 28);
-            this.con_img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.con_img_logo.TabIndex = 18;
-            this.con_img_logo.TabStop = false;
-            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(349, 653);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.label13);
             this.Controls.Add(this.con_img_logo);
             this.Controls.Add(this.con_Button_Reset_Flags);
             this.Controls.Add(this.label12);
@@ -526,11 +553,11 @@
             this.con_GroupBox_3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_lotATC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -582,6 +609,8 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button con_Button_Reset_Flags;
         private System.Windows.Forms.PictureBox con_img_logo;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
     }
 }
 
