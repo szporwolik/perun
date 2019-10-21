@@ -486,99 +486,105 @@ namespace Perun_v1
             bool boolLotATCdefault = true;
 
             // Handle SRS 
-            if (con_check_3rd_srs.Checked)
+            if (Globals.bClientConnected)
             {
-                try
+                if (con_check_3rd_srs.Checked)
                 {
-                    strSRSJson = System.IO.File.ReadAllText(con_txt_3rd_srs.Text);
-                    dynamic raw_lotatc = JsonConvert.DeserializeObject(strSRSJson);
-
-                    for (int i = 0; i < raw_lotatc.Count; i++)
+                    try
                     {
+                        strSRSJson = System.IO.File.ReadAllText(con_txt_3rd_srs.Text);
+                        dynamic raw_lotatc = JsonConvert.DeserializeObject(strSRSJson);
 
-                        if (raw_lotatc[i].RadioInfo != null)
+                        for (int i = 0; i < raw_lotatc.Count; i++)
                         {
 
-                            int temp = raw_lotatc[i].RadioInfo.radios.Count - 1;
-                            for (int j = temp; j >= 0; j--)
+                            if (raw_lotatc[i].RadioInfo != null)
                             {
-                                raw_lotatc[i].RadioInfo.radios[j].enc.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].encKey.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].encMode.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].freqMax.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].freqMin.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].modulation.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].freqMode.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].volMode.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].expansion.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].channel.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.radios[j].simul.Parent.Remove();
 
-                                if (raw_lotatc[i].RadioInfo.radios[j].name == "No Radio")
+                                int temp = raw_lotatc[i].RadioInfo.radios.Count - 1;
+                                for (int j = temp; j >= 0; j--)
                                 {
-                                    raw_lotatc[i].RadioInfo.radios[j].Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].enc.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].encKey.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].encMode.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].freqMax.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].freqMin.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].modulation.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].freqMode.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].volMode.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].expansion.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].channel.Parent.Remove();
+                                    raw_lotatc[i].RadioInfo.radios[j].simul.Parent.Remove();
+
+                                    if (raw_lotatc[i].RadioInfo.radios[j].name == "No Radio")
+                                    {
+                                        raw_lotatc[i].RadioInfo.radios[j].Remove();
+                                    }
                                 }
+                                raw_lotatc[i].ClientChannelId.Parent.Remove();
+                                raw_lotatc[i].RadioInfo.simultaneousTransmission.Parent.Remove();
                             }
-                            raw_lotatc[i].ClientChannelId.Parent.Remove();
-                            raw_lotatc[i].RadioInfo.simultaneousTransmission.Parent.Remove();
                         }
+
+                        if (raw_lotatc.Count > 0)
+                        {
+                            strSRSJson = JsonConvert.SerializeObject(raw_lotatc);
+                            strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + strSRSJson + "'}";
+                        }
+                        else
+                        {
+                            strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'false'}}"; // No SRS clients connected
+                        }
+                        boolSRSdefault = false;
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data loaded", 3, 0, "100", true);
+                        bSRSStatus = true;
+                    }
+                    catch (Exception exc_srs)
+                    {
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data ERROR , error: " + exc_srs.Message, 3, 1, "100");
+                        bSRSStatus = false;
+                        Globals.intSRSErros++;
                     }
 
-                    if (raw_lotatc.Count > 0)
-                    {
-                        strSRSJson = JsonConvert.SerializeObject(raw_lotatc);
-                        strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + strSRSJson + "'}";
-                    }
-                    else
-                    {
-                        strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'false'}}"; // No SRS clients connected
-                    }
-                    boolSRSdefault = false;
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data loaded",3,0,"100",true);
-                    bSRSStatus = true;
+
                 }
-                catch (Exception exc_srs)
+                if (boolSRSdefault)
                 {
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "SRS data ERROR , error: " + exc_srs.Message,3,1,"100");
-                    bSRSStatus = false;
-                    Globals.intSRSErros++;
+                    strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";
                 }
-
-
+                dcConnection.SendToMySql(strSRSJson);
             }
-            if (boolSRSdefault)
-            {
-                strSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";
-            }
-            dcConnection.SendToMySql(strSRSJson);
 
             // Handle LotATC 
-            if (con_check_3rd_lotatc.Checked)
+            if (Globals.bClientConnected)
             {
-                try
+                if (con_check_3rd_lotatc.Checked)
                 {
-                    strLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
-                    dynamic raw_srs = JsonConvert.DeserializeObject(strLotATCJson);
+                    try
+                    {
+                        strLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
+                        dynamic raw_srs = JsonConvert.DeserializeObject(strLotATCJson);
 
-                    strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + strLotATCJson + "'}";
-                    boolLotATCdefault = false;
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data loaded",3,0,"101",true);
-                    bLotATCStatus = true;
+                        strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + strLotATCJson + "'}";
+                        boolLotATCdefault = false;
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data loaded", 3, 0, "101", true);
+                        bLotATCStatus = true;
+                    }
+                    catch (Exception exc_lotatc)
+                    {
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message, 3, 1, "101");
+                        bLotATCStatus = false;
+                        Globals.intLotATCErros++;
+                    }
+
+
                 }
-                catch (Exception exc_lotatc)
+                if (boolLotATCdefault)
                 {
-                    PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message,3,1,"101");
-                    bLotATCStatus = false;
-                    Globals.intLotATCErros++;
+                    strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";   // No LotATC controller connected
                 }
-
-
+                dcConnection.SendToMySql(strLotATCJson);
             }
-            if (boolLotATCdefault)
-            {
-                strLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";   // No LotATC controller connected
-            }
-            dcConnection.SendToMySql(strLotATCJson);
 
             // Let's do not risk int overload
             Globals.intMysqlErros = (Globals.intMysqlErros > 999) ? 999 : Globals.intMysqlErros;
