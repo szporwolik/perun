@@ -68,6 +68,12 @@ namespace Perun_v1
                     con_check_3rd_lotatc.Checked = true;
                 }
             }
+
+            // Initialize controls
+            con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
+            con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
+            con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
+            con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
         }
 
         public form_Main()

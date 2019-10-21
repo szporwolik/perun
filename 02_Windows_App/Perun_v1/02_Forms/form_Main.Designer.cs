@@ -427,7 +427,6 @@
             // 
             // con_img_lotATC
             // 
-            this.con_img_lotATC.Image = global::Perun_v1.Properties.Resources.status_disconnected;
             this.con_img_lotATC.Location = new System.Drawing.Point(292, 335);
             this.con_img_lotATC.Name = "con_img_lotATC";
             this.con_img_lotATC.Size = new System.Drawing.Size(29, 28);
@@ -437,7 +436,6 @@
             // 
             // con_img_srs
             // 
-            this.con_img_srs.Image = global::Perun_v1.Properties.Resources.status_disconnected;
             this.con_img_srs.Location = new System.Drawing.Point(207, 335);
             this.con_img_srs.Name = "con_img_srs";
             this.con_img_srs.Size = new System.Drawing.Size(29, 28);
@@ -447,7 +445,6 @@
             // 
             // con_img_dcs
             // 
-            this.con_img_dcs.Image = global::Perun_v1.Properties.Resources.status_disconnected;
             this.con_img_dcs.Location = new System.Drawing.Point(122, 335);
             this.con_img_dcs.Name = "con_img_dcs";
             this.con_img_dcs.Size = new System.Drawing.Size(29, 28);
@@ -458,7 +455,6 @@
             // con_img_db
             // 
             this.con_img_db.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.con_img_db.Image = global::Perun_v1.Properties.Resources.status_disconnected;
             this.con_img_db.Location = new System.Drawing.Point(37, 335);
             this.con_img_db.Name = "con_img_db";
             this.con_img_db.Size = new System.Drawing.Size(29, 28);
