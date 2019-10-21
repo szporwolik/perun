@@ -11,7 +11,7 @@ Provided windows app puts received TCP packets to MySQL database; additionaly Pe
 
 However, this software is intended to be used by experienced users - the output is MySQL data and/or JSON file; you will need to process/display it yourself.
 
-![Perun in action](https://i.imgur.com/vHw8Xu5.png)
+![Perun in action](https://i.imgur.com/MieyBej.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
 
 ## Prerequisites
@@ -57,6 +57,15 @@ Example for windows shortcut:
 ```
 C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved Games\DCS\Mods\tech\LotAtc\stats.json"
 ```
+## Troubleshooting - FAQ
+- [I keep getting 1305 MySQL error](#i-keep-getting-1305-mysql-error)
+- [Carrier landing are not tracked correctly](#carrier-landing-are-not-tracked-correctly)
+
+### I keep getting 1305 MySQL error
+That probably means that your database does not support JSON functions, you shall upgrade your MySQL server to at lease 5.7 version.
+
+### Carrier landing are not tracked correctly
+DCS API does not track carrier landing natively, so there is a trick to achive that. You shall set your carrier to a propoer group name to have landings tracked.
 
 # API documentation (for expert users)
 ## MySQL database structure
