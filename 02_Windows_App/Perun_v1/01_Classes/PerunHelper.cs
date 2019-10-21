@@ -13,10 +13,10 @@ internal class PerunHelper
         }
 
         // Add new entry
-        arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("yyyy-dd-MM HH:mm:ss") + " > " + strEntryToAdd; // Add entry at the last position
+        arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " > " + strEntryToAdd; // Add entry at the last position
 
         // Add the entry to log file
-        LogController.WriteLog(arrLogHistory[arrLogHistory.Length - 1]);
+        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + arrLogHistory[arrLogHistory.Length - 1]);
 
         // Update control at my window
         Globals.bGUILogHistoryUpdate = true;
