@@ -98,7 +98,6 @@
             this.con_List_Received.Name = "con_List_Received";
             this.con_List_Received.Size = new System.Drawing.Size(307, 134);
             this.con_List_Received.TabIndex = 0;
-            this.con_List_Received.SelectedIndexChanged += new System.EventHandler(this.con_List_Received_SelectedIndexChanged);
             // 
             // con_Button_Listen_ON
             // 

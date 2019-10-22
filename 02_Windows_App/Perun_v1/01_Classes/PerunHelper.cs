@@ -7,27 +7,27 @@ internal class PerunHelper
     public static void GUILogHistoryAdd(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
         // Declare values
-        string strDirection;
-        string strMarker;
+        string LogDirection;
+        string LogMarker;
         // Set direction marker
         switch (intDirection)
         {
             case 1:
-                strDirection = ">";
+                LogDirection = ">";
                 break;
             case 2:
-                strDirection = "<";
+                LogDirection = "<";
                 break;
             case 3:
-                strDirection = "^";
+                LogDirection = "^";
                 break;
             default:
-                strDirection = " ";
+                LogDirection = " ";
                 break;
         }
 
         // Set marker for user flags (markers)
-        strMarker = (intMarker>0) ? "X" : " ";
+        LogMarker = (intMarker>0) ? "X" : " ";
 
         // Set frame type 
         strType=strType.PadLeft(3, ' ');
@@ -41,28 +41,19 @@ internal class PerunHelper
             }
 
             // Add new entry
-            arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + strDirection + " " + strEntryToAdd; // Add entry at the last position
+            arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + LogDirection + " " + strEntryToAdd; // Add entry at the last position
 
             // Update control at my window
             Globals.bGUILogHistoryUpdate = true;
         }
         // Add the entry to log file
-        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.intInstanceId + " | " + strMarker + " | "+ strDirection + " | "+ strType + " | " + strEntryToAdd);
+        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.intInstanceId + " | " + LogMarker + " | "+ LogDirection + " | "+ strType + " | " + strEntryToAdd);
     }
+
     public static string GetAppVersion(string strBeginning)
     {
         // Gets build version
-        if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
-        {
-            // For network deployed
-            System.Deployment.Application.ApplicationDeployment cd = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;
-            Globals.strPerunVersion = cd.CurrentVersion.ToString();
-        }
-        else
-        {
-            // For other cases
-            Globals.strPerunVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        }
+        Globals.strPerunVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         return strBeginning + "v" + Globals.strPerunVersion;
     }
 }

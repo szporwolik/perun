@@ -6,36 +6,36 @@ class LogController
     // TBD - done via https://stackoverflow.com/questions/20185015/how-to-write-log-file-in-c
     public static void WriteLog(string strLog)
     {
-        StreamWriter log;
-        FileStream fileStream = null;
-        DirectoryInfo logDirInfo = null;
-        FileInfo logFileInfo;
+        StreamWriter LogStreamWriter;
+        FileStream LogFileStream = null;
+        DirectoryInfo LogDirectoryInfo = null;
+        FileInfo LogFileInfo;
 
-        string logFilePath = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\Perun\\";
-        logFilePath = logFilePath + "Perun_Log_" + System.DateTime.Today.ToString("yyyyddMM") + "." + "txt";
-        logFileInfo = new FileInfo(logFilePath);
-        logDirInfo = new DirectoryInfo(logFileInfo.DirectoryName);
-        if (!logDirInfo.Exists) logDirInfo.Create();
-        if (!logFileInfo.Exists)
+        string LogFilePath = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\Perun\\";
+        LogFilePath = LogFilePath + "Perun_Log_" + System.DateTime.Today.ToString("yyyyddMM") + "." + "txt";
+        LogFileInfo = new FileInfo(LogFilePath);
+        LogDirectoryInfo = new DirectoryInfo(LogFileInfo.DirectoryName);
+        if (!LogDirectoryInfo.Exists) LogDirectoryInfo.Create();
+        if (!LogFileInfo.Exists)
         {
-            fileStream = logFileInfo.Create();
+            LogFileStream = LogFileInfo.Create();
         }
         else
         {
             try
             {
-                fileStream = new FileStream(logFilePath, FileMode.Append);
+                LogFileStream = new FileStream(LogFilePath, FileMode.Append);
             }
             catch
             {
-                // Do nothing
+                // Do nothing 
             }
         }
         try
         {
-            log = new StreamWriter(fileStream);
-            log.WriteLine(strLog);
-            log.Close();
+            LogStreamWriter = new StreamWriter(LogFileStream);
+            LogStreamWriter.WriteLine(strLog);
+            LogStreamWriter.Close();
         }
         catch
         {

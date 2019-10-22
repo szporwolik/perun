@@ -127,13 +127,19 @@ public class TCPController
                                         {
                                             // Add to mySQL send buffer (find first empty slot)
                                             PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "Packet received" , 2,0, strRawTCPFrameType,true);
+                                            bool AddedDataToBuffer = false;
                                             for (int i = 0; i < arrMySQLSendBuffer.Length - 1; i++)
                                             {
                                                 if (arrMySQLSendBuffer[i] == null)
                                                 {
                                                     arrMySQLSendBuffer[i] = strReceivedData;
+                                                    AddedDataToBuffer = true;
                                                     break;
                                                 }
+                                            }
+                                            if (!AddedDataToBuffer)
+                                            {
+                                                PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "ERROR package was dropped", 1, 1, strRawTCPFrameType);
                                             }
                                         } else
                                         {
