@@ -44,16 +44,16 @@ internal class PerunHelper
             arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + LogDirection + " " + strEntryToAdd; // Add entry at the last position
 
             // Update control at my window
-            Globals.bGUILogHistoryUpdate = true;
+            Globals.AppUpdateGUI = true;
         }
         // Add the entry to log file
-        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.intInstanceId + " | " + LogMarker + " | "+ LogDirection + " | "+ strType + " | " + strEntryToAdd);
+        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.AppInstanceID + " | " + LogMarker + " | "+ LogDirection + " | "+ strType + " | " + strEntryToAdd);
     }
 
     public static string GetAppVersion(string strBeginning)
     {
         // Gets build version
-        Globals.strPerunVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        return strBeginning + "v" + Globals.strPerunVersion;
+        Globals.VersionPerun = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        return strBeginning + "v" + Globals.VersionPerun;
     }
 }

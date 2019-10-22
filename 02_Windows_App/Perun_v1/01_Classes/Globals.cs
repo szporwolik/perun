@@ -2,21 +2,25 @@
 
 internal class Globals
 {
-    public static string strPerunVersion = "DEBUG";                 // Helper for pulling version definition
-    public static string[] AppLogHistory = new string[10];       // Log history for GUI
-    public static bool bGUILogHistoryUpdate = true;                 // Flag if log control requires update
-    public static string strPerunTitleText = "";                    // Helper to update title
-    public static int intInstanceId = 0;                            // Kepp the instance ID
-    public static bool bStatusIconsForce = true;                    // Force main window icons reload
-    public static bool bdcConnection = false;                       // Historic db connection status
-    public static bool bTCPServer = false;                          // Historic tcp connection status
-    public static bool bSRSStatus = false;                          // Historic srs connection status
-    public static bool bLotATCStatus = false;                       // Historic lotatc connection status
-    public static bool bClientConnected = false;                    // Flag if is TCP connectionstill alive
-    public static int intMysqlErros = 0;                            // MySQL - Error counter
-    public static int intGameErros = 0;                             // TCP connection - Error counter
-    public static int intGameErrosHistory = 0;                      // TCP connection - historic value of Error counter
-    public static int intSRSErros = 0;                              // DCS SRS - error counter
-    public static int intLotATCErros = 0;                           // LotATC - error counter
+    public static string[] AppLogHistory = new string[10];          // Log history for GUI
+    public static bool AppUpdateGUI = true;                         // Flag if log control requires update
+    public static string AppTitle = "";                             // Helper to update title
+    public static int AppInstanceID = 0;                            // Kepp the instance ID
+    public static bool AppForceIconReload = true;                   // Force main window icons reload
+
+    public static bool StatusDatabase = false;                      // Historic db connection status
+    public static bool StatusSRS = false;                           // Historic srs connection status
+    public static bool StatusLotATC = false;                        // Historic lotatc connection status
+    public static bool StatusHistoryConnection = false;                          // Historic tcp connection status
+    public static bool StatusConnection = false;                    // Flag if is TCP connectionstill alive
+    public static int ErrorsDatabase = 0;                           // MySQL - Error counter
+    public static int ErrorsGame = 0;                               // TCP connection - Error counter
+    public static int ErrorsHistoryGame = 0;                        // TCP connection - historic value of Error counter
+    public static int ErrorsSRS = 0;                                // DCS SRS - error counter
+    public static int ErrorsLotATC = 0;                             // LotATC - error counter
+
+    public static string VersionDCSHook = "";                       // Version - DCS hook
+    public static string VersionDatabase = "";                      // Version - Database
+    public static string VersionPerun = "DEBUG";                    // Version - Perun
 }
 

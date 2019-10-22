@@ -27,8 +27,8 @@ namespace Perun_v1
             form_Main_LoadSettings();   // Load settings from registry
 
             // Display build version in title bar
-            Globals.strPerunTitleText = PerunHelper.GetAppVersion(this.Text + " - ");
-            this.Text = Globals.strPerunTitleText;
+            Globals.AppTitle = PerunHelper.GetAppVersion(this.Text + " - ");
+            this.Text = Globals.AppTitle;
 
             // Use command line parameters
             string[] args = Environment.GetCommandLineArgs();
@@ -165,18 +165,18 @@ namespace Perun_v1
         {
             // Start listening
             // Set globals
-            Globals.intInstanceId = Int32.Parse(con_txt_dcs_instance.Text);
-            Globals.bStatusIconsForce = true;
-            Globals.intMysqlErros = 0;                // Reset error counter
-            Globals.intGameErros = 0;                 // Reset error counter
-            Globals.intSRSErros = 0;                  // Reset error counter
-            Globals.intLotATCErros = 0;               // Reset error counter
-            Globals.bClientConnected = false;         // Reset connection status
+            Globals.AppInstanceID = Int32.Parse(con_txt_dcs_instance.Text);
+            Globals.AppForceIconReload = true;
+            Globals.ErrorsDatabase = 0;                // Reset error counter
+            Globals.ErrorsGame = 0;                 // Reset error counter
+            Globals.ErrorsSRS = 0;                  // Reset error counter
+            Globals.ErrorsLotATC = 0;               // Reset error counter
+            Globals.StatusConnection = false;         // Reset connection status
 
             // Prepare GUI
             form_Main_SetControlsToConnected();
             form_Main_SaveSettings();
-            this.Text = "[#" + con_txt_dcs_instance.Text + "] " + Globals.strPerunTitleText; // Set title bar
+            this.Text = "[#" + con_txt_dcs_instance.Text + "] " + Globals.AppTitle; // Set title bar
             trayIconMain.Text = this.Text; // Set notification icon text
 
             // Prepare MySQL connection string
@@ -243,17 +243,17 @@ namespace Perun_v1
             Tim_GUI_Tick(null, null);
 
             // Set title bar
-            this.Text = Globals.strPerunTitleText;
+            this.Text = Globals.AppTitle;
             trayIconMain.Text = this.Text;
 
             // Set globals
-            Globals.intInstanceId = 0;
-            Globals.bGUILogHistoryUpdate = false;
-            Globals.bdcConnection = false;
-            Globals.bTCPServer = false;
-            Globals.bSRSStatus = false;
-            Globals.bLotATCStatus = false;
-            Globals.bClientConnected = false;
+            Globals.AppInstanceID = 0;
+            Globals.AppUpdateGUI = false;
+            Globals.StatusDatabase = false;
+            Globals.StatusHistoryConnection = false;
+            Globals.StatusSRS = false;
+            Globals.StatusLotATC = false;
+            Globals.StatusConnection = false;
         }
 
         private void con_lab_github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -360,7 +360,7 @@ namespace Perun_v1
             // Main timer to sync GUI with background tasks and flush buffers
 
             // Refresh Log Window
-            if (Globals.bGUILogHistoryUpdate)
+            if (Globals.AppUpdateGUI)
             {
                 con_List_Received.Items.Clear();
                 foreach (string i in Globals.AppLogHistory)
@@ -370,7 +370,7 @@ namespace Perun_v1
                         con_List_Received.Items.Add(i);
                     }
                 }
-                Globals.bGUILogHistoryUpdate = false;
+                Globals.AppUpdateGUI = false;
             }
             else
             {
@@ -378,11 +378,11 @@ namespace Perun_v1
             }
 
             // Update status icons at main form - MySQL
-            if ((DatabaseConnection.DatabaseStatus != Globals.bdcConnection) || Globals.bStatusIconsForce)
+            if ((DatabaseConnection.DatabaseStatus != Globals.StatusDatabase) || Globals.AppForceIconReload)
             {
                 if (DatabaseConnection.DatabaseStatus)
                 {
-                    if (Globals.intMysqlErros == 0)
+                    if (Globals.ErrorsDatabase == 0)
                     {
                         con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
                     }
@@ -395,14 +395,14 @@ namespace Perun_v1
                 {
                     con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_error");
                 }
-                Globals.bdcConnection = DatabaseConnection.DatabaseStatus;
+                Globals.StatusDatabase = DatabaseConnection.DatabaseStatus;
             }
             // Update status icons at main form - DCS
-            if ((Globals.bClientConnected != Globals.bTCPServer) || Globals.bStatusIconsForce || Globals.intGameErros != Globals.intGameErrosHistory)
+            if ((Globals.StatusConnection != Globals.StatusHistoryConnection) || Globals.AppForceIconReload || Globals.ErrorsGame != Globals.ErrorsHistoryGame)
             {
-                if (Globals.bClientConnected)
+                if (Globals.StatusConnection)
                 {
-                    if (Globals.intGameErros == 0)
+                    if (Globals.ErrorsGame == 0)
                     {
                         con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
                     }
@@ -415,15 +415,15 @@ namespace Perun_v1
                 {
                     con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_error");
                 }
-                Globals.bTCPServer = Globals.bClientConnected;
-                Globals.intGameErrosHistory = Globals.intGameErros;
+                Globals.StatusHistoryConnection = Globals.StatusConnection;
+                Globals.ErrorsHistoryGame = Globals.ErrorsGame;
             }
             // Update status icons at main form - SRS
-            if ((ExtSRSStatus != Globals.bSRSStatus) || Globals.bStatusIconsForce)
+            if ((ExtSRSStatus != Globals.StatusSRS) || Globals.AppForceIconReload)
             {
                 if (ExtSRSStatus && con_check_3rd_srs.Checked)
                 {
-                    if (Globals.intSRSErros == 0)
+                    if (Globals.ErrorsSRS == 0)
                     {
                         con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
                     }
@@ -436,14 +436,14 @@ namespace Perun_v1
                 {
                     con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_error");
                 }
-                Globals.bSRSStatus = ExtSRSStatus;
+                Globals.StatusSRS = ExtSRSStatus;
             }
             // Update status icons at main form - LotATC
-            if ((ExtLotATCStatus != Globals.bLotATCStatus) || Globals.bStatusIconsForce)
+            if ((ExtLotATCStatus != Globals.StatusLotATC) || Globals.AppForceIconReload)
             {
                 if (ExtLotATCStatus && con_check_3rd_lotatc.Checked)
                 {
-                    if (Globals.intLotATCErros == 0)
+                    if (Globals.ErrorsLotATC == 0)
                     {
                         con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_connected");
                     }
@@ -456,9 +456,9 @@ namespace Perun_v1
                 {
                     con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected_error");
                 }
-                Globals.bLotATCStatus = ExtLotATCStatus;
+                Globals.StatusLotATC = ExtLotATCStatus;
             }
-            Globals.bStatusIconsForce = false;
+            Globals.AppForceIconReload = false;
         }
 
         private void Tim_MySQL_Tick(object sender, EventArgs e)
@@ -491,7 +491,7 @@ namespace Perun_v1
             bool ExtLotATCUseDefault = true;
 
             // Handle SRS 
-            if (Globals.bClientConnected)
+            if (Globals.StatusConnection)
             {
                 if (con_check_3rd_srs.Checked)
                 {
@@ -548,7 +548,7 @@ namespace Perun_v1
                     {
                         PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "SRS data ERROR , error: " + exc_srs.Message, 3, 1, "100");
                         ExtSRSStatus = false;
-                        Globals.intSRSErros++;
+                        Globals.ErrorsSRS++;
                     }
 
 
@@ -561,7 +561,7 @@ namespace Perun_v1
             }
 
             // Handle LotATC 
-            if (Globals.bClientConnected)
+            if (Globals.StatusConnection)
             {
                 if (con_check_3rd_lotatc.Checked)
                 {
@@ -579,7 +579,7 @@ namespace Perun_v1
                     {
                         PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message, 3, 1, "101");
                         ExtLotATCStatus = false;
-                        Globals.intLotATCErros++;
+                        Globals.ErrorsLotATC++;
                     }
 
 
@@ -592,10 +592,10 @@ namespace Perun_v1
             }
 
             // Let's do not risk int overload
-            Globals.intMysqlErros = (Globals.intMysqlErros > 999) ? 999 : Globals.intMysqlErros;
-            Globals.intGameErros = (Globals.intGameErros > 999) ? 999 : Globals.intGameErros;
-            Globals.intSRSErros = (Globals.intSRSErros > 999) ? 999 : Globals.intSRSErros;
-            Globals.intLotATCErros = (Globals.intLotATCErros > 999) ? 999 : Globals.intLotATCErros;
+            Globals.ErrorsDatabase = (Globals.ErrorsDatabase > 999) ? 999 : Globals.ErrorsDatabase;
+            Globals.ErrorsGame = (Globals.ErrorsGame > 999) ? 999 : Globals.ErrorsGame;
+            Globals.ErrorsSRS = (Globals.ErrorsSRS > 999) ? 999 : Globals.ErrorsSRS;
+            Globals.ErrorsLotATC = (Globals.ErrorsLotATC > 999) ? 999 : Globals.ErrorsLotATC;
 
         }
 
@@ -606,14 +606,14 @@ namespace Perun_v1
             if (dialogResult == DialogResult.Yes)
             {
                 // Reset errors counter
-                Globals.intMysqlErros = 0;                            // MySQL - Error counter
-                Globals.intGameErros = 0;                             // TCP connection - Error counter
-                Globals.intGameErrosHistory = 0;                      // TCP connection - historic value of Error counter
-                Globals.intSRSErros = 0;                              // DCS SRS - error counter
-                Globals.intLotATCErros = 0;                           // LotATC - error counter
+                Globals.ErrorsDatabase = 0;                            // MySQL - Error counter
+                Globals.ErrorsGame = 0;                             // TCP connection - Error counter
+                Globals.ErrorsHistoryGame = 0;                      // TCP connection - historic value of Error counter
+                Globals.ErrorsSRS = 0;                              // DCS SRS - error counter
+                Globals.ErrorsLotATC = 0;                           // LotATC - error counter
 
                 // Force icons reload
-                Globals.bStatusIconsForce = true;
+                Globals.AppForceIconReload = true;
 
                 // Add information
                 PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "Resetted error counter",0,1);

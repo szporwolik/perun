@@ -64,7 +64,7 @@ public class TCPController
                 {
                     // Start listening
                     Console.WriteLine("TCP: Waiting for connection");
-                    Globals.bClientConnected = false;
+                    Globals.StatusConnection = false;
 
                     // Wait for pending connection
                     if (tcpServer.Pending())
@@ -80,7 +80,7 @@ public class TCPController
                         while (tcpClient.Connected && !bCloseConnection && bTCPConnectionOnline)  //while the client is connected, we look for incoming messages
                         {
                             StringBuilder CompleteMessage = new StringBuilder();
-                            Globals.bClientConnected = true;
+                            Globals.StatusConnection = true;
 
                             if (nsReadStream.CanRead)
                             {
@@ -154,7 +154,7 @@ public class TCPController
                                 }
                                 catch (Exception e)
                                 {
-                                    Globals.intGameErros++;
+                                    Globals.ErrorsGame++;
                                     Console.WriteLine(e.ToString());
                                     PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "ERROR while message parsing , error: " + e.Message,2,1,"?");
                                     bTCPConnectionOnline = false;
@@ -180,7 +180,7 @@ public class TCPController
             }
             catch (Exception e)
             {
-                Globals.intGameErros++;
+                Globals.ErrorsGame++;
                 Console.WriteLine(e.ToString());
                 PerunHelper.GUILogHistoryAdd(ref arrGUILogHistory, "TCP error - connection closed or port in use, error: " + e.Message,1,1,"?");
                 bTCPConnectionOnline = false;

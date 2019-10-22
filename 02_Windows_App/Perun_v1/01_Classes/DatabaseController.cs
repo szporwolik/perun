@@ -38,7 +38,7 @@ public class DatabaseController
         // Modify specific types
         if (TCPFrameType == "1")
         {
-            TCPFrame.payload["v_win"] = "v" + Globals.strPerunVersion; // Inject app version information
+            TCPFrame.payload["v_win"] = "v" + Globals.VersionPerun; // Inject app version information
         }
 
         // Specific SQL per each frame type
@@ -150,7 +150,7 @@ public class DatabaseController
                 // General exception found
                 Console.WriteLine(a_ex.ToString());
                 PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "ERROR MySQL - error: " + a_ex.Message,1,1, TCPFrameType);
-                Globals.intGameErros++;
+                Globals.ErrorsGame++;
                 DatabaseStatus = false;
                 ReturnValue = 0;
             }
@@ -171,7 +171,7 @@ public class DatabaseController
                         PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "ERROR MySQL - error: " + m_ex.Message,1,1, TCPFrameType);
                         break;
                 }
-                Globals.intGameErros++;
+                Globals.ErrorsGame++;
                 DatabaseStatus = false;
                 ReturnValue = 0;
             }
@@ -182,7 +182,7 @@ public class DatabaseController
         {
             PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "ERROR MySQL - unable to connect, error: " + x_ex.Message,1,1, TCPFrameType);
             ReturnValue = 0;
-            Globals.intGameErros++;
+            Globals.ErrorsGame++;
         }
 
         return ReturnValue;
