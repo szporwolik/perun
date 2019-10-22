@@ -42,12 +42,12 @@ internal class PerunHelper
 
             // Add new entry
             arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + strDirection + " " + strEntryToAdd; // Add entry at the last position
+
+            // Update control at my window
+            Globals.bGUILogHistoryUpdate = true;
         }
         // Add the entry to log file
         LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.intInstanceId + " | " + strMarker + " | "+ strDirection + " | "+ strType + " | " + strEntryToAdd);
-
-        // Update control at my window
-        Globals.bGUILogHistoryUpdate = true;
     }
     public static string GetAppVersion(string strBeginning)
     {

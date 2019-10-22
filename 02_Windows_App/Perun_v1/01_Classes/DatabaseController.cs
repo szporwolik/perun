@@ -9,9 +9,13 @@ public class DatabaseController
     public MySqlConnection connMySQL;
     public bool bStatus;
 
-    public void SendToMySql(string strRawTCPFrame)
+    public void SendToMySql(string strRawTCPFrame, bool bCheckConnection = false)
     {
         // Main function to send data to mysql
+        if (bCheckConnection)
+        {
+            strRawTCPFrame = "{\"type\": \"-1\"}";
+        }
         dynamic strTCPFrame = JsonConvert.DeserializeObject(strRawTCPFrame); // Deserialize raw data
         string strTCPFrameType = strTCPFrame.type;
         string strTCPFrameTimestamp = strTCPFrame.timestamp;
@@ -76,6 +80,11 @@ public class DatabaseController
             strSQLQueryTxt += "UPDATE `pe_DataPlayers` SET  pe_DataPlayers_lastip='" + strTCPFrame.payload.login_ipaddr + "', pe_DataPlayers_lastname='" + strTCPFrame.payload.login_name + "',pe_DataPlayers_updated='" + strTCPFrame.payload.login_datetime + "' WHERE `pe_DataPlayers_ucid`= '" + strTCPFrame.payload.login_ucid + "';";
             strSQLQueryTxt += "INSERT INTO `pe_LogLogins` (`pe_LogLogins_datetime`, `pe_LogLogins_playerid`, `pe_LogLogins_name`, `pe_LogLogins_ip`,`pe_LogLogins_instance`) VALUES ('" + strTCPFrame.payload.login_datetime + "', (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + strTCPFrame.payload.login_ucid + "'), '" + strTCPFrame.payload.login_name + "', '" + strTCPFrame.payload.login_ipaddr + "','" + strTCPFrameInstance + "');";
         }
+        else if (strTCPFrameType == "-1")
+        {
+            // keep alibe
+            strSQLQueryTxt = "SELECT 1;";
+        }
         else
         {
             // General definition used for 1-10 type packets
@@ -98,10 +107,6 @@ public class DatabaseController
                 MySqlCommand cmdMySQL = new MySqlCommand(strSQLQueryTxt, connMySQL);
                 MySqlDataReader rdrMySQL = cmdMySQL.ExecuteReader();
 
-                while (rdrMySQL.Read())
-                {
-                    Console.WriteLine(rdrMySQL[0] + " -- " + rdrMySQL[1]);
-                }
                 rdrMySQL.Close();
                 switch (Int32.Parse(strTCPFrameType))
                 {
@@ -132,6 +137,8 @@ public class DatabaseController
                     case 101:
                         PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "LotATC data send", 1,0,"101");
                         break;
+                    case -1:
+                        break;
                     default:
                         PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "Data send", 1,0, strTCPFrameType);
                         break;
@@ -143,6 +150,7 @@ public class DatabaseController
                 // General exception found
                 Console.WriteLine(a_ex.ToString());
                 PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "ERROR MySQL - error: " + a_ex.Message,1,1, strTCPFrameType);
+                Globals.intGameErros++;
                 bStatus = false;
             }
             catch (MySqlException m_ex)
@@ -158,6 +166,7 @@ public class DatabaseController
                         break;
                     default:
                         PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "ERROR MySQL - error id: " + m_ex.Number,1,1, strTCPFrameType);
+                        PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "ERROR MySQL - query: " + strSQLQueryTxt, 1, 1, strTCPFrameType);
                         PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "ERROR MySQL - error: " + m_ex.Message,1,1, strTCPFrameType);
                         break;
                 }

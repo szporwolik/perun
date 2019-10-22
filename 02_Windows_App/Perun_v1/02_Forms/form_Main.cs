@@ -478,7 +478,12 @@ namespace Perun_v1
 
         private void tim_3rdparties_Tick(object sender, EventArgs e)
         {
-            // Main timer to send JSON files to MySQL
+            // Main timer to check MySQL connection and send JSON files to MySQL
+
+            // Send ping to check for possible connection issues
+            dcConnection.SendToMySql("", true);
+
+            // Take care of 3rd party stuff
             string strSRSJson = "";
             string strLotATCJson = "";
 
