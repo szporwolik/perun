@@ -2,20 +2,19 @@
 ![alt text](https://img.shields.io/github/release-pre/szporwolik/perun.svg "Latest release")
 ![alt text](https://img.shields.io/github/release-date-pre/szporwolik/perun.svg "Latest release date")
 
+![Perun logo](https://i.imgur.com/JkeHYjJ.png)
 
 # Perun for DCS World
-
 Included lua script extracts data from DCS World multiplayer server and sends information to TCP port and JSON file for further processing. 
 
 Provided windows app puts received TCP packets to MySQL database; additionaly Perun windows application can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
 
 However, this software is intended to be used by experienced users - the output is MySQL data and/or JSON file; you will need to process/display it yourself.
 
-![Perun in action](https://i.imgur.com/vHw8Xu5.png)
+![Perun in action](https://i.imgur.com/MieyBej.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
 
 ## Prerequisites
-
 Core:
  * For JSON Export:
    * DCS World stable or DCS World beta
@@ -28,7 +27,6 @@ Core:
  * for [LotATC](https://www.lotatc.com/) you will need location of stats.json file and proper LotATC configuration with JSON data export enabled - see [LotATC documentation](https://www.lotatc.com/documentation/server_configuration.html)
 
 ## Installing
-
 * Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
 * **optionaly** create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
@@ -57,6 +55,15 @@ Example for windows shortcut:
 ```
 C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved Games\DCS\Mods\tech\LotAtc\stats.json"
 ```
+## Troubleshooting - FAQ
+- [I keep getting 1305 MySQL error](#i-keep-getting-1305-mysql-error)
+- [Carrier landing are not tracked correctly](#carrier-landing-are-not-tracked-correctly)
+
+### I keep getting 1305 MySQL error
+That probably means that your database does not support JSON functions, you shall upgrade your MySQL server to at lease 5.7 version.
+
+### Carrier landing are not tracked correctly
+DCS API does not track carrier landing natively, so there is a trick to achive that. You shall set your carrier to a propoer group name to have landings tracked.
 
 # API documentation (for expert users)
 ## MySQL database structure
@@ -95,32 +102,24 @@ C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved
 
 # Project information
 ## Built With
-
 * [VisualStudio 2017 Community](https://visualstudio.microsoft.com/vs/community/) 
 * [Notepad++](https://notepad-plus-plus.org/)
 
-## used 3rd party resources
-
-* [Tango Icon Library](http://tango.freedesktop.org/Tango_Icon_Library)
-
 ## Contributing
-
 Please contact me if you'd like to contribute.
 
 ## Versioning
-
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/szporwolik/perun/tags). 
 
 ## Authors
-
 * **Szymon Porwolik** - *Initial work* - [szporwolik](https://github.com/szporwolik)
 
 See also the list of [contributors](https://github.com/szporwolik/perun/contributors) who participated in this project.
 
 ## License
-
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
+![Gildia.org Logo](https://images.weserv.nl/?url=https://i.imgur.com/nFHxQMy.png&w=140&il)
 
-* Thanks to [Gildia DCS](https://forum.gildia.org) Polish community of DCS World pilots.
+Thanks to [Gildia DCS](https://forum.gildia.org) Polish community of DCS World pilots.

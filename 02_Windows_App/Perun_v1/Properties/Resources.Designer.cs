@@ -63,6 +63,16 @@ namespace Perun_v1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap perun_logo {
+            get {
+                object obj = ResourceManager.GetObject("perun_logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap status_connected {
             get {
                 object obj = ResourceManager.GetObject("status_connected", resourceCulture);

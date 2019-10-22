@@ -34,7 +34,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>Perun.htm</WebPage>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>0.8.2.%2a</ApplicationVersion>
+    <ApplicationVersion>0.8.3.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -131,25 +131,23 @@
     <Compile Include="01_Classes\PerunHelper.cs" />
     <Compile Include="02_Forms\form_Main.cs">
       <SubType>Form</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="02_Forms\form_Main.Designer.cs">
       <DependentUpon>form_Main.cs</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="01_Classes\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="02_Forms\form_Main.resx">
       <DependentUpon>form_Main.cs</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="00_Config\packages.config" />
     <None Include="00_Config\Perun_v1_TemporaryKey.pfx" />
     <None Include="app.config" />
@@ -159,6 +157,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -182,17 +185,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="03_Resources\perun_logo.ico" />
-    <None Include="Resources\status-connectedx.png" />
-    <None Include="Resources\status-disconnected-game.png" />
+    <None Include="03_Resources\perun_logo.png" />
+    <None Include="Resources\perun_logo.png" />
+    <None Include="Resources\status-connected-error.png" />
     <None Include="Resources\status-disconnected-error.png" />
     <None Include="Resources\status-disconnected.png" />
     <None Include="Resources\status-connected.png" />
-    <None Include="Resources\ico_error.png" />
-    <None Include="Resources\ico_srs.png" />
-    <None Include="Resources\ico_lotatc.png" />
-    <None Include="Resources\ico_game.png" />
-    <None Include="Resources\ico_db.png" />
-    <None Include="Resources\img_db.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

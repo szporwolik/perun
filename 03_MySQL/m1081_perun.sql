@@ -8,6 +8,45 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
+CREATE DATABASE IF NOT EXISTS `m1081_perun` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `m1081_perun`;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `sp_CleanDatabase`$$
+CREATE DEFINER=`m1081`@`%.devil` PROCEDURE `sp_CleanDatabase` ()  MODIFIES SQL DATA
+BEGIN
+	DELETE FROM pe_DataMissionHashes;
+    DELETE FROM pe_DataPlayers;
+    DELETE FROM pe_DataRaw;
+    DELETE FROM pe_LogChat;
+    DELETE FROM pe_LogEvent;
+    DELETE FROM pe_LogLogins;
+    DELETE FROM pe_LogStats;
+    
+    ALTER TABLE pe_DataMissionHashes AUTO_INCREMENT = 1;
+    ALTER TABLE pe_DataPlayers AUTO_INCREMENT = 1;
+    ALTER TABLE pe_DataRaw AUTO_INCREMENT = 1;
+    ALTER TABLE pe_LogChat AUTO_INCREMENT = 1;
+    ALTER TABLE pe_LogEvent AUTO_INCREMENT = 1;
+    ALTER TABLE pe_LogLogins AUTO_INCREMENT = 1;
+    ALTER TABLE pe_LogStats AUTO_INCREMENT = 1;
+   	
+END$$
+
+DROP PROCEDURE IF EXISTS `sp_SyncForumGame`$$
+$$
+
+DELIMITER ;
+
+DROP TABLE IF EXISTS `pe_Config`;
+CREATE TABLE IF NOT EXISTS `pe_Config` (
+  `pe_Config_id` int(11) NOT NULL,
+  `pe_Config_payload` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`pe_Config_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `pe_Config` (`pe_Config_id`, `pe_Config_payload`) VALUES
+(1, 'v0.8.3');
 
 DROP TABLE IF EXISTS `pe_DataMissionHashes`;
 CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
@@ -18,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
   PRIMARY KEY (`pe_DataMissionHashes_id`),
   UNIQUE KEY `UNIQUE_hash` (`pe_DataMissionHashes_hash`),
   KEY `pe_DataMissionHashes_instance` (`pe_DataMissionHashes_instance`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=818 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataPlayers`;
 CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
@@ -29,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
   `pe_DataPlayers_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataPlayers_id`),
   UNIQUE KEY `UNIQUE_UCID` (`pe_DataPlayers_ucid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=219 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataRaw`;
 CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
@@ -47,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataTypes` (
   `pe_DataTypes_update` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataTypes_id`),
   UNIQUE KEY `UNIQUE_TYPE_NAME` (`pe_DataTypes_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogChat`;
 CREATE TABLE IF NOT EXISTS `pe_LogChat` (
@@ -61,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogChat` (
   KEY `pe_LogChat_missionhash_id` (`pe_LogChat_missionhash_id`),
   KEY `pe_LogChat_playerid` (`pe_LogChat_playerid`),
   KEY `pe_LogChat_datetime` (`pe_LogChat_datetime`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19739 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogEvent`;
 CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
@@ -75,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   PRIMARY KEY (`pe_LogEvent_id`),
   KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`),
   KEY `pe_LogEvent_datetime` (`pe_LogEvent_datetime`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=93657 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogLogins`;
 CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
@@ -88,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
   PRIMARY KEY (`pe_LogLogins_id`),
   KEY `pe_LogLogins_playerid` (`pe_LogLogins_playerid`),
   KEY `pe_LogLogins_datetime` (`pe_LogLogins_datetime`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10742 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogStats`;
 CREATE TABLE IF NOT EXISTS `pe_LogStats` (
@@ -132,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   KEY `pe_LogStats_missionhash_id` (`pe_LogStats_missionhash_id`),
   KEY `pe_LogStats_playerid` (`pe_LogStats_playerid`),
   KEY `pe_LogStats_typeid` (`pe_LogStats_typeid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9595 DEFAULT CHARSET=utf8;
 DROP TRIGGER IF EXISTS `pe_LogStats_UPDATE`;
 DELIMITER $$
 CREATE TRIGGER `pe_LogStats_UPDATE` BEFORE UPDATE ON `pe_LogStats` FOR EACH ROW BEGIN

@@ -1,40 +1,94 @@
 ﻿// This class gathers all helper functions
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 internal class PerunHelper
 {
-    public static void GUILogHistoryAdd(ref string[] arrLogHistory, string strEntryToAdd)
+    public static void AddLog(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
-        // Rotate log history
-        for (int i = 0; i < arrLogHistory.Length - 1; i++)
+        // Declare values
+        string LogDirection;
+        string LogMarker;
+        // Set direction marker
+        switch (intDirection)
         {
-            arrLogHistory[i] = arrLogHistory[i + 1]; // Shift one down
+            case 1:
+                LogDirection = ">";
+                break;
+            case 2:
+                LogDirection = "<";
+                break;
+            case 3:
+                LogDirection = "^";
+                break;
+            default:
+                LogDirection = " ";
+                break;
         }
 
-        // Add new entry
-        arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("yyyy-dd-MM HH:mm:ss") + " > " + strEntryToAdd; // Add entry at the last position
+        // Set marker for user flags (markers)
+        LogMarker = (intMarker>0) ? "X" : " ";
 
+        // Set frame type 
+        strType=strType.PadLeft(3, ' ');
+
+        if (!bSkipGui)
+        {
+            // Rotate log history
+            for (int i = 0; i < arrLogHistory.Length - 1; i++)
+            {
+                arrLogHistory[i] = arrLogHistory[i + 1]; // Shift one down
+            }
+
+            // Add new entry
+            arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + LogDirection + " " + strEntryToAdd; // Add entry at the last position
+
+            // Update control at my window
+            Globals.AppUpdateGUI = true;
+        }
         // Add the entry to log file
-        LogController.WriteLog(arrLogHistory[arrLogHistory.Length - 1]);
-
-        // Update control at my window
-        Globals.bGUILogHistoryUpdate = true;
+        LogController.WriteLog(DateTime.Now.ToString("yyyy-dd-MM ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.AppInstanceID + " | " + LogMarker + " | "+ LogDirection + " | "+ strType + " | " + strEntryToAdd);
     }
+
     public static string GetAppVersion(string strBeginning)
     {
         // Gets build version
-        if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
+        Globals.VersionPerun = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        return strBeginning + "v" + Globals.VersionPerun;
+    }
+
+    public static int CheckVersions()
+    {
+        // Checks the versions of APP, DCS Hook and MySQL database
+        Match match = Regex.Match(Globals.VersionPerun, @"^\d+.\d+.\d+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        string VersionApp = "v" + match.Groups[0].Value;
+
+        int ReturnValue = 1;
+        if (!String.IsNullOrEmpty(Globals.VersionDatabase))
         {
-            // For network deployed
-            System.Deployment.Application.ApplicationDeployment cd = System.Deployment.Application.ApplicationDeployment.CurrentDeployment;
-            Globals.strPerunVersion = cd.CurrentVersion.ToString();
+            // Check database
+            if(VersionApp != Globals.VersionDatabase)
+            {
+                // Incorrect database version
+                PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR Incorrect database revision : "+ Globals.VersionDatabase, 1, 1, "?");
+                Globals.ErrorsDatabase++;
+                ReturnValue = 0;
+            }
         }
-        else
+
+        if (!String.IsNullOrEmpty(Globals.VersionDCSHook))
         {
-            // For other cases
-            Globals.strPerunVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            // Check database
+            if (VersionApp != Globals.VersionDCSHook)
+            {
+                // Incorrect dcs script version
+                PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR Incorrect DCS hook revision : " + Globals.VersionDCSHook, 2, 1, "?");
+                Globals.ErrorsGame++;
+                ReturnValue = 0;
+            }
         }
-        return strBeginning + "v" + Globals.strPerunVersion;
+
+        return ReturnValue;
     }
 }
