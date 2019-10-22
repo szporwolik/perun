@@ -161,6 +161,7 @@ public class DatabaseController
                         PerunHelper.GUILogHistoryAdd(ref Globals.arrGUILogHistory, "ERROR MySQL - error: " + m_ex.Message,1,1, strTCPFrameType);
                         break;
                 }
+                Globals.intGameErros++;
                 bStatus = false;
             }
             connMySQL.Close();
