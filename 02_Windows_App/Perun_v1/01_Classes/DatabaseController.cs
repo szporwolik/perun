@@ -21,7 +21,6 @@ public class DatabaseController
         string TCPFrameTimestamp = TCPFrame.timestamp;
         string TCPFrameInstance = TCPFrame.instance;
         string TCPFramePayload;
-        string TCPFramePayload_Perun;
         string SQLQueryTxt;
         int ReturnValue = 1;
 
@@ -64,9 +63,6 @@ public class DatabaseController
         else if (TCPFrameType == "52")
         {
             // Update user stats
-            TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload.stat_data_dcs); // Deserialize payload
-            TCPFramePayload_Perun = JsonConvert.SerializeObject(TCPFrame.payload.stat_data_perun); // Deserialize payload
-
             SQLQueryTxt = "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`,`pe_DataMissionHashes_instance`) SELECT '" + TCPFrame.payload.stat_missionhash + "','" + TCPFrameInstance + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataMissionHashes` where `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.stat_missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + ");";
             SQLQueryTxt += "UPDATE `pe_DataMissionHashes` SET `pe_DataMissionHashes_datetime` = " + TCPFrameTimestamp + " WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.stat_missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + " ;";
             SQLQueryTxt += "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) SELECT '" + TCPFrame.payload.stat_ucid + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataPlayers` where `pe_DataPlayers_ucid` = '" + TCPFrame.payload.stat_ucid + "');";
