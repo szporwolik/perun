@@ -1,10 +1,11 @@
 ﻿// This class gathers all helper functions
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 internal class PerunHelper
 {
-    public static void GUILogHistoryAdd(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
+    public static void AddLog(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
         // Declare values
         string LogDirection;
@@ -55,5 +56,39 @@ internal class PerunHelper
         // Gets build version
         Globals.VersionPerun = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         return strBeginning + "v" + Globals.VersionPerun;
+    }
+
+    public static int CheckVersions()
+    {
+        // Checks the versions of APP, DCS Hook and MySQL database
+        Match match = Regex.Match(Globals.VersionPerun, @"^\d+.\d+.\d+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        string VersionApp = "v" + match.Groups[0].Value;
+
+        int ReturnValue = 1;
+        if (!String.IsNullOrEmpty(Globals.VersionDatabase))
+        {
+            // Check database
+            if(VersionApp != Globals.VersionDatabase)
+            {
+                // Incorrect database version
+                PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR Incorrect database revision : "+ Globals.VersionDatabase, 1, 1, "?");
+                Globals.ErrorsDatabase++;
+                ReturnValue = 0;
+            }
+        }
+
+        if (!String.IsNullOrEmpty(Globals.VersionDCSHook))
+        {
+            // Check database
+            if (VersionApp != Globals.VersionDCSHook)
+            {
+                // Incorrect dcs script version
+                PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR Incorrect DCS hook revision : " + Globals.VersionDCSHook, 2, 1, "?");
+                Globals.ErrorsGame++;
+                ReturnValue = 0;
+            }
+        }
+
+        return ReturnValue;
     }
 }

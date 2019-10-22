@@ -183,7 +183,7 @@ namespace Perun_v1
             DatabaseConnection.DatabaseConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
 
             // Start listening
-            PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "Opening connections",0,1);
+            PerunHelper.AddLog(ref Globals.AppLogHistory, "Opening connections",0,1);
             TCPServer.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.AppLogHistory, ref DatabaseSendBuffer);
             TCPServer.thrTCPListener = new Thread(TCPServer.StartListen);
             TCPServer.thrTCPListener.Start();
@@ -203,7 +203,7 @@ namespace Perun_v1
         {
             // Stop listening
             // Prepare GUI
-            PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "Closing connections",0,1);
+            PerunHelper.AddLog(ref Globals.AppLogHistory, "Closing connections",0,1);
             con_Button_Listen_OFF.Enabled = false;
             Tim_GUI_Tick(null, null);
             this.Refresh();
@@ -221,7 +221,7 @@ namespace Perun_v1
             }
             catch (Exception ex)
             {
-                PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "TCP ERROR, error: " + ex.Message, 2, 1, "?");
+                PerunHelper.AddLog(ref Globals.AppLogHistory, "TCP ERROR, error: " + ex.Message, 2, 1, "?");
                 Console.WriteLine(ex.ToString());
             }
 
@@ -239,7 +239,7 @@ namespace Perun_v1
             con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
 
             // Display information about closed connections
-            PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "Connections closed",0,1);
+            PerunHelper.AddLog(ref Globals.AppLogHistory, "Connections closed",0,1);
             Tim_GUI_Tick(null, null);
 
             // Set title bar
@@ -483,6 +483,12 @@ namespace Perun_v1
             // Send ping to check for possible connection issues
             DatabaseConnection.SendToMySql("", true);
 
+            if (PerunHelper.CheckVersions()==0)
+            {
+                MessageBox.Show("Version mismatch detected - please check log files and update.\n\nPerun will now terminate.", "Perun ERROR!",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                con_Button_Listen_OFF_Click(null, null);
+            }
+
             // Take care of 3rd party stuff
             string ExtSRSJson = "";
             string ExtLotATCJson = "";
@@ -541,12 +547,12 @@ namespace Perun_v1
                             ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'false'}}"; // No SRS clients connected
                         }
                         ExtSRSUseDefault = false;
-                        PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "SRS data loaded", 3, 0, "100", true);
+                        PerunHelper.AddLog(ref Globals.AppLogHistory, "SRS data loaded", 3, 0, "100", true);
                         ExtSRSStatus = true;
                     }
                     catch (Exception exc_srs)
                     {
-                        PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "SRS data ERROR , error: " + exc_srs.Message, 3, 1, "100");
+                        PerunHelper.AddLog(ref Globals.AppLogHistory, "SRS data ERROR , error: " + exc_srs.Message, 3, 1, "100");
                         ExtSRSStatus = false;
                         Globals.ErrorsSRS++;
                     }
@@ -572,12 +578,12 @@ namespace Perun_v1
 
                         ExtLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + ExtLotATCJson + "'}";
                         ExtLotATCUseDefault = false;
-                        PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "LotATC data loaded", 3, 0, "101", true);
+                        PerunHelper.AddLog(ref Globals.AppLogHistory, "LotATC data loaded", 3, 0, "101", true);
                         ExtLotATCStatus = true;
                     }
                     catch (Exception exc_lotatc)
                     {
-                        PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message, 3, 1, "101");
+                        PerunHelper.AddLog(ref Globals.AppLogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message, 3, 1, "101");
                         ExtLotATCStatus = false;
                         Globals.ErrorsLotATC++;
                     }
@@ -616,7 +622,7 @@ namespace Perun_v1
                 Globals.AppForceIconReload = true;
 
                 // Add information
-                PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "Resetted error counter",0,1);
+                PerunHelper.AddLog(ref Globals.AppLogHistory, "Resetted error counter",0,1);
             }
             else if (dialogResult == DialogResult.No)
             {
@@ -628,7 +634,7 @@ namespace Perun_v1
         private void con_Button_Add_Marker_Click(object sender, EventArgs e)
         {
             // Added user marker
-            PerunHelper.GUILogHistoryAdd(ref Globals.AppLogHistory, "User Marker",0,1);
+            PerunHelper.AddLog(ref Globals.AppLogHistory, "User Marker",0,1);
         }
     }
 }
