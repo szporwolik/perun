@@ -40,7 +40,7 @@ Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
 Perun.socket  = require("socket")
 Perun.IsServer = true --DCS.isServer( )								-- TBD looks like DCS API error, always returning True
 
--- ########### Helper function definitions ###########
+-- ################################ Helper function definitions ################################
 function stripChars(str)
     -- Hellper functions removes accents characters from string
     -- via https://stackoverflow.com/questions/50459102/replace-accented-characters-in-string-to-standard-with-lua
@@ -161,8 +161,6 @@ Perun.SideID2Name = function(id)
     return _sides[id]
 end
 
--- ########### Main code ###########
-
 Perun.AddLog = function(text,LogLevel)
     -- Adds logs to DCS.log file
 	LogLevel = LogLevel or 1
@@ -171,20 +169,102 @@ Perun.AddLog = function(text,LogLevel)
 	end
 end
 
-Perun.UpdateJsonStatus = function()
-    -- Updates status json file
-    local _TempData={}
-    _TempData["1"]=Perun.ServerData
-    _TempData["2"]=Perun.StatusData
-    _TempData["3"]=Perun.SlotsData
-    -- _TempData["4"]=Perun.MissionData -- TBD: hangs for some large missions
-
-	-- Export data to JSON file
-    local _perun_export = io.open(Perun.JsonStatusLocation .. "perun_status_data.json", "w")
-    _perun_export:write(net.lua2json(_TempData) .. "\n")
-    _perun_export:close()
-	Perun.AddLog("Updated JSON",2)
+Perun.GenerateMissionHash = function()
+	-- Generates unique simulation mission hash
+	return DCS.getMissionName( ).."@".. Perun.Instance .. "@" .. Perun.Version .. "@".. os.date('%Y%m%d_%H%M%S') 
 end
+
+Perun.GetMulticrewAllParameters = function (PlayerId)
+	-- Gets all multicrew parameters
+	local _result = ""
+	local _player_slot=net.get_player_info(PlayerId, 'slot')
+	local _master_type= "?"
+	local _master_slot = nil
+	local _sub_slot = nil
+
+	if _player_slot and _player_slot ~= '' and not (string.find(_player_slot, 'red') or string.find(_player_slot, 'blue')) then
+		-- Player took model
+		_master_slot = _player_slot
+		_sub_slot =0
+
+		if (not tonumber(_player_slot)) then 
+			-- If this is multiseat slot parse master slot and look for seat number
+			_t_start, _t_end = string.find(_player_slot, '_%d+')
+		
+			if _t_start then
+				-- This is co-player
+				_master_slot = string.sub(_player_slot, 0 , _t_start -1 )
+				_sub_slot = string.sub(_player_slot, _t_start + 1, _t_end )
+			end
+		end
+		_master_type = DCS.getUnitType(_master_slot)
+
+	elseif string.find(_player_slot, 'red') or string.find(_player_slot, 'blue') then
+		-- Deal with the special slots addded by Combined Arms and Spectators
+		if string.find(_player_slot, 'artillery_commander') then
+			_master_type = "artillery_commander"
+		elseif string.find(_player_slot, 'instructor') then
+			_master_type = "instructor"
+		elseif string.find(_player_slot, 'forward_observer') then
+			_master_type = "forward_observer"
+		elseif string.find(_player_slot, 'observer') then
+			_master_type = "observer"
+		end
+	end
+	return _master_type,_master_slot,_sub_slot
+end
+
+Perun.GetMulticrewParameter = function (PlayerId,Parameter)
+	-- Get specific multicrew Parameter
+	_master_type,_master_slot,_sub_slot = Perun.GetMulticrewAllParameters(PlayerId)
+
+	if Parameter == "mastertype" then
+		return _master_type
+	elseif Parameter == "masterslot" then
+		return _master_slot
+	elseif Parameter == "subslot" then
+		return _sub_slot
+	elseif Parameter == "subtype" then
+		if _sub_slot == 0 then
+			return _master_type
+		else
+			return _master_type .. "_" .. _sub_slot
+		end
+	else
+		return nil
+	end
+end
+
+Perun.GetMulticrewCrew = function (owner_playerID)
+	-- Get all multicrew crew
+	_master_type,_master_slot,_sub_slot = Perun.GetMulticrewAllParameters(owner_playerID)
+
+	local _crew = {}
+	table.insert(_crew, owner_playerID)
+	if _master_type == "F-14B" or _master_type == "Yak-52" or _master_type == "L-39C" or _master_type == "SA342M" or _master_type =="SA342Minigun" or _master_type == "SA342Mistral" or _master_type == "SA342L" then -- TBD add additional multicrew model types
+		local _owner_side=net.get_player_info(owner_playerID, 'side')
+		
+		if _master_slot and _master_slot ~= "" then
+			-- Search for all players from crew
+			local _all_players = net.get_player_list()
+			for PlayerIDIndex, _playerID in ipairs(_all_players) do
+				 local _playerDetails = net.get_player_info( _playerID )
+				 
+				 if _playerDetails.side == _owner_side and (_playerDetails.slot == _master_slot  or _playerDetails.slot == _master_slot .. "_1" or _playerDetails.slot == _master_slot .. "_2" or _playerDetails.slot == _master_slot .. "_3" or _playerDetails.slot == _master_slot .. "_4") and _playerID ~= owner_playerID then
+					-- Add to crew list
+					table.insert(_crew, _playerID)
+				 else
+					-- Do nothing
+				 end
+			end
+		end
+	end
+
+	Perun.AddLog("Multicrew check completed: " .. net.lua2json(_crew),2)
+	return _crew
+end
+
+-- ################################ TCP Connection ################################
 
 Perun.ConnectToPerun = function ()
 	-- Connects to Perun server
@@ -237,6 +317,213 @@ Perun.SendToPerun = function(data_id, data_package)
 		-- Add information to log file
 		Perun.AddLog("ERROR - packed dropped : " .. data_id)
 	end 
+end
+
+-- ################################ Log functions ################################
+
+Perun.LogChat = function(playerID,msg,all)
+    -- Logs chat messages
+    local _TempData={}
+    _TempData['player']= net.get_player_info(playerID, "name")
+    _TempData['msg']=stripChars(msg)
+    _TempData['all']=all
+    _TempData['ucid']=net.get_player_info(playerID, 'ucid')
+    _TempData['datetime']=os.date('%Y-%m-%d %H:%M:%S')
+    _TempData['missionhash']=Perun.MissionHash
+
+	Perun.AddLog("Sending chat message",2)
+    Perun.SendToPerun(50,_TempData)
+end
+
+Perun.LogEvent = function(log_type,log_content,log_arg_1,log_arg_2)
+    -- Logs events messages
+    local _TempData={}
+    _TempData['log_type']= log_type
+	_TempData['log_arg_1']= log_arg_1
+	_TempData['log_arg_2']= log_arg_2
+    _TempData['log_content']=log_content
+    _TempData['log_datetime']=os.date('%Y-%m-%d %H:%M:%S')
+    _TempData['log_missionhash']=Perun.MissionHash
+	
+	if log_arg_1 == nil then
+		log_arg_1 = "null"
+	end
+	if log_arg_2 == nil then
+		log_arg_2 = "null"
+	end
+
+	Perun.AddLog("Sending event data, event: " .. log_type .. ", arg1:" .. log_arg_1 .. ", arg2:" .. log_arg_2 .. ", content: " .. log_content,2)
+    Perun.SendToPerun(51,_TempData)
+end
+
+Perun.LogStats = function(playerID)
+    -- Log player status
+	local _PlayerStatsTable=Perun.LogStatsGet(playerID)
+    local _TempData={}
+	_TempData['stat_data_perun']=_PlayerStatsTable
+	_TempData['stat_data_type']=_PlayerStatsTable['ps_type'];
+    _TempData['stat_ucid']=net.get_player_info(playerID, 'ucid')
+	_TempData['stat_name']=net.get_player_info(playerID, 'name')
+    _TempData['stat_datetime']=os.date('%Y-%m-%d %H:%M:%S')
+    _TempData['stat_missionhash']=Perun.MissionHash
+
+	Perun.AddLog("Sending stats data",2)
+    Perun.SendToPerun(52,_TempData)
+end
+
+Perun.LogLogin = function(playerID)
+    -- Player logged in
+    local _TempData={}
+    _TempData['login_ucid']=net.get_player_info(playerID, 'ucid')
+    _TempData['login_ipaddr']=net.get_player_info(playerID, 'ipaddr')
+    _TempData['login_name']=net.get_player_info(playerID, 'name')
+    _TempData['login_datetime']=os.date('%Y-%m-%d %H:%M:%S')
+
+	Perun.AddLog("Sending login event",2)
+    Perun.SendToPerun(53,_TempData)
+end
+
+--- ################################ Calculate stats ################################
+		
+Perun.LogStatsCount = function(argPlayerID,argAction)
+	-- Creates or updates Perun statistics array
+	local _player_hash=net.get_player_info(argPlayerID, 'ucid')..Perun.GetMulticrewParameter(argPlayerID,"subtype")
+	
+	if Perun.StatData[_player_hash] == nil then
+		-- Create empty element
+		 local _TempData={}
+		_TempData['ps_type'] = Perun.GetMulticrewParameter(argPlayerID,"subtype")
+		_TempData['ps_pvp'] = 0
+		_TempData['ps_deaths'] = 0
+		_TempData['ps_ejections'] = 0
+		_TempData['ps_crashes'] = 0
+		_TempData['ps_teamkills'] = 0
+		_TempData['ps_kills_planes'] = 0
+		_TempData['ps_kills_helicopters'] = 0
+		_TempData['ps_kills_air_defense'] = 0
+		_TempData['ps_kills_armor'] = 0
+		_TempData['ps_kills_unarmed'] = 0
+		_TempData['ps_kills_infantry'] = 0
+		_TempData['ps_kills_ships'] = 0
+		_TempData['ps_kills_fortification'] = 0
+		_TempData['ps_kills_other'] = 0
+		_TempData['ps_airfield_takeoffs'] = 0
+		_TempData['ps_airfield_landings'] = 0
+		_TempData['ps_ship_takeoffs'] = 0
+		_TempData['ps_ship_landings'] = 0
+		_TempData['ps_farp_takeoffs'] = 0
+		_TempData['ps_farp_landings'] = 0
+		_TempData['ps_other_takeoffs'] = 0
+		_TempData['ps_other_landings'] = 0
+
+		Perun.StatData[_player_hash]=_TempData
+	end
+	
+	if argType ~= nil then
+		Perun.StatData[_player_hash]['ps_type']=Perun.GetMulticrewParameter(argPlayerID,"subtype");
+		Perun.StatDataLastType[net.get_player_info(argPlayerID, 'ucid')]=_player_hash
+	else
+		-- Do nothing
+	end 
+	
+	if argAction == "eject" then
+		Perun.StatData[_player_hash]['ps_ejections']=Perun.StatData[_player_hash]['ps_ejections']+1
+	elseif  argAction == "pilot_death" then
+		if DCS.getModelTime() > Perun.MissionStartNoDeathWindow then
+			-- we do not track deaths during mission startup due to spawning issues
+			Perun.StatData[_player_hash]['ps_deaths']=Perun.StatData[_player_hash]['ps_deaths']+1
+		end
+	elseif  argAction == "friendly_fire" then
+		Perun.StatData[_player_hash]['ps_teamkills']=Perun.StatData[_player_hash]['ps_teamkills']+1
+	elseif  argAction == "crash" then
+		Perun.StatData[_player_hash]['ps_crashes']=Perun.StatData[_player_hash]['ps_crashes']+1
+	elseif  argAction == "landing_FARP" then
+		Perun.StatData[_player_hash]['ps_farp_landings']=Perun.StatData[_player_hash]['ps_farp_landings']+1
+	elseif  argAction == "landing_SHIP" then
+		Perun.StatData[_player_hash]['ps_ship_landings']=Perun.StatData[_player_hash]['ps_ship_landings']+1
+	elseif  argAction == "landing_AIRFIELD" then
+		Perun.StatData[_player_hash]['ps_airfield_landings']=Perun.StatData[_player_hash]['ps_airfield_landings']+1
+	elseif  argAction == "tookoff_FARP" then
+		Perun.StatData[_player_hash]['ps_farp_takeoffs']=Perun.StatData[_player_hash]['ps_farp_takeoffs']+1
+	elseif  argAction == "tookoff_SHIP" then
+		Perun.StatData[_player_hash]['ps_ship_takeoffs']=Perun.StatData[_player_hash]['ps_ship_takeoffs']+1
+	elseif  argAction == "tookoff_AIRFIELD" then
+		Perun.StatData[_player_hash]['ps_airfield_takeoffs']=Perun.StatData[_player_hash]['ps_airfield_takeoffs']+1
+	elseif  argAction == "kill_Planes" then
+		Perun.StatData[_player_hash]['ps_kills_planes']=Perun.StatData[_player_hash]['ps_kills_planes']+1
+	elseif  argAction == "kill_Helicopters" then
+		Perun.StatData[_player_hash]['ps_kills_helicopters']=Perun.StatData[_player_hash]['ps_kills_helicopters']+1
+	elseif  argAction == "kill_Ships" then
+		Perun.StatData[_player_hash]['ps_kills_ships']=Perun.StatData[_player_hash]['ps_kills_ships']+1
+	elseif  argAction == "kill_Air_Defence" then
+		Perun.StatData[_player_hash]['ps_kills_air_defense']=Perun.StatData[_player_hash]['ps_kills_air_defense']+1
+	elseif  argAction == "kill_Unarmed" then
+		Perun.StatData[_player_hash]['ps_kills_unarmed']=Perun.StatData[_player_hash]['ps_kills_unarmed']+1
+	elseif  argAction == "kill_Armor" then
+		Perun.StatData[_player_hash]['ps_kills_armor']=Perun.StatData[_player_hash]['ps_kills_armor']+1
+	elseif  argAction == "kill_Infantry" then
+		Perun.StatData[_player_hash]['ps_kills_infantry']=Perun.StatData[_player_hash]['ps_kills_infantry']+1
+	elseif  argAction == "kill_Fortification" then
+		Perun.StatData[_player_hash]['ps_kills_fortification']=Perun.StatData[_player_hash]['ps_kills_fortification']+1
+	elseif  argAction == "kill_Other" then
+		Perun.StatData[_player_hash]['ps_kills_other']=Perun.StatData[_player_hash]['ps_kills_other']+1
+	elseif  argAction == "kill_PvP" then
+		Perun.StatData[_player_hash]['ps_pvp']=Perun.StatData[_player_hash]['ps_pvp']+1
+	elseif  argAction == "landing_OTHER" then
+		Perun.StatData[_player_hash]['ps_other_landings']=Perun.StatData[_player_hash]['ps_other_landings']+1
+	elseif  argAction == "tookoff_OTHER" then
+		Perun.StatData[_player_hash]['ps_other_takeoffs']=Perun.StatData[_player_hash]['ps_other_takeoffs']+1
+	end
+	
+	Perun.AddLog("Stats data prepared",2)
+	Perun.LogStats(argPlayerID);
+end
+
+-- ################################ Data preparation ################################
+
+Perun.LogStatsGet = function(playerID)
+	-- Gets Perun statistics array per player TBD rewrite
+	local next = next -- Make next function local - this improves performance TBD
+	local _player_hash = nil
+
+	if next(Perun.StatDataLastType) == nil then
+		-- Array is empty
+		_player_hash=net.get_player_info(playerID, 'ucid')..Perun.GetMulticrewParameter(playerID,"subtype")
+	elseif Perun.StatDataLastType[net.get_player_info(playerID, 'ucid')]== nil then
+		-- Last type entry is empty
+		_player_hash=net.get_player_info(playerID, 'ucid')..Perun.GetMulticrewParameter(playerID,"subtype")
+	else
+		-- Return last type entry
+		_player_hash=Perun.StatDataLastType[net.get_player_info(playerID, 'ucid')]
+	end
+	
+	local next = next -- Make next function local - this improves performance TBD
+	if  next(Perun.StatData) == nil then
+		-- Array is empty
+		Perun.LogStatsCount(playerID,'init') -- Init statistics
+	end
+	if Perun.StatData[_player_hash]== nil then
+		-- Stats for player are empty
+		Perun.LogStatsCount(playerID,'init') -- Init statistics
+	end
+
+	Perun.AddLog("Getting stats data",2)
+	return Perun.StatData[_player_hash];
+end
+
+Perun.UpdateJsonStatus = function()
+    -- Updates status json file
+    local _TempData={}
+    _TempData["1"]=Perun.ServerData
+    _TempData["2"]=Perun.StatusData
+    _TempData["3"]=Perun.SlotsData
+    -- _TempData["4"]=Perun.MissionData -- TBD: hangs for some large missions
+
+	-- Export data to JSON file
+    local _perun_export = io.open(Perun.JsonStatusLocation .. "perun_status_data.json", "w")
+    _perun_export:write(net.lua2json(_TempData) .. "\n")
+    _perun_export:close()
+	Perun.AddLog("Updated JSON",2)
 end
 
 Perun.UpdateStatus = function()
@@ -312,235 +599,11 @@ Perun.UpdateMission = function()
 	Perun.AddLog("Mission data updated",2)
 end
 
-Perun.LogChat = function(playerID,msg,all)
-    -- Logs chat messages
-    local _TempData={}
-    _TempData['player']= net.get_player_info(playerID, "name")
-    _TempData['msg']=stripChars(msg)
-    _TempData['all']=all
-    _TempData['ucid']=net.get_player_info(playerID, 'ucid')
-    _TempData['datetime']=os.date('%Y-%m-%d %H:%M:%S')
-    _TempData['missionhash']=Perun.MissionHash
-
-	Perun.AddLog("Sending chat message",2)
-    Perun.SendToPerun(50,_TempData)
-end
-
-Perun.LogEvent = function(log_type,log_content,log_arg_1,log_arg_2)
-    -- Logs events messages
-    local _TempData={}
-    _TempData['log_type']= log_type
-	_TempData['log_arg_1']= log_arg_1
-	_TempData['log_arg_2']= log_arg_2
-    _TempData['log_content']=log_content
-    _TempData['log_datetime']=os.date('%Y-%m-%d %H:%M:%S')
-    _TempData['log_missionhash']=Perun.MissionHash
-
-	Perun.AddLog("Sending event data, event: "..log_type .. ", arg1:" .. log_arg_1 .. ", arg2:" .. log_arg_2 .. ", content: " .. log_content,2)
-    Perun.SendToPerun(51,_TempData)
-end
-
-Perun.LogStatsCount = function(argPlayerID,argAction,argType)
-	-- Creates or updates Perun statistics array
-	local _player_hash=net.get_player_info(argPlayerID, 'ucid')..argType
-	
-	if Perun.StatData[_player_hash] == nil then
-		-- Create empty element
-		 local _TempData={}
-		_TempData['ps_type'] = argType
-		_TempData['ps_pvp'] = 0
-		_TempData['ps_deaths'] = 0
-		_TempData['ps_ejections'] = 0
-		_TempData['ps_crashes'] = 0
-		_TempData['ps_teamkills'] = 0
-		_TempData['ps_kills_planes'] = 0
-		_TempData['ps_kills_helicopters'] = 0
-		_TempData['ps_kills_air_defense'] = 0
-		_TempData['ps_kills_armor'] = 0
-		_TempData['ps_kills_unarmed'] = 0
-		_TempData['ps_kills_infantry'] = 0
-		_TempData['ps_kills_ships'] = 0
-		_TempData['ps_kills_fortification'] = 0
-		_TempData['ps_kills_other'] = 0
-		_TempData['ps_airfield_takeoffs'] = 0
-		_TempData['ps_airfield_landings'] = 0
-		_TempData['ps_ship_takeoffs'] = 0
-		_TempData['ps_ship_landings'] = 0
-		_TempData['ps_farp_takeoffs'] = 0
-		_TempData['ps_farp_landings'] = 0
-		_TempData['ps_other_takeoffs'] = 0
-		_TempData['ps_other_landings'] = 0
-
-		Perun.StatData[_player_hash]=_TempData
-	end
-	
-	if argType ~= nil then
-		Perun.StatData[_player_hash]['ps_type']=argType;
-		Perun.StatDataLastType[net.get_player_info(argPlayerID, 'ucid')]=_player_hash
-	else
-		-- Do nothing
-	end 
-	
-	if argAction == "eject" then
-		Perun.StatData[_player_hash]['ps_ejections']=Perun.StatData[_player_hash]['ps_ejections']+1
-	elseif  argAction == "pilot_death" then
-		if DCS.getModelTime() > Perun.MissionStartNoDeathWindow then
-			-- we do not track deaths during mission startup due to spawning issues
-			Perun.StatData[_player_hash]['ps_deaths']=Perun.StatData[_player_hash]['ps_deaths']+1
-		end
-	elseif  argAction == "friendly_fire" then
-		Perun.StatData[_player_hash]['ps_teamkills']=Perun.StatData[_player_hash]['ps_teamkills']+1
-	elseif  argAction == "crash" then
-		Perun.StatData[_player_hash]['ps_crashes']=Perun.StatData[_player_hash]['ps_crashes']+1
-	elseif  argAction == "landing_FARP" then
-		Perun.StatData[_player_hash]['ps_farp_landings']=Perun.StatData[_player_hash]['ps_farp_landings']+1
-	elseif  argAction == "landing_SHIP" then
-		Perun.StatData[_player_hash]['ps_ship_landings']=Perun.StatData[_player_hash]['ps_ship_landings']+1
-	elseif  argAction == "landing_AIRFIELD" then
-		Perun.StatData[_player_hash]['ps_airfield_landings']=Perun.StatData[_player_hash]['ps_airfield_landings']+1
-	elseif  argAction == "tookoff_FARP" then
-		Perun.StatData[_player_hash]['ps_farp_takeoffs']=Perun.StatData[_player_hash]['ps_farp_takeoffs']+1
-	elseif  argAction == "tookoff_SHIP" then
-		Perun.StatData[_player_hash]['ps_ship_takeoffs']=Perun.StatData[_player_hash]['ps_ship_takeoffs']+1
-	elseif  argAction == "tookoff_AIRFIELD" then
-		Perun.StatData[_player_hash]['ps_airfield_takeoffs']=Perun.StatData[_player_hash]['ps_airfield_takeoffs']+1
-	elseif  argAction == "kill_Planes" then
-		Perun.StatData[_player_hash]['ps_kills_planes']=Perun.StatData[_player_hash]['ps_kills_planes']+1
-	elseif  argAction == "kill_Helicopters" then
-		Perun.StatData[_player_hash]['ps_kills_helicopters']=Perun.StatData[_player_hash]['ps_kills_helicopters']+1
-	elseif  argAction == "kill_Ships" then
-		Perun.StatData[_player_hash]['ps_kills_ships']=Perun.StatData[_player_hash]['ps_kills_ships']+1
-	elseif  argAction == "kill_Air_Defence" then
-		Perun.StatData[_player_hash]['ps_kills_air_defense']=Perun.StatData[_player_hash]['ps_kills_air_defense']+1
-	elseif  argAction == "kill_Unarmed" then
-		Perun.StatData[_player_hash]['ps_kills_unarmed']=Perun.StatData[_player_hash]['ps_kills_unarmed']+1
-	elseif  argAction == "kill_Armor" then
-		Perun.StatData[_player_hash]['ps_kills_armor']=Perun.StatData[_player_hash]['ps_kills_armor']+1
-	elseif  argAction == "kill_Infantry" then
-		Perun.StatData[_player_hash]['ps_kills_infantry']=Perun.StatData[_player_hash]['ps_kills_infantry']+1
-	elseif  argAction == "kill_Fortification" then
-		Perun.StatData[_player_hash]['ps_kills_fortification']=Perun.StatData[_player_hash]['ps_kills_fortification']+1
-	elseif  argAction == "kill_Other" then
-		Perun.StatData[_player_hash]['ps_kills_other']=Perun.StatData[_player_hash]['ps_kills_other']+1
-	elseif  argAction == "kill_PvP" then
-		Perun.StatData[_player_hash]['ps_pvp']=Perun.StatData[_player_hash]['ps_pvp']+1
-	elseif  argAction == "landing_OTHER" then
-		Perun.StatData[_player_hash]['ps_other_landings']=Perun.StatData[_player_hash]['ps_other_landings']+1
-	elseif  argAction == "tookoff_OTHER" then
-		Perun.StatData[_player_hash]['ps_other_takeoffs']=Perun.StatData[_player_hash]['ps_other_takeoffs']+1
-	end
-	
-	Perun.AddLog("Stats data prepared",2)
-	Perun.LogStats(argPlayerID);
-end
-
-Perun.LogStatsGet = function(playerID)
-	-- Gets Perun statistics array per player TBD rewrite
-	local next = next -- Make next function local - this improves performance TBD
-	local _player_hash = nil
-
-	if next(Perun.StatDataLastType) == nil then
-		-- Array is empty
-		_player_hash=net.get_player_info(playerID, 'ucid')..DCS.getUnitType(playerID)
-	elseif Perun.StatDataLastType[net.get_player_info(playerID, 'ucid')]== nil then
-		-- Last type entry is empty
-		_player_hash=net.get_player_info(playerID, 'ucid')..DCS.getUnitType(playerID)
-	else
-		-- Return last type entry
-		_player_hash=Perun.StatDataLastType[net.get_player_info(playerID, 'ucid')]
-	end
-	
-	local next = next -- Make next function local - this improves performance TBD
-	if  next(Perun.StatData) == nil then
-		-- Array is empty
-		Perun.LogStatsCount(playerID,'init') -- Init statistics
-	end
-	if Perun.StatData[_player_hash]== nil then
-		-- Stats for player are empty
-		Perun.LogStatsCount(playerID,'init') -- Init statistics
-	end
-
-	Perun.AddLog("Getting stats data",2)
-	return Perun.StatData[_player_hash];
-end
-
-
-
-Perun.LogStats = function(playerID)
-    -- Log player status
-	local _PlayerStatsTable=Perun.LogStatsGet(playerID)
-    local _TempData={}
-	_TempData['stat_data_perun']=_PlayerStatsTable
-	_TempData['stat_data_type']=_PlayerStatsTable['ps_type'];
-    _TempData['stat_ucid']=net.get_player_info(playerID, 'ucid')
-	_TempData['stat_name']=net.get_player_info(playerID, 'name')
-    _TempData['stat_datetime']=os.date('%Y-%m-%d %H:%M:%S')
-    _TempData['stat_missionhash']=Perun.MissionHash
-
-	Perun.AddLog("Sending stats data",2)
-    Perun.SendToPerun(52,_TempData)
-end
-
-Perun.LogLogin = function(playerID)
-    -- Player logged in
-    local _TempData={}
-    _TempData['login_ucid']=net.get_player_info(playerID, 'ucid')
-    _TempData['login_ipaddr']=net.get_player_info(playerID, 'ipaddr')
-    _TempData['login_name']=net.get_player_info(playerID, 'name')
-    _TempData['login_datetime']=os.date('%Y-%m-%d %H:%M:%S')
-
-	Perun.AddLog("Sending login event",2)
-    Perun.SendToPerun(53,_TempData)
-end
-
-Perun.CheckMulticrew = function (owner_playerID,owner_unittype)
-	-- Check multicrew and return  list of co-player
-
-	local _coplayers = {}
-	table.insert(_coplayers, owner_playerID)
-	if owner_unittype == "F-14B" or owner_unittype == "Yak-52" or owner_unittype == "L-39C" or owner_unittype == "SA342M" or owner_unittype =="SA342Minigun" or owner_unittype == "SA342Mistral" or owner_unittype == "SA342L" then -- TBD add additional multicrew model types
-		local _owner_slot=net.get_player_info(owner_playerID, 'slot')
-		local _owner_side=net.get_player_info(owner_playerID, 'side')
-			
-		-- Check if we are co-player
-		_t_start, _t_end = string.find(_owner_slot, '_%d+')
-		local _master_slot = nil
-		local _sub_slot = nil
-		if _t_start then
-			-- This is co-player
-			_master_slot = string.sub(_owner_slot, 0 , _t_start -1 )
-			_sub_slot = string.sub(_owner_slot, _t_start + 1, _t_end )
-		else
-			_master_slot = _owner_slot
-
-		end
-		
-		if _master_slot ~= "" then
-			-- Search for all players to account for event
-			local _all_players = net.get_player_list()
-			for PlayerIDIndex, playerID in ipairs(_all_players) do
-				 local _playerDetails = net.get_player_info( playerID )
-				 
-				 if _playerDetails.side == _owner_side and (_playerDetails.slot == _master_slot  or _playerDetails.slot == _master_slot .. "_1" or _playerDetails.slot == _master_slot .. "_2") and playerID ~= owner_playerID then
-					-- Let's build coplayers list
-					table.insert(_coplayers, playerID)
-				 else
-					-- No coplayers
-				 end
-			end
-		end
-	end
-
-	Perun.AddLog("Multicrew check completed",2)
-	return _coplayers
-end
-
-		
---- ########### Event callbacks ###########
+--- ################################ Event callbacks ################################
 
 Perun.onSimulationStart = function()
 	-- Simulation was started
-    Perun.MissionHash=DCS.getMissionName( ).."@".. Perun.Instance .. "@"..os.date('%Y%m%d_%H%M%S');
+    Perun.MissionHash=Perun.GenerateMissionHash()
     Perun.LogEvent("SimStart","Mission " .. Perun.MissionHash .. " started",nil,nil);
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
@@ -550,7 +613,7 @@ end
 Perun.onSimulationStop = function()
 	-- Simulation was stopped
     Perun.LogEvent("SimStop","Mission " .. Perun.MissionHash .. " finished",nil,nil);
-	Perun.MissionHash="";
+	Perun.MissionHash=Perun.GenerateMissionHash();
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
 	-- TBD send this to Perun
@@ -597,8 +660,6 @@ Perun.onPlayerStart = function (id)
 	-- Player entered cocpit
     net.send_chat_to(Perun.MOTD_L1, id);
     net.send_chat_to(Perun.MOTD_L2, id);
-
-	Perun.AddLog("Player entered the game",2)
 end
 
 Perun.onPlayerTrySendChat = function (playerID, msg, all)
@@ -612,7 +673,7 @@ end
 
 Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 	-- Game event has occured
-	Perun.AddLog("Event handler for "..eventName .. " started",2)
+	Perun.AddLog("Event handler for ".. eventName .. " started",2)
     if eventName == "friendly_fire" then
         --"friendly_fire", playerID, weaponName, victimPlayerID
 		if arg2 == "" then
@@ -629,7 +690,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
         --"kill", killerPlayerID, killerUnitType, killerSide, victimPlayerID, victimUnitType, victimSide, weaponName
 		local _temp_victim=""
 		if net.get_player_info(arg4, "name") ~= nil then
-            _temp_victim = " player ".. net.get_player_info(arg4, "name") .." ";
+            _temp_victim = " player ".. net.get_player_info(arg4, "name") .. " ";
             
 			Perun.LogStats(arg4);
         else
@@ -661,18 +722,18 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 					_temp_event_type="kill_Other"
 				end
 				if net.get_player_info(arg4, "name") ~= nil and arg3 ~= arg6 then
-					pilots_accounted = Perun.CheckMulticrew(arg1,arg2)
+					pilots_accounted = Perun.GetMulticrewCrew(arg1)
 					for _, pilotID in ipairs(pilots_accounted) do
-						Perun.LogStatsCount(pilotID,"kill_PvP",DCS.getUnitType(arg2));
+						Perun.LogStatsCount(pilotID,"kill_PvP");
 					end
 				end
 			else
 				_temp_event_type="friendly_fire"
 			end
 			
-			pilots_accounted = Perun.CheckMulticrew(arg1,arg2)
+			pilots_accounted = Perun.GetMulticrewCrew(arg1)
 			for _, pilotID in ipairs(pilots_accounted) do
-				Perun.LogStatsCount(pilotID,_temp_event_type,DCS.getUnitType(arg2));
+				Perun.LogStatsCount(pilotID,_temp_event_type);
 			end
 			
         else
@@ -699,7 +760,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
             _temp_slot = "SPECTATOR";
         end
 
-       Perun.LogStatsCount(arg1,"init",_temp_slot)
+       Perun.LogStatsCount(arg1,"init")
 	   Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " changed slot to " .. _temp_slot,nil,nil);
        
 
@@ -715,17 +776,17 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
     elseif eventName == "crash" then
         --"crash", playerID, unit_missionID
-		pilots_accounted = Perun.CheckMulticrew(arg1,DCS.getUnitType(arg2))
+		pilots_accounted = Perun.GetMulticrewCrew(arg1)
 		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,"crash",DCS.getUnitType(arg2));
+			Perun.LogStatsCount(pilotID,"crash");
 		end
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " crashed in " .. DCS.getUnitType(arg2),nil,nil);
 
     elseif eventName == "eject" then
         --"eject", playerID, unit_missionID
-		pilots_accounted = Perun.CheckMulticrew(arg1,DCS.getUnitType(arg2))
+		pilots_accounted = Perun.GetMulticrewCrew(arg1)
 		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,"eject",DCS.getUnitType(arg2));
+			Perun.LogStatsCount(pilotID,"eject");
 		end
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " ejected " .. DCS.getUnitType(arg2),nil,nil);
 
@@ -748,9 +809,9 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			_temp_type="tookoff_OTHER"
 		end
 		
-		pilots_accounted = Perun.CheckMulticrew(arg1,DCS.getUnitType(arg2))
+		pilots_accounted = Perun.GetMulticrewCrew(arg1)
 		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,_temp_type,DCS.getUnitType(arg2))
+			Perun.LogStatsCount(pilotID,_temp_type)
 		end
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " took off in ".. DCS.getUnitType(arg2) .. _temp_airfield,arg3,nil);
 
@@ -773,17 +834,17 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			_temp_type = "landing_OTHER"
 		end
 		
-		pilots_accounted = Perun.CheckMulticrew(arg1,DCS.getUnitType(arg2))
+		pilots_accounted = Perun.GetMulticrewCrew(arg1)
 		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,_temp_type,DCS.getUnitType(arg2))
+			Perun.LogStatsCount(pilotID,_temp_type)
 		end
-		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " landed in " .. DCS.getUnitType(arg2).. _temp,arg3,nil);
+		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " landed in " .. DCS.getUnitType(arg2).. _temp_airfield,arg3,nil);
 
     elseif eventName == "pilot_death" then
         --"pilot_death", playerID, unit_missionID
-		pilots_accounted = Perun.CheckMulticrew(arg1,DCS.getUnitType(arg2))
+		pilots_accounted = Perun.GetMulticrewCrew(arg1)
 		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,"pilot_death",DCS.getUnitType(arg2))
+			Perun.LogStatsCount(pilotID,"pilot_death")
 		end
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " in " .. DCS.getUnitType(arg2) .. " died",nil,nil);
 
@@ -791,13 +852,14 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
         Perun.LogEvent(eventName,"Unknown event type",nil,nil);
 
     end
-	Perun.AddLog("Event handler for "..eventName .. " finished",2)
+	Perun.AddLog("Event handler for " .. eventName .. " finished",2)
 end
 
 -- ########### Finalize and set callbacks ###########
 if Perun.IsServer then
 	-- If this game instance is hosting multiplayer game, start Perun
-	DCS.setUserCallbacks(Perun)											-- Set user callbacs,  map DCS event handlers with functions defined above
-	net.log("Perun by VladMordock was loaded: " .. Perun.Version )		-- Display perun information in log
-	Perun.ConnectToPerun()												-- Connect to Perun server
+	Perun.MissionHash=Perun.GenerateMissionHash()														-- Generate initial missionhash
+	DCS.setUserCallbacks(Perun)																			-- Set user callbacs,  map DCS event handlers with functions defined above
+	net.log("Perun by VladMordock was loaded: " .. Perun.Version )										-- Display perun information in log
+	Perun.ConnectToPerun()																				-- Connect to Perun server
 end
