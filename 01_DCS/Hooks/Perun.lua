@@ -210,6 +210,8 @@ Perun.GetMulticrewAllParameters = function (PlayerId)
 		elseif string.find(_player_slot, 'observer') then
 			_master_type = "observer"
 		end
+		_master_slot = -1
+		_sub_slot = 0
 	end
 	return _master_type,_master_slot,_sub_slot
 end
@@ -361,7 +363,8 @@ Perun.LogStats = function(playerID)
 	local _PlayerStatsTable=Perun.LogStatsGet(playerID)
     local _TempData={}
 	_TempData['stat_data_perun']=_PlayerStatsTable
-	_TempData['stat_data_type']=_PlayerStatsTable['ps_type'];
+	_TempData['stat_data_type']= _PlayerStatsTable['ps_type'];
+	_TempData['stat_data_masterslot'] = _PlayerStatsTable['ps_masterslot'];
     _TempData['stat_ucid']=net.get_player_info(playerID, 'ucid')
 	_TempData['stat_name']=net.get_player_info(playerID, 'name')
     _TempData['stat_datetime']=os.date('%Y-%m-%d %H:%M:%S')
@@ -393,6 +396,7 @@ Perun.LogStatsCount = function(argPlayerID,argAction)
 		-- Create empty element
 		 local _TempData={}
 		_TempData['ps_type'] = Perun.GetMulticrewParameter(argPlayerID,"subtype")
+		_TempData['ps_masterslot'] = Perun.GetMulticrewParameter(argPlayerID,"masterslot")
 		_TempData['ps_pvp'] = 0
 		_TempData['ps_deaths'] = 0
 		_TempData['ps_ejections'] = 0
@@ -419,13 +423,15 @@ Perun.LogStatsCount = function(argPlayerID,argAction)
 		Perun.StatData[_player_hash]=_TempData
 	end
 	
+	-- TBD BELLOW SEEMS TO BE OBSOLETE, CHECK AND DELETE
 	if argType ~= nil then
 		Perun.StatData[_player_hash]['ps_type']=Perun.GetMulticrewParameter(argPlayerID,"subtype");
 		Perun.StatDataLastType[net.get_player_info(argPlayerID, 'ucid')]=_player_hash
 	else
 		-- Do nothing
 	end 
-	
+	-- TBD ABOVE SEEMS TO BE OBSOLETE, CHECK AND DELETE
+
 	if argAction == "eject" then
 		Perun.StatData[_player_hash]['ps_ejections']=Perun.StatData[_player_hash]['ps_ejections']+1
 	elseif  argAction == "pilot_death" then
@@ -474,11 +480,21 @@ Perun.LogStatsCount = function(argPlayerID,argAction)
 	elseif  argAction == "tookoff_OTHER" then
 		Perun.StatData[_player_hash]['ps_other_takeoffs']=Perun.StatData[_player_hash]['ps_other_takeoffs']+1
 	end
+
+	-- Always update master slot
+	Perun.StatData[_player_hash]['ps_masterslot'] = Perun.GetMulticrewParameter(argPlayerID,"masterslot")
 	
 	Perun.AddLog("Stats data prepared",2)
 	Perun.LogStats(argPlayerID);
 end
 
+Perun.LogStatsCountCrew = function (MasterPilotID,ActionType)
+	-- Change stats for the whole crew
+	local _pilots_accounted = Perun.GetMulticrewCrew(MasterPilotID)
+	for _, pilotID in ipairs(_pilots_accounted) do
+		Perun.LogStatsCount(pilotID,ActionType)
+	end
+end
 -- ################################ Data preparation ################################
 
 Perun.LogStatsGet = function(playerID)
@@ -722,19 +738,13 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 					_temp_event_type="kill_Other"
 				end
 				if net.get_player_info(arg4, "name") ~= nil and arg3 ~= arg6 then
-					pilots_accounted = Perun.GetMulticrewCrew(arg1)
-					for _, pilotID in ipairs(pilots_accounted) do
-						Perun.LogStatsCount(pilotID,"kill_PvP");
-					end
+					Perun.LogStatsCountCrew (arg1,"kill_PvP")
 				end
 			else
 				_temp_event_type="friendly_fire"
 			end
 			
-			pilots_accounted = Perun.GetMulticrewCrew(arg1)
-			for _, pilotID in ipairs(pilots_accounted) do
-				Perun.LogStatsCount(pilotID,_temp_event_type);
-			end
+			Perun.LogStatsCountCrew (arg1,_temp_event_type)
 			
         else
             _temp_killer = " AI ";
@@ -776,18 +786,12 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
     elseif eventName == "crash" then
         --"crash", playerID, unit_missionID
-		pilots_accounted = Perun.GetMulticrewCrew(arg1)
-		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,"crash");
-		end
+		Perun.LogStatsCountCrew (arg1,"crash")
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " crashed in " .. DCS.getUnitType(arg2),nil,nil);
 
     elseif eventName == "eject" then
         --"eject", playerID, unit_missionID
-		pilots_accounted = Perun.GetMulticrewCrew(arg1)
-		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,"eject");
-		end
+		Perun.LogStatsCountCrew (arg1,"eject")
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " ejected " .. DCS.getUnitType(arg2),nil,nil);
 
     elseif eventName == "takeoff" then
@@ -809,10 +813,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			_temp_type="tookoff_OTHER"
 		end
 		
-		pilots_accounted = Perun.GetMulticrewCrew(arg1)
-		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,_temp_type)
-		end
+		Perun.LogStatsCountCrew (arg1,_temp_type)
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " took off in ".. DCS.getUnitType(arg2) .. _temp_airfield,arg3,nil);
 
     elseif eventName == "landing" then
@@ -834,18 +835,12 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			_temp_type = "landing_OTHER"
 		end
 		
-		pilots_accounted = Perun.GetMulticrewCrew(arg1)
-		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,_temp_type)
-		end
+		Perun.LogStatsCountCrew (arg1,_temp_type)
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " landed in " .. DCS.getUnitType(arg2).. _temp_airfield,arg3,nil);
 
     elseif eventName == "pilot_death" then
         --"pilot_death", playerID, unit_missionID
-		pilots_accounted = Perun.GetMulticrewCrew(arg1)
-		for _, pilotID in ipairs(pilots_accounted) do
-			Perun.LogStatsCount(pilotID,"pilot_death")
-		end
+		Perun.LogStatsCountCrew (arg1,"pilot_death")
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " in " .. DCS.getUnitType(arg2) .. " died",nil,nil);
 
     else
