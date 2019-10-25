@@ -365,7 +365,8 @@ Perun.LogStats = function(playerID)
 	_TempData['stat_data_perun']=_PlayerStatsTable
 	_TempData['stat_data_type']= _PlayerStatsTable['ps_type'];
 	_TempData['stat_data_masterslot'] = _PlayerStatsTable['ps_masterslot'];
-    _TempData['stat_ucid']=net.get_player_info(playerID, 'ucid')
+    _TempData['stat_data_subslot'] = _PlayerStatsTable['ps_subslot'];
+	_TempData['stat_ucid']=net.get_player_info(playerID, 'ucid')
 	_TempData['stat_name']=net.get_player_info(playerID, 'name')
     _TempData['stat_datetime']=os.date('%Y-%m-%d %H:%M:%S')
     _TempData['stat_missionhash']=Perun.MissionHash
@@ -397,6 +398,7 @@ Perun.LogStatsCount = function(argPlayerID,argAction)
 		 local _TempData={}
 		_TempData['ps_type'] = Perun.GetMulticrewParameter(argPlayerID,"subtype")
 		_TempData['ps_masterslot'] = Perun.GetMulticrewParameter(argPlayerID,"masterslot")
+		_TempData['ps_subslot'] = Perun.GetMulticrewParameter(argPlayerID,"subslot")
 		_TempData['ps_pvp'] = 0
 		_TempData['ps_deaths'] = 0
 		_TempData['ps_ejections'] = 0
@@ -481,8 +483,9 @@ Perun.LogStatsCount = function(argPlayerID,argAction)
 		Perun.StatData[_player_hash]['ps_other_takeoffs']=Perun.StatData[_player_hash]['ps_other_takeoffs']+1
 	end
 
-	-- Always update master slot
+	-- Always update slots
 	Perun.StatData[_player_hash]['ps_masterslot'] = Perun.GetMulticrewParameter(argPlayerID,"masterslot")
+	Perun.StatData[_player_hash]['ps_subslot'] = Perun.GetMulticrewParameter(argPlayerID,"subslot")
 	
 	Perun.AddLog("Stats data prepared",2)
 	Perun.LogStats(argPlayerID);
