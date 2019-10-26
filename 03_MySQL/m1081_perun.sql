@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `pe_Config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `pe_Config` (`pe_Config_id`, `pe_Config_payload`) VALUES
-(1, 'v0.8.3');
+(1, 'v0.9.0');
 
 DROP TABLE IF EXISTS `pe_DataMissionHashes`;
 CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
   PRIMARY KEY (`pe_DataMissionHashes_id`),
   UNIQUE KEY `UNIQUE_hash` (`pe_DataMissionHashes_hash`),
   KEY `pe_DataMissionHashes_instance` (`pe_DataMissionHashes_instance`)
-) ENGINE=InnoDB AUTO_INCREMENT=818 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7155 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataPlayers`;
 CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
   `pe_DataPlayers_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataPlayers_id`),
   UNIQUE KEY `UNIQUE_UCID` (`pe_DataPlayers_ucid`)
-) ENGINE=InnoDB AUTO_INCREMENT=219 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=222 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataRaw`;
 CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataTypes` (
   `pe_DataTypes_update` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataTypes_id`),
   UNIQUE KEY `UNIQUE_TYPE_NAME` (`pe_DataTypes_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogChat`;
 CREATE TABLE IF NOT EXISTS `pe_LogChat` (
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogChat` (
   KEY `pe_LogChat_missionhash_id` (`pe_LogChat_missionhash_id`),
   KEY `pe_LogChat_playerid` (`pe_LogChat_playerid`),
   KEY `pe_LogChat_datetime` (`pe_LogChat_datetime`)
-) ENGINE=InnoDB AUTO_INCREMENT=19739 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21177 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogEvent`;
 CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   PRIMARY KEY (`pe_LogEvent_id`),
   KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`),
   KEY `pe_LogEvent_datetime` (`pe_LogEvent_datetime`)
-) ENGINE=InnoDB AUTO_INCREMENT=93657 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=95755 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogLogins`;
 CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
   PRIMARY KEY (`pe_LogLogins_id`),
   KEY `pe_LogLogins_playerid` (`pe_LogLogins_playerid`),
   KEY `pe_LogLogins_datetime` (`pe_LogLogins_datetime`)
-) ENGINE=InnoDB AUTO_INCREMENT=10742 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11064 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogStats`;
 CREATE TABLE IF NOT EXISTS `pe_LogStats` (
@@ -136,6 +136,8 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `pe_LogStats_missionhash_id` bigint(20) DEFAULT NULL,
   `pe_LogStats_playerid` bigint(20) DEFAULT NULL,
   `pe_LogStats_typeid` int(11) DEFAULT NULL,
+  `pe_LogStats_masterslot` int(11) DEFAULT NULL,
+  `pe_LogStats_seat` int(10) UNSIGNED DEFAULT NULL,
   `ps_kills` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_pvp` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_deaths` int(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -170,8 +172,10 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   UNIQUE KEY `UNIQUE_STATS_PER_MISSION_AND_UCID_AND_TYPE` (`pe_LogStats_playerid`,`pe_LogStats_missionhash_id`,`pe_LogStats_typeid`) USING BTREE,
   KEY `pe_LogStats_missionhash_id` (`pe_LogStats_missionhash_id`),
   KEY `pe_LogStats_playerid` (`pe_LogStats_playerid`),
-  KEY `pe_LogStats_typeid` (`pe_LogStats_typeid`)
-) ENGINE=InnoDB AUTO_INCREMENT=9595 DEFAULT CHARSET=utf8;
+  KEY `pe_LogStats_typeid` (`pe_LogStats_typeid`),
+  KEY `pe_LogStats_masterslot` (`pe_LogStats_masterslot`),
+  KEY `pe_LogStats_mstatus` (`pe_LogStats_mstatus`)
+) ENGINE=InnoDB AUTO_INCREMENT=9900 DEFAULT CHARSET=utf8;
 DROP TRIGGER IF EXISTS `pe_LogStats_UPDATE`;
 DELIMITER $$
 CREATE TRIGGER `pe_LogStats_UPDATE` BEFORE UPDATE ON `pe_LogStats` FOR EACH ROW BEGIN
