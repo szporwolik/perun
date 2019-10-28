@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
   PRIMARY KEY (`pe_DataMissionHashes_id`),
   UNIQUE KEY `UNIQUE_hash` (`pe_DataMissionHashes_hash`),
   KEY `pe_DataMissionHashes_instance` (`pe_DataMissionHashes_instance`)
-) ENGINE=InnoDB AUTO_INCREMENT=7184 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7194 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataPlayers`;
 CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogChat` (
   KEY `pe_LogChat_playerid` (`pe_LogChat_playerid`),
   KEY `pe_LogChat_datetime` (`pe_LogChat_datetime`),
   KEY `pe_LogChat_all` (`pe_LogChat_all`)
-) ENGINE=InnoDB AUTO_INCREMENT=21901 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22235 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogEvent`;
 CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`),
   KEY `pe_LogEvent_datetime` (`pe_LogEvent_datetime`),
   KEY `pe_LogEvent_type_2` (`pe_LogEvent_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=98685 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=98988 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogLogins`;
 CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
   KEY `pe_LogLogins_playerid` (`pe_LogLogins_playerid`),
   KEY `pe_LogLogins_datetime` (`pe_LogLogins_datetime`),
   KEY `pe_LogLogins_instance` (`pe_LogLogins_instance`)
-) ENGINE=InnoDB AUTO_INCREMENT=11195 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11239 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogStats`;
 CREATE TABLE IF NOT EXISTS `pe_LogStats` (
@@ -149,7 +149,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   KEY `pe_LogStats_masterslot` (`pe_LogStats_masterslot`),
   KEY `pe_LogStats_mstatus` (`pe_LogStats_mstatus`),
   KEY `pe_LogStats_seat` (`pe_LogStats_seat`)
-) ENGINE=InnoDB AUTO_INCREMENT=10086 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10124 DEFAULT CHARSET=utf8;
 DROP TRIGGER IF EXISTS `pe_LogStats_UPDATE`;
 DELIMITER $$
 CREATE TRIGGER `pe_LogStats_UPDATE` BEFORE UPDATE ON `pe_LogStats` FOR EACH ROW BEGIN
@@ -157,13 +157,13 @@ CREATE TRIGGER `pe_LogStats_UPDATE` BEFORE UPDATE ON `pe_LogStats` FOR EACH ROW 
     	SET NEW.pe_LogStats_mstatus = "MIA";
     ELSEIF NEW.ps_deaths > 0 THEN
     	SET NEW.pe_LogStats_mstatus = "KIA";
-    ELSEIF NEW.ps_landings >= NEW.ps_takeoffs THEN
-    	IF NEW.ps_takeoffs > 0 or NEW.ps_landings > 0 THEN
+    ELSEIF (NEW.ps_airfield_landings + NEW.ps_farp_landings + NEW.ps_other_landings + NEW.ps_ship_landings) >= (NEW.ps_airfield_takeoffs + NEW.ps_farp_takeoffs + NEW.ps_other_takeoffs + NEW.ps_ship_takeoffs) THEN
+    	IF (NEW.ps_airfield_takeoffs + NEW.ps_farp_takeoffs + NEW.ps_other_takeoffs + NEW.ps_ship_takeoffs) > 0 or (NEW.ps_airfield_landings + NEW.ps_farp_landings + NEW.ps_other_landings + NEW.ps_ship_landings) > 0 THEN
     		SET NEW.pe_LogStats_mstatus = "RTB";
         ELSE 
         	SET NEW.pe_LogStats_mstatus = "?";
         END IF;
-    ELSEIF NEW.ps_takeoffs > NEW.ps_landings and NEW.ps_ejections=0 and NEW.ps_deaths=0 THEN
+    ELSEIF (NEW.ps_airfield_takeoffs + NEW.ps_farp_takeoffs + NEW.ps_other_takeoffs + NEW.ps_ship_takeoffs) > (NEW.ps_airfield_landings + NEW.ps_farp_landings + NEW.ps_other_landings + NEW.ps_ship_landings) and NEW.ps_ejections=0 and NEW.ps_deaths=0 THEN
 SET NEW.pe_LogStats_mstatus = "MIA";
     ELSE
     	SET NEW.pe_LogStats_mstatus = "?";
@@ -180,9 +180,6 @@ ALTER TABLE `pe_DataPlayers` ADD FULLTEXT KEY `pe_DataPlayers_ucid` (`pe_DataPla
 ALTER TABLE `pe_DataTypes` ADD FULLTEXT KEY `pe_DataTypes_name` (`pe_DataTypes_name`);
 
 ALTER TABLE `pe_LogChat` ADD FULLTEXT KEY `pe_LogChat_msg` (`pe_LogChat_msg`);
-
-ALTER TABLE `pe_LogEvent` ADD FULLTEXT KEY `pe_LogEvent_argPlayers` (`pe_LogEvent_argPlayers`);
-ALTER TABLE `pe_LogEvent` ADD FULLTEXT KEY `pe_LogEvent_type` (`pe_LogEvent_type`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
