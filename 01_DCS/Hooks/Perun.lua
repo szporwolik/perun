@@ -33,12 +33,14 @@ Perun.MissionHash=""
 Perun.lastSentStatus = 0
 Perun.lastSentMission = 0
 Perun.lastSentKeepAlive = 0
+Perun.lastConnectionError = 0
 Perun.lastReconnect = 0
 Perun.SendRetries = 3
 Perun.RefreshKeepAlive = 3
 Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
 Perun.socket  = require("socket")
 Perun.IsServer = true --DCS.isServer( )								-- TBD looks like DCS API error, always returning True
+Perun.ConnectionError = "[Perun] ERROR: Connection broken - contact server admin!"
 
 -- ################################ Helper function definitions ################################
 function stripChars(str)
@@ -164,8 +166,8 @@ end
 Perun.AddLog = function(text,LogLevel)
     -- Adds logs to DCS.log file
 	LogLevel = LogLevel or 1
-	if Perun.DebugMode == LogLevel then
-		net.log("Perun : ".. text)
+	if Perun.DebugMode >= LogLevel then
+		net.log("[Perun] ".. text)
 	end
 end
 
@@ -287,10 +289,10 @@ Perun.ConnectToPerun = function ()
 	_, _err = Perun.TCP:connect(Perun.TCPPerunHost, Perun.TCPTargetPort)
 	if _err then
 		-- Could not connect
-		Perun.AddLog("ERROR - TCP connection error : " .. _err)
+		Perun.AddLog("ERROR - TCP connection error : " .. _err , 1)
 	else
 		-- Connected
-		Perun.AddLog("Sucess - connected to TCP server",2)
+		Perun.AddLog("Success - connected to TCP server",2)
 		Perun.lastReconnect = _now
 	end
 end
@@ -310,6 +312,7 @@ Perun.SendToPerun = function(data_id, data_package)
 	local _intStatus = nil
 	local _intTries =0
 	local _err=nil
+	local _dropped =  true
 
 	-- Try to send a few times (defind in settings section)
 	while _intStatus == nil and _intTries < Perun.SendRetries do
@@ -321,13 +324,24 @@ Perun.SendToPerun = function(data_id, data_package)
 		else
 			-- Succes, packet was send
 			Perun.AddLog("Packet send : " .. data_id .. " , tries:" .. _intTries,2)
+			_dropped = false
 		end
 		_intTries=_intTries+1
-		_err = nil
 	end
-	if _err then
-		-- Add information to log file
-		Perun.AddLog("ERROR - packed dropped : " .. data_id)
+	
+	if _dropped == true then
+		-- Add information to log file and send chat message to all that Perun connection is broken
+		Perun.AddLog("ERROR - packed dropped : " .. data_id,1)
+		local _now = DCS.getRealTime()
+		if _now > Perun.lastConnectionError + 60 then
+			-- Informs all players that there is Peron error; below hack for DCS net.send_chat not working
+			local _all_players = net.get_player_list()
+			for PlayerIDIndex, _playerID in ipairs(_all_players) do
+				 net.send_chat_to(Perun.ConnectionError , _playerID)
+			end
+			-- Reset last error send counter
+			Perun.lastConnectionError = _now
+		end
 	end 
 end
 
@@ -693,7 +707,7 @@ end
 
 Perun.onPlayerTrySendChat = function (playerID, msg, all)
 	-- Somebody tries to send chat message
-    if msg~=Perun.MOTD_L1 and msg~=Perun.MOTD_L2 then
+    if msg~=Perun.MOTD_L1 and msg~=Perun.MOTD_L2 and msg~=Perun.ConnectionError then
         Perun.LogChat(playerID,msg,all)
     end
 
@@ -709,7 +723,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			arg2 = "Cannon"
 		end
 		
-        Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name").." killed friendy " .. net.get_player_info(arg3, "name") .. " using " .. arg2,nil,nil);
+        Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player(s) " .. Perun.GetMulticrewCrewNames(arg1) .." killed friendly " .. Perun.GetMulticrewCrewNames(arg3) .. " using " .. arg2,nil,nil);
 
     elseif eventName == "mission_end" then
         --"mission_end", winner, msg
@@ -717,13 +731,13 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
     elseif eventName == "kill" then
         --"kill", killerPlayerID, killerUnitType, killerSide, victimPlayerID, victimUnitType, victimSide, weaponName
-		local _temp_victim=""
+		local _temp_victims=""
 		if net.get_player_info(arg4, "name") ~= nil then
-            _temp_victim = " player(s) ".. Perun.GetMulticrewCrewNames(arg1) .. " ";
+            _temp_victims = " player(s) ".. Perun.GetMulticrewCrewNames(arg4) .. " ";
             
 			Perun.LogStats(arg4);
         else
-            _temp_victim = " AI ";
+            _temp_victims = " AI ";
         end
 
         if net.get_player_info(arg1, "name") ~= nil then
@@ -769,7 +783,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			arg7 = "Cannon"
 		end
 
-		Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp_killers .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp_victim .. " in " .. arg5  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]",arg7,Perun.GetCategory(arg5));
+		Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp_killers .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp_victims .. " in " .. arg5  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]",arg7,Perun.GetCategory(arg5));
 
     elseif eventName == "self_kill" then
         --"self_kill", playerID
