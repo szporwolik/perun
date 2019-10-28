@@ -59,7 +59,7 @@ C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved
 Data displaying and handling is not in the current scope of this project. Since the end of 2018 the Perun data displaying has been  hardcoded at forum.gildia.org , website for the Polish DCS community; examples:
 ![Who is online](https://i.imgur.com/5lVwsJw.png)
 ![Mission statistics](https://i.imgur.com/uiRSa9e.png)
-Due to resource limitations, "Perun for DCS World" will focus on pulling the data from DCS (and external modules) and pushing it to MySQL server, but ** if anyone would like to develop open sourced PHP applets for data/statistics displaying ** we're willing to cooperate and support such projects. Unfortunetly it's not possible to share the hardcoded code from forum.gildia.org.
+Due to resource limitations, "Perun for DCS World" will focus on pulling the data from DCS (and external modules) and pushing it to MySQL server, but if anyone would like to develop open sourced PHP applets for data/statistics displaying we're willing to cooperate and support such projects. Unfortunetly it's not possible to share the hardcoded code from forum.gildia.org.
 
 ## Troubleshooting - FAQ
 - [I keep getting 1305 MySQL error](#i-keep-getting-1305-mysql-error)
