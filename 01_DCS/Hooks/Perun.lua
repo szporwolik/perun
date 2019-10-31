@@ -849,9 +849,9 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
     elseif eventName == "landing" then
         --"landing", playerID, unit_missionID, airdromeName
         if arg3 ~= "" then
-            _temp = " at " .. arg3;
+            _temp_airfield = " at " .. arg3;
         else
-            _temp ="";
+            _temp_airfield ="";
         end
 
 		-- TBD below shall be moved to function and arrays of strings - see takeoffs
