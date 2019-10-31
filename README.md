@@ -112,7 +112,7 @@ DCS API does not track carrier landing natively, so there is a trick to achive t
 * [Notepad++](https://notepad-plus-plus.org/)
 
 ## Contributing
-Please contact me if you'd like to contribute.
+Please contact me if you'd like to contribute. Short rule is that all pull request shall come to "dev" branch, pull requests to "master" will be deleted.
 
 ## Versioning
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/szporwolik/perun/tags). 
