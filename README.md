@@ -69,7 +69,7 @@ Due to resource limitations, "Perun for DCS World" will focus on pulling the dat
 That probably means that your database does not support JSON functions, you shall upgrade your MySQL server to at lease 5.7 version.
 
 ### Carrier landing are not tracked correctly
-DCS API does not track carrier landing natively, so there is a trick to achive that. You shall set your carrier to a propoer group name to have landings tracked.
+DCS API does not track carrier or FARP operations natively, so there is a trick to achive that. At this point of time to detect FARP operations, the FARPs shall have "FARP" string in the group name (set in mission editor). For carrier operations the string "SHIP" is required within group name.
 
 # API documentation (for expert users)
 ## MySQL database structure
