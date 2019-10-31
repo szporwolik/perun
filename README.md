@@ -11,7 +11,7 @@ Provided windows app puts received TCP packets to MySQL database; additionaly Pe
 
 However, this software is intended to be used by experienced users - the output is MySQL data and/or JSON file; you will need to process/display it yourself.
 
-![Perun in action](https://i.imgur.com/MieyBej.png)
+![Perun in action](https://i.imgur.com/JIlLENa.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
 
 ## Prerequisites
@@ -55,6 +55,12 @@ Example for windows shortcut:
 ```
 C:\Perun_v1\Perun.exe 48621 1 "G:\DCS SRS\clients-list.json" "C:\Users\DCS\Saved Games\DCS\Mods\tech\LotAtc\stats.json"
 ```
+## Displaying data
+Data displaying and handling is not in the current scope of this project. Since the end of 2018 the Perun data displaying has been  hardcoded at forum.gildia.org , website for the Polish DCS community; examples:
+![Who is online](https://i.imgur.com/5lVwsJw.png)
+![Mission statistics](https://i.imgur.com/uiRSa9e.png)
+Due to resource limitations, "Perun for DCS World" will focus on pulling the data from DCS (and external modules) and pushing it to MySQL server, but if anyone would like to develop open sourced PHP applets for data/statistics displaying we're willing to cooperate and support such projects. Unfortunetly it's not possible to share the hardcoded code from forum.gildia.org.
+
 ## Troubleshooting - FAQ
 - [I keep getting 1305 MySQL error](#i-keep-getting-1305-mysql-error)
 - [Carrier landing are not tracked correctly](#carrier-landing-are-not-tracked-correctly)
@@ -106,7 +112,7 @@ DCS API does not track carrier landing natively, so there is a trick to achive t
 * [Notepad++](https://notepad-plus-plus.org/)
 
 ## Contributing
-Please contact me if you'd like to contribute.
+Please contact me if you'd like to contribute. Short rule is that all pull request shall come to "dev" branch, pull requests to "master" will be deleted.
 
 ## Versioning
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/szporwolik/perun/tags). 
