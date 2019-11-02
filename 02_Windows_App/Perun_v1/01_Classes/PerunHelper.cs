@@ -60,6 +60,7 @@ internal class PerunHelper
 
     public static int CheckVersions()
     {
+#if !DEBUG
         // Checks the versions of APP, DCS Hook and MySQL database
         Match match = Regex.Match(Globals.VersionPerun, @"^\d+.\d+.\d+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         string VersionApp = "v" + match.Groups[0].Value;
@@ -90,5 +91,8 @@ internal class PerunHelper
         }
 
         return ReturnValue;
+#else
+        return 1;
+#endif
     }
 }
