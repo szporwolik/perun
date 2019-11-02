@@ -506,46 +506,40 @@ namespace Perun_v1
                         ExtSRSJson = System.IO.File.ReadAllText(con_txt_3rd_srs.Text);
                         dynamic raw_lotatc = JsonConvert.DeserializeObject(ExtSRSJson);
 
-                        for (int i = 0; i < raw_lotatc.Count; i++)
+                        for (int i = 0; i < raw_lotatc.Clients.Count; i++)
                         {
 
-                            if (raw_lotatc[i].RadioInfo != null)
+                            if (raw_lotatc.Clients[i].RadioInfo != null)
                             {
 
-                                int temp = raw_lotatc[i].RadioInfo.radios.Count - 1;
+                                int temp = raw_lotatc.Clients[i].RadioInfo.radios.Count - 1;
                                 for (int j = temp; j >= 0; j--)
                                 {
-                                    raw_lotatc[i].RadioInfo.radios[j].enc.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].encKey.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].encMode.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].freqMax.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].freqMin.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].modulation.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].freqMode.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].volMode.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].expansion.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].channel.Parent.Remove();
-                                    raw_lotatc[i].RadioInfo.radios[j].simul.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].enc.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].encKey.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].encMode.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].freqMax.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].freqMin.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].modulation.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].freqMode.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].volMode.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].expansion.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].channel.Parent.Remove();
+                                    raw_lotatc.Clients[i].RadioInfo.radios[j].simul.Parent.Remove();
 
-                                    if (raw_lotatc[i].RadioInfo.radios[j].name == "No Radio")
+                                    if (raw_lotatc.Clients[i].RadioInfo.radios[j].name == "No Radio")
                                     {
-                                        raw_lotatc[i].RadioInfo.radios[j].Remove();
+                                        raw_lotatc.Clients[i].RadioInfo.radios[j].Remove();
                                     }
                                 }
-                                raw_lotatc[i].ClientChannelId.Parent.Remove();
-                                raw_lotatc[i].RadioInfo.simultaneousTransmission.Parent.Remove();
+                                raw_lotatc.Clients[i].ClientChannelId.Parent.Remove();
+                                raw_lotatc.Clients[i].RadioInfo.simultaneousTransmission.Parent.Remove();
                             }
                         }
 
-                        if (raw_lotatc.Count > 0)
-                        {
-                            ExtSRSJson = JsonConvert.SerializeObject(raw_lotatc);
-                            ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + ExtSRSJson + "'}";
-                        }
-                        else
-                        {
-                            ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'false'}}"; // No SRS clients connected
-                        }
+                        ExtSRSJson = JsonConvert.SerializeObject(raw_lotatc);
+                        ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + ExtSRSJson + "'}";
+
                         ExtSRSUseDefault = false;
                         PerunHelper.AddLog(ref Globals.AppLogHistory, "SRS data loaded", 3, 0, "100", true);
                         ExtSRSStatus = true;
