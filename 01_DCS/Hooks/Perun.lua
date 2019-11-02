@@ -22,7 +22,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"
 -- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
 
 -- Variable init
-Perun.Version = "v0.9.0"
+Perun.Version = "v0.9.1"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -650,7 +650,6 @@ Perun.onSimulationStart = function()
     Perun.LogEvent("SimStart","Mission " .. Perun.MissionHash .. " started",nil,nil);
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
-	-- TBD send this to Perun
 end
 
 Perun.onSimulationStop = function()
@@ -659,13 +658,14 @@ Perun.onSimulationStop = function()
 	Perun.MissionHash=Perun.GenerateMissionHash();
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
-	-- TBD send this to Perun
 end
 
 Perun.onPlayerDisconnect = function(id, err_code)
 	-- Player disconnected - TBD DCS Bug, this is not triggered at this point of time
+	if err_code == nil then
+		err_code = "-1"
+	end
     Perun.LogEvent("disconnect", "Player " .. net.get_player_info(id, "name") .. " disconnected; " .. err_code,net.get_player_info(id, "name"),err_code);
-	-- TBD send this to Perun
 end
 
 Perun.onSimulationFrame = function()
