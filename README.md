@@ -18,7 +18,7 @@ However, this software is intended to be used by experienced users - the output 
 Core:
  * For JSON Export:
    * DCS World stable or DCS World beta
- * **(Optional)** For MySQL Export:
+ * For MySQL Export:
    * MySQL database with read/write access running at min. 5.7 server (tested with v5.7.21; native JSON support is required)
    * .NET Framework 4.8.0
 
