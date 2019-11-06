@@ -30,12 +30,13 @@ Perun.ServerData = {}
 Perun.StatData = {}
 Perun.StatDataLastType = {}
 Perun.MissionHash=""
+Perun.ReconnectTimeout = 30
 Perun.lastSentStatus = 0
 Perun.lastSentMission = 0
 Perun.lastSentKeepAlive = 0
 Perun.lastConnectionError = 0
-Perun.lastReconnect = 0
-Perun.SendRetries = 3
+Perun.lastReconnect = (-1) * Perun.ReconnectTimeout
+Perun.SendRetries = 2
 Perun.RefreshKeepAlive = 3
 Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
 Perun.socket  = require("socket")
@@ -293,8 +294,9 @@ Perun.ConnectToPerun = function ()
 	else
 		-- Connected
 		Perun.AddLog("Success - connected to TCP server",2)
-		Perun.lastReconnect = _now
 	end
+	local _now = DCS.getRealTime()
+	Perun.lastReconnect = _now
 end
 
 Perun.SendToPerun = function(data_id, data_package)
@@ -315,12 +317,15 @@ Perun.SendToPerun = function(data_id, data_package)
 	local _dropped =  true
 
 	-- Try to send a few times (defind in settings section)
+	local _now = DCS.getRealTime()
 	while _intStatus == nil and _intTries < Perun.SendRetries do
 		_intStatus, _err = Perun.TCP:send(_TCPFrame) 
 		if _err then
 			-- Failure, packet was not send
 			Perun.AddLog("Packed not send : " .. data_id .. " , error: " .. _err .. ", tries: " .. _intTries,2)
-			Perun.ConnectToPerun()
+			if _now > Perun.lastReconnect + Perun.ReconnectTimeout then
+				Perun.ConnectToPerun()
+			end
 		else
 			-- Succes, packet was send
 			Perun.AddLog("Packet send : " .. data_id .. " , tries:" .. _intTries,2)
@@ -332,8 +337,7 @@ Perun.SendToPerun = function(data_id, data_package)
 	if _dropped == true then
 		-- Add information to log file and send chat message to all that Perun connection is broken
 		Perun.AddLog("ERROR - packed dropped : " .. data_id,1)
-		local _now = DCS.getRealTime()
-		if _now > Perun.lastConnectionError + 60 then
+		if _now > Perun.lastConnectionError + Perun.ReconnectTimeout then
 			-- Informs all players that there is Peron error; below hack for DCS net.send_chat not working
 			local _all_players = net.get_player_list()
 			for PlayerIDIndex, _playerID in ipairs(_all_players) do
