@@ -1,3 +1,4 @@
+![alt text](https://img.shields.io/discord/641759751780302866)
 ![alt text](https://img.shields.io/github/license/szporwolik/perun.svg "MIT")
 ![alt text](https://img.shields.io/github/release-pre/szporwolik/perun.svg "Latest release")
 ![alt text](https://img.shields.io/github/release-date-pre/szporwolik/perun.svg "Latest release date")
