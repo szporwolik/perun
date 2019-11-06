@@ -71,6 +71,9 @@ Due to resource limitations, "Perun for DCS World" will focus on pulling the dat
 ### I keep getting 1305 MySQL error
 That probably means that your database does not support JSON functions, you shall upgrade your MySQL server to at lease 5.7 version.
 
+### I keep getting 1364 MySQL error
+Make sure that STRICT_TRANS_TABLES is disabled at your MySQL server, see: https://stackoverflow.com/questions/37964325/how-to-find-and-disable-mysql-strict-mode
+
 ### Carrier landing are not tracked correctly
 DCS API does not track carrier or FARP operations natively, so there is a trick to achive that. At this point of time to detect FARP operations, the FARPs shall have "FARP" string in the group name (set in mission editor). For carrier operations the string "SHIP" is required within group name.
 
