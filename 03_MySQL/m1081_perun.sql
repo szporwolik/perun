@@ -8,8 +8,6 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
-CREATE DATABASE IF NOT EXISTS `m1081_perun` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `m1081_perun`;
 
 DROP TABLE IF EXISTS `pe_Config`;
 CREATE TABLE IF NOT EXISTS `pe_Config` (
@@ -30,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
   PRIMARY KEY (`pe_DataMissionHashes_id`),
   UNIQUE KEY `UNIQUE_hash` (`pe_DataMissionHashes_hash`),
   KEY `pe_DataMissionHashes_instance` (`pe_DataMissionHashes_instance`)
-) ENGINE=InnoDB AUTO_INCREMENT=7215 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7272 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataPlayers`;
 CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
@@ -41,13 +39,13 @@ CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
   `pe_DataPlayers_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataPlayers_id`),
   UNIQUE KEY `UNIQUE_UCID` (`pe_DataPlayers_ucid`)
-) ENGINE=InnoDB AUTO_INCREMENT=226 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=228 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataRaw`;
 CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
   `pe_dataraw_type` tinyint(4) NOT NULL,
   `pe_dataraw_instance` smallint(5) UNSIGNED NOT NULL,
-  `pe_dataraw_payload` text NOT NULL,
+  `pe_dataraw_payload` text,
   `pe_dataraw_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_dataraw_type`,`pe_dataraw_instance`),
   KEY `pe_dataraw_type_pe_dataraw_instance` (`pe_dataraw_type`,`pe_dataraw_instance`),
@@ -61,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataTypes` (
   `pe_DataTypes_update` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataTypes_id`),
   UNIQUE KEY `UNIQUE_TYPE_NAME` (`pe_DataTypes_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogChat`;
 CREATE TABLE IF NOT EXISTS `pe_LogChat` (
@@ -76,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogChat` (
   KEY `pe_LogChat_playerid` (`pe_LogChat_playerid`),
   KEY `pe_LogChat_datetime` (`pe_LogChat_datetime`),
   KEY `pe_LogChat_all` (`pe_LogChat_all`)
-) ENGINE=InnoDB AUTO_INCREMENT=22686 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=24168 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogEvent`;
 CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
@@ -92,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`),
   KEY `pe_LogEvent_datetime` (`pe_LogEvent_datetime`),
   KEY `pe_LogEvent_type_2` (`pe_LogEvent_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=99807 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=102343 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogLogins`;
 CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
@@ -106,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
   KEY `pe_LogLogins_playerid` (`pe_LogLogins_playerid`),
   KEY `pe_LogLogins_datetime` (`pe_LogLogins_datetime`),
   KEY `pe_LogLogins_instance` (`pe_LogLogins_instance`)
-) ENGINE=InnoDB AUTO_INCREMENT=11344 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11701 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogStats`;
 CREATE TABLE IF NOT EXISTS `pe_LogStats` (
@@ -149,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   KEY `pe_LogStats_masterslot` (`pe_LogStats_masterslot`),
   KEY `pe_LogStats_mstatus` (`pe_LogStats_mstatus`),
   KEY `pe_LogStats_seat` (`pe_LogStats_seat`)
-) ENGINE=InnoDB AUTO_INCREMENT=10220 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10504 DEFAULT CHARSET=utf8;
 DROP TRIGGER IF EXISTS `pe_LogStats_UPDATE`;
 DELIMITER $$
 CREATE TRIGGER `pe_LogStats_UPDATE` BEFORE UPDATE ON `pe_LogStats` FOR EACH ROW BEGIN
