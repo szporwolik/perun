@@ -28,14 +28,14 @@ CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
   PRIMARY KEY (`pe_DataMissionHashes_id`),
   UNIQUE KEY `UNIQUE_hash` (`pe_DataMissionHashes_hash`),
   KEY `pe_DataMissionHashes_instance` (`pe_DataMissionHashes_instance`)
-) ENGINE=InnoDB AUTO_INCREMENT=7272 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7276 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataPlayers`;
 CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
   `pe_DataPlayers_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `pe_DataPlayers_ucid` varchar(150) NOT NULL,
-  `pe_DataPlayers_lastname` varchar(150) NOT NULL,
-  `pe_DataPlayers_lastip` varchar(100) NOT NULL,
+  `pe_DataPlayers_lastname` varchar(150) DEFAULT NULL,
+  `pe_DataPlayers_lastip` varchar(100) DEFAULT NULL,
   `pe_DataPlayers_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataPlayers_id`),
   UNIQUE KEY `UNIQUE_UCID` (`pe_DataPlayers_ucid`)
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogChat` (
   KEY `pe_LogChat_playerid` (`pe_LogChat_playerid`),
   KEY `pe_LogChat_datetime` (`pe_LogChat_datetime`),
   KEY `pe_LogChat_all` (`pe_LogChat_all`)
-) ENGINE=InnoDB AUTO_INCREMENT=24168 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=24169 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogEvent`;
 CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`),
   KEY `pe_LogEvent_datetime` (`pe_LogEvent_datetime`),
   KEY `pe_LogEvent_type_2` (`pe_LogEvent_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=102343 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=102357 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogLogins`;
 CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
   KEY `pe_LogLogins_playerid` (`pe_LogLogins_playerid`),
   KEY `pe_LogLogins_datetime` (`pe_LogLogins_datetime`),
   KEY `pe_LogLogins_instance` (`pe_LogLogins_instance`)
-) ENGINE=InnoDB AUTO_INCREMENT=11701 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11705 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogStats`;
 CREATE TABLE IF NOT EXISTS `pe_LogStats` (
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   KEY `pe_LogStats_masterslot` (`pe_LogStats_masterslot`),
   KEY `pe_LogStats_mstatus` (`pe_LogStats_mstatus`),
   KEY `pe_LogStats_seat` (`pe_LogStats_seat`)
-) ENGINE=InnoDB AUTO_INCREMENT=10504 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10507 DEFAULT CHARSET=utf8;
 DROP TRIGGER IF EXISTS `pe_LogStats_UPDATE`;
 DELIMITER $$
 CREATE TRIGGER `pe_LogStats_UPDATE` BEFORE UPDATE ON `pe_LogStats` FOR EACH ROW BEGIN
