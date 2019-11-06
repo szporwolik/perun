@@ -14,6 +14,8 @@ However, this software is intended to be used by experienced users - the output 
 ![Perun in action](https://i.imgur.com/JIlLENa.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
 
+Discord channel: https://discord.gg/MTahREx
+
 ## Prerequisites
 Core:
  * For JSON Export:
