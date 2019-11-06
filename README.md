@@ -29,13 +29,13 @@ Core:
 ## Installing
 * Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
-* **optionaly** create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
+* Create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
 
 ## Running
 * Start DCS World and host multiplayer session
   * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
-  * by default the TCP port 48620 is in use as target port
-* **optionaly** run the Win32 application
+  * by default the TCP port 48620 is in use as target port - ensure that port and instance ID in the options sections of the Lua file matches data 
+* run the Win32 application
 	* set MySQL connection data
 	* **optionaly** point LotATC json file location
 	* **optionaly** point DCS SRS json file location
