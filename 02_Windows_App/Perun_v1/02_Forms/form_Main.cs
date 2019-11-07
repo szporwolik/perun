@@ -557,7 +557,10 @@ namespace Perun_v1
                 {
                     ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";
                 }
-                DatabaseConnection.SendToMySql(ExtSRSJson);
+                if (ExtSRSStatus)
+                {
+                    DatabaseConnection.SendToMySql(ExtSRSJson);
+                }
             }
 
             // Handle LotATC 
@@ -588,7 +591,10 @@ namespace Perun_v1
                 {
                     ExtLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";   // No LotATC controller connected
                 }
-                DatabaseConnection.SendToMySql(ExtLotATCJson);
+                if (ExtLotATCStatus)
+                {
+                    DatabaseConnection.SendToMySql(ExtLotATCJson);
+                }
             }
 
             // Let's do not risk int overload
