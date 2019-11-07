@@ -40,7 +40,7 @@ Perun.SendRetries = 2
 Perun.RefreshKeepAlive = 3
 Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
 Perun.socket  = require("socket")
-Perun.IsServer = true --DCS.isServer( )								-- TBD looks like DCS API error, always returning True
+Perun.IsServer = DCS.isServer( )								
 Perun.ConnectionError = "[Perun] ERROR: Connection broken - contact server admin!"
 
 -- ################################ Helper function definitions ################################
@@ -135,7 +135,7 @@ function stripChars(str)
 end
 
 Perun.GetCategory = function(id)
-    -- Helper function returns object category basing on I via  https://pastebin.com/GUAXrd2U TBD: rewrite
+    -- Helper function returns object category basing on https://pastebin.com/GUAXrd2U
     local _killed_target_category = DCS.getUnitTypeAttribute(id, "category")
     
 	-- Below, simple hack to get the propper category when DCS API is not returning correct value
@@ -452,15 +452,6 @@ Perun.LogStatsCount = function(argPlayerID,argAction)
 
 		Perun.StatData[_player_hash]=_TempData
 	end
-	
-	-- TBD BELLOW SEEMS TO BE OBSOLETE, CHECK AND DELETE
-	if argType ~= nil then
-		Perun.StatData[_player_hash]['ps_type']=Perun.GetMulticrewParameter(argPlayerID,"subtype");
-		Perun.StatDataLastType[net.get_player_info(argPlayerID, 'ucid')]=_player_hash
-	else
-		-- Do nothing
-	end 
-	-- TBD ABOVE SEEMS TO BE OBSOLETE, CHECK AND DELETE
 
 	if argAction == "eject" then
 		Perun.StatData[_player_hash]['ps_ejections']=Perun.StatData[_player_hash]['ps_ejections']+1
@@ -529,8 +520,8 @@ end
 -- ################################ Data preparation ################################
 
 Perun.LogStatsGet = function(playerID)
-	-- Gets Perun statistics array per player TBD rewrite
-	local next = next -- Make next function local - this improves performance TBD
+	-- Gets Perun statistics array per player 
+	local next = next -- Make next function local - this improves performance
 	local _player_hash = nil
 
 	if next(Perun.StatDataLastType) == nil then
@@ -544,7 +535,7 @@ Perun.LogStatsGet = function(playerID)
 		_player_hash=Perun.StatDataLastType[net.get_player_info(playerID, 'ucid')]
 	end
 	
-	local next = next -- Make next function local - this improves performance TBD
+	local next = next -- Make next function local - this improves performance
 	if  next(Perun.StatData) == nil then
 		-- Array is empty
 		Perun.LogStatsCount(playerID,'init') -- Init statistics
@@ -556,21 +547,6 @@ Perun.LogStatsGet = function(playerID)
 
 	Perun.AddLog("Getting stats data",2)
 	return Perun.StatData[_player_hash];
-end
-
-Perun.UpdateJsonStatus = function()
-    -- Updates status json file
-    local _TempData={}
-    _TempData["1"]=Perun.ServerData
-    _TempData["2"]=Perun.StatusData
-    _TempData["3"]=Perun.SlotsData
-    -- _TempData["4"]=Perun.MissionData -- TBD: hangs for some large missions
-
-	-- Export data to JSON file
-    local _perun_export = io.open(Perun.JsonStatusLocation .. "perun_status_data.json", "w")
-    _perun_export:write(net.lua2json(_TempData) .. "\n")
-    _perun_export:close()
-	Perun.AddLog("Updated JSON",2)
 end
 
 Perun.UpdateStatus = function()
@@ -690,7 +666,6 @@ Perun.onSimulationFrame = function()
         Perun.lastSentMission = _now
 
         Perun.UpdateMission()
-        Perun.UpdateJsonStatus()
     end
 
     -- Send status update
