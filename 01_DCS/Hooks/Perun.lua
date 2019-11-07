@@ -640,7 +640,7 @@ end
 Perun.UpdateMission = function()
     -- Main function for mission information updates
 	Perun.AddLog("Updating mission data",2)
-    Perun.MissionData=DCS.getCurrentMission()
+    -- Perun.MissionData=DCS.getCurrentMission()
 	-- Perun.SendToPerun(4,Perun.MissionData) -- TBD can cause data transmission troubles
 	Perun.AddLog("Mission data updated",2)
 end
