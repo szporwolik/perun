@@ -279,6 +279,29 @@ Perun.GetMulticrewCrewNames = function (owner_playerID)
 	return _result_text
 end
 
+Perun.GetTakeOffLandingEvent = function (takeoff,location)
+	-- Get correct event type for statistics basing on objecy which served as runway/farp
+	local _operation = ""
+	if takeoff == true then
+		_operation="tookoff_"
+	else
+		_operation="landing_"
+	end
+	
+	local _temp_type = ""
+	if string.find(location, "FARP",1,true) then
+		_temp_type = "FARP"
+	elseif string.find(location, "CVN-74 John C. Stennis",1,true) or string.find(location, "LHA-1 Tarawa",1,true) or string.find(location, "SHIP",1,true) then
+		_temp_type = "SHIP"
+	elseif location ~= "" then
+		_temp_type = "AIRFIELD"
+	else
+		_temp_type = "OTHER"
+	end
+	
+	return _operation .. _temp_type
+end
+
 -- ################################ TCP Connection ################################
 
 Perun.ConnectToPerun = function ()
@@ -814,19 +837,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
             _temp_airfield = "";
         end
 
-		-- TBD below shall be moved to function and arrays of strings - see landings
-		_temp_type = ""
-		if string.find(arg3, "FARP",1,true) then
-			_temp_type="tookoff_FARP"
-		elseif string.find(arg3, "CVN-74 John C. Stennis",1,true) or string.find(arg3, "LHA-1 Tarawa",1,true) or string.find(arg3, "SHIP",1,true) then
-			_temp_type="tookoff_SHIP"
-		elseif arg3 ~= "" then
-			_temp_type="tookoff_AIRFIELD"
-		else
-			_temp_type="tookoff_OTHER"
-		end
-		
-		Perun.LogStatsCountCrew (arg1,_temp_type)
+		Perun.LogStatsCountCrew (arg1,Perun.GetTakeOffLandingEvent(true,arg3))
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player(s) " .. Perun.GetMulticrewCrewNames(arg1) .. " took off in ".. DCS.getUnitType(arg2) .. _temp_airfield,arg3,nil);
 
     elseif eventName == "landing" then
@@ -837,19 +848,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
             _temp_airfield ="";
         end
 
-		-- TBD below shall be moved to function and arrays of strings - see takeoffs
-		_temp_type = ""
-		if string.find(arg3, "FARP",1,true) then
-			_temp_type = "landing_FARP"
-		elseif string.find(arg3, "CVN-74 John C. Stennis",1,true) or string.find(arg3, "LHA-1 Tarawa",1,true) or string.find(arg3, "SHIP",1,true) then
-			_temp_type = "landing_SHIP"
-		elseif arg3 ~= "" then
-			_temp_type = "landing_AIRFIELD"
-		else
-			_temp_type = "landing_OTHER"
-		end
-		
-		Perun.LogStatsCountCrew (arg1,_temp_type)
+		Perun.LogStatsCountCrew (arg1,Perun.GetTakeOffLandingEvent(false,arg3))
 		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player(s) " .. Perun.GetMulticrewCrewNames(arg1) .. " landed in " .. DCS.getUnitType(arg2).. _temp_airfield,arg3,nil);
 
     elseif eventName == "pilot_death" then
