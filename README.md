@@ -6,11 +6,11 @@
 ![Perun logo](https://i.imgur.com/JkeHYjJ.png)
 
 # Perun for DCS World
-Included lua script extracts data from DCS World multiplayer server and sends information to TCP port and JSON file for further processing. 
+Included lua script extracts data from DCS World multiplayer server and sends information to TCP port for further processing. 
 
 Provided windows app puts received TCP packets to MySQL database; additionaly Perun windows application can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
 
-However, this software is intended to be used by experienced users - the output is MySQL data and/or JSON file; you will need to process/display it yourself.
+However, this software is intended to be used by experienced users - the output is MySQL data; you will need to process/display it yourself.
 
 ![Perun in action](https://i.imgur.com/JIlLENa.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
@@ -19,9 +19,6 @@ Discord server: https://discord.gg/MTahREx
 
 ## Prerequisites
 Core:
- * For JSON Export:
-   * DCS World stable or DCS World beta
- * For MySQL Export:
    * MySQL database with read/write access running at min. 5.7 server (tested with v5.7.21; native JSON support is required)
    * .NET Framework 4.8.0
 
@@ -36,7 +33,6 @@ Core:
 
 ## Running
 * Start DCS World and host multiplayer session
-  * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
   * by default the TCP port 48620 is in use as target port - ensure that port and instance ID in the options sections of the Lua file matches data 
 * run the Win32 application
 	* set MySQL connection data
