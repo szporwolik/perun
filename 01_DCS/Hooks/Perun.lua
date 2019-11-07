@@ -666,7 +666,7 @@ end
 
 Perun.onPlayerDisconnect = function(id, err_code)
 	-- Player disconnected
-    Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.",nil,nil);
+    Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.(?)",nil,nil);
 	return 
 end
 
@@ -818,8 +818,8 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
     elseif eventName == "disconnect" then
         --"disconnect", playerID, name, playerSide, reason_code
+        Perun.LogEvent(eventName,"Player " ..  arg2 .. " disconnected (".. arg4 .. ").",arg4,nil);
 		Perun.LogStats(arg1);
-        Perun.LogEvent(eventName,"Player " ..  arg1 .. " disconnected!",nil,nil);
 
     elseif eventName == "crash" then
         --"crash", playerID, unit_missionID
