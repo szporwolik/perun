@@ -665,11 +665,15 @@ Perun.onSimulationStop = function()
 end
 
 Perun.onPlayerDisconnect = function(id, err_code)
-	-- Player disconnected - TBD DCS Bug, this is not triggered at this point of time
-	if err_code == nil then
-		err_code = "-1"
-	end
-    Perun.LogEvent("disconnect", "Player " .. net.get_player_info(id, "name") .. " disconnected; " .. err_code,net.get_player_info(id, "name"),err_code);
+	-- Player disconnected
+    Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.",nil,nil);
+	return 
+end
+
+Perun.onPlayerStop = function (id)
+    -- Player left the simulation (happens right before a disconnect, if player exited by desire)
+	Perun.LogEvent("quit", "Player " .. id .. " quit the server.",nil,nil);
+	return
 end
 
 Perun.onSimulationFrame = function()
@@ -815,7 +819,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
     elseif eventName == "disconnect" then
         --"disconnect", playerID, name, playerSide, reason_code
 		Perun.LogStats(arg1);
-        Perun.LogEvent(eventName, Perun.SideID2Name(arg3) .. " player " ..net.get_player_info(arg1, "name") .. " disconnected",nil,nil);
+        Perun.LogEvent(eventName,"Player " ..  arg1 .. " disconnected!",nil,nil);
 
     elseif eventName == "crash" then
         --"crash", playerID, unit_missionID
