@@ -8,8 +8,6 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
-CREATE DATABASE IF NOT EXISTS `m1081_perun` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `m1081_perun`;
 
 DROP TABLE IF EXISTS `pe_Config`;
 CREATE TABLE IF NOT EXISTS `pe_Config` (
@@ -30,24 +28,24 @@ CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
   PRIMARY KEY (`pe_DataMissionHashes_id`),
   UNIQUE KEY `UNIQUE_hash` (`pe_DataMissionHashes_hash`),
   KEY `pe_DataMissionHashes_instance` (`pe_DataMissionHashes_instance`)
-) ENGINE=InnoDB AUTO_INCREMENT=7215 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7344 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataPlayers`;
 CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
   `pe_DataPlayers_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `pe_DataPlayers_ucid` varchar(150) NOT NULL,
-  `pe_DataPlayers_lastname` varchar(150) NOT NULL,
-  `pe_DataPlayers_lastip` varchar(100) NOT NULL,
+  `pe_DataPlayers_lastname` varchar(150) DEFAULT NULL,
+  `pe_DataPlayers_lastip` varchar(100) DEFAULT NULL,
   `pe_DataPlayers_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataPlayers_id`),
   UNIQUE KEY `UNIQUE_UCID` (`pe_DataPlayers_ucid`)
-) ENGINE=InnoDB AUTO_INCREMENT=226 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=230 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_DataRaw`;
 CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
   `pe_dataraw_type` tinyint(4) NOT NULL,
   `pe_dataraw_instance` smallint(5) UNSIGNED NOT NULL,
-  `pe_dataraw_payload` text NOT NULL,
+  `pe_dataraw_payload` text,
   `pe_dataraw_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_dataraw_type`,`pe_dataraw_instance`),
   KEY `pe_dataraw_type_pe_dataraw_instance` (`pe_dataraw_type`,`pe_dataraw_instance`),
@@ -61,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `pe_DataTypes` (
   `pe_DataTypes_update` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_DataTypes_id`),
   UNIQUE KEY `UNIQUE_TYPE_NAME` (`pe_DataTypes_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogChat`;
 CREATE TABLE IF NOT EXISTS `pe_LogChat` (
@@ -76,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogChat` (
   KEY `pe_LogChat_playerid` (`pe_LogChat_playerid`),
   KEY `pe_LogChat_datetime` (`pe_LogChat_datetime`),
   KEY `pe_LogChat_all` (`pe_LogChat_all`)
-) ENGINE=InnoDB AUTO_INCREMENT=22686 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25202 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogEvent`;
 CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
@@ -92,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogEvent` (
   KEY `pe_LogEvent_missionhash_id` (`pe_LogEvent_missionhash_id`),
   KEY `pe_LogEvent_datetime` (`pe_LogEvent_datetime`),
   KEY `pe_LogEvent_type_2` (`pe_LogEvent_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=99807 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=104565 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogLogins`;
 CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
@@ -106,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogLogins` (
   KEY `pe_LogLogins_playerid` (`pe_LogLogins_playerid`),
   KEY `pe_LogLogins_datetime` (`pe_LogLogins_datetime`),
   KEY `pe_LogLogins_instance` (`pe_LogLogins_instance`)
-) ENGINE=InnoDB AUTO_INCREMENT=11344 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11959 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `pe_LogStats`;
 CREATE TABLE IF NOT EXISTS `pe_LogStats` (
@@ -117,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `pe_LogStats_typeid` int(11) DEFAULT NULL,
   `pe_LogStats_masterslot` int(11) DEFAULT NULL,
   `pe_LogStats_seat` int(10) UNSIGNED DEFAULT NULL,
-  `ps_kills` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_X` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_pvp` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_deaths` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_ejections` int(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -140,6 +138,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `ps_farp_landings` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_other_landings` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `ps_other_takeoffs` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `pe_LogStats_mstatus` enum('?','RTB','MIA','KIA') DEFAULT NULL,
   PRIMARY KEY (`pe_LogStats_id`),
   UNIQUE KEY `UNIQUE_STATS_PER_MISSION_AND_UCID_AND_TYPE` (`pe_LogStats_playerid`,`pe_LogStats_missionhash_id`,`pe_LogStats_typeid`) USING BTREE,
@@ -149,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   KEY `pe_LogStats_masterslot` (`pe_LogStats_masterslot`),
   KEY `pe_LogStats_mstatus` (`pe_LogStats_mstatus`),
   KEY `pe_LogStats_seat` (`pe_LogStats_seat`)
-) ENGINE=InnoDB AUTO_INCREMENT=10220 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10723 DEFAULT CHARSET=utf8;
 DROP TRIGGER IF EXISTS `pe_LogStats_UPDATE`;
 DELIMITER $$
 CREATE TRIGGER `pe_LogStats_UPDATE` BEFORE UPDATE ON `pe_LogStats` FOR EACH ROW BEGIN
