@@ -35,6 +35,7 @@ Perun.lastSentStatus = 0
 Perun.lastSentMission = 0
 Perun.lastSentKeepAlive = 0
 Perun.lastConnectionError = 0
+Perun.lastTimer = 0
 Perun.lastReconnect = (-1) * Perun.ReconnectTimeout
 Perun.SendRetries = 2
 Perun.RefreshKeepAlive = 3
@@ -440,13 +441,17 @@ end
 
 --- ################################ Calculate stats ################################
 		
-Perun.LogStatsCount = function(argPlayerID,argAction)
+Perun.LogStatsCount = function(argPlayerID,argAction,argTimer)
 	-- Creates or updates Perun statistics array
 	local _player_hash=net.get_player_info(argPlayerID, 'ucid')..Perun.GetMulticrewParameter(argPlayerID,"subtype")
+	
+	-- By default we will be sending stats
+	argTimer = argTimer or false
 	
 	if Perun.StatData[_player_hash] == nil then
 		-- Create empty element
 		 local _TempData={}
+		_TempData['ps_ucid'] = net.get_player_info(argPlayerID, 'ucid')
 		_TempData['ps_type'] = Perun.GetMulticrewParameter(argPlayerID,"subtype")
 		_TempData['ps_masterslot'] = Perun.GetMulticrewParameter(argPlayerID,"masterslot")
 		_TempData['ps_subslot'] = Perun.GetMulticrewParameter(argPlayerID,"subslot")
@@ -455,6 +460,7 @@ Perun.LogStatsCount = function(argPlayerID,argAction)
 		_TempData['ps_ejections'] = 0
 		_TempData['ps_crashes'] = 0
 		_TempData['ps_teamkills'] = 0
+		_TempData['ps_time'] = 0
 		_TempData['ps_kills_planes'] = 0
 		_TempData['ps_kills_helicopters'] = 0
 		_TempData['ps_kills_air_defense'] = 0
@@ -523,6 +529,9 @@ Perun.LogStatsCount = function(argPlayerID,argAction)
 		Perun.StatData[_player_hash]['ps_other_landings']=Perun.StatData[_player_hash]['ps_other_landings']+1
 	elseif  argAction == "tookoff_OTHER" then
 		Perun.StatData[_player_hash]['ps_other_takeoffs']=Perun.StatData[_player_hash]['ps_other_takeoffs']+1
+	elseif  argAction == "timer" then
+		Perun.AddLog("TIMERX",2)
+		Perun.StatData[_player_hash]['ps_time']=Perun.StatData[_player_hash]['ps_time']+1
 	end
 
 	-- Always update slots
@@ -530,7 +539,11 @@ Perun.LogStatsCount = function(argPlayerID,argAction)
 	Perun.StatData[_player_hash]['ps_subslot'] = Perun.GetMulticrewParameter(argPlayerID,"subslot")
 	
 	Perun.AddLog("Stats data prepared",2)
-	Perun.LogStats(argPlayerID);
+	
+	-- If this is timer request do not send data to database
+	if argTimer ~= true or true then
+		Perun.LogStats(argPlayerID);
+	end
 end
 
 Perun.LogStatsCountCrew = function (MasterPilotID,ActionType)
@@ -703,6 +716,19 @@ Perun.onSimulationFrame = function()
 		Perun.lastSentKeepAlive = _now
 		Perun.SendToPerun(0,nil)
 	end
+	
+	-- Calucalate time on slot per each of players
+	if _now > Perun.lastTimer + 60 then
+		Perun.lastTimer = _now;
+		local _all_players = net.get_player_list()
+		for PlayerIDIndex, _playerID in ipairs(_all_players) do
+			if _playerID ~= 1 then
+				Perun.LogStatsCount(_playerID,"timer",true)
+			end
+		end
+	end
+	
+	
 end
 
 Perun.onPlayerStart = function (id)
