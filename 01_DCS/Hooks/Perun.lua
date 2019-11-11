@@ -9,9 +9,9 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
 Perun.RefreshStatus = 15 																-- (int) [default: 60] Base refresh rate in seconds to send status update
 Perun.RefreshMission = 60 																-- (int) [default: 120] Refresh rate in seconds to send mission information
-Perun.TCPTargetPort = 48622																-- (int) [default: 48621] TCP port to send data to
+Perun.TCPTargetPort = 48620																-- (int) [default: 48621] TCP port to send data to
 Perun.TCPPerunHost = "localhost"														-- (string) [default: "localhost"] IP adress of the Perun instance or "localhost"
-Perun.Instance = 2																		-- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
+Perun.Instance = 1																		-- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
 Perun.JsonStatusLocation = "Scripts\\Json\\" 											-- (string) [default: "Scripts\\Json\\"] Folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
 Perun.MissionStartNoDeathWindow = 300													-- (int) [default: 300] Number of secounds after mission start when death of the pilot will not go to statistics, shall avoid death penalty during spawning DCS bugs
 Perun.DebugMode = 2																		-- (int) [0 (default),1,2] Value greater than 0 will display Perun information in DCS log file, values: 1 - minimal verbose, 2 - all log information will be logged
@@ -751,7 +751,7 @@ Perun.onSimulationFrame = function()
 	end
 	
 	-- Calucalate time on slot per each of players
-	if _now > Perun.lastTimer + 5 then
+	if _now > Perun.lastTimer + 60 then
 		Perun.lastTimer = _now;
 		local _all_players = net.get_player_list()
 		for PlayerIDIndex, _playerID in ipairs(_all_players) do

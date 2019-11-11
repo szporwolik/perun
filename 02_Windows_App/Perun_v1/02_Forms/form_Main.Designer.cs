@@ -157,11 +157,11 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(41, 48);
+            this.label6.Location = new System.Drawing.Point(19, 48);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(59, 13);
+            this.label6.Size = new System.Drawing.Size(81, 13);
             this.label6.TabIndex = 9;
-            this.label6.Text = "Server port";
+            this.label6.Text = "MySQL DB port";
             // 
             // con_txt_mysql_port
             // 
@@ -198,20 +198,20 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(47, 74);
+            this.label2.Location = new System.Drawing.Point(18, 74);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 13);
+            this.label2.Size = new System.Drawing.Size(82, 13);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Database";
+            this.label2.Text = "Database name";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(22, 22);
+            this.label1.Location = new System.Drawing.Point(3, 22);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 13);
+            this.label1.Size = new System.Drawing.Size(100, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Server address";
+            this.label1.Text = "MySQL DB address";
             // 
             // con_txt_mysql_database
             // 
@@ -359,11 +359,11 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(41, 45);
+            this.label8.Location = new System.Drawing.Point(7, 45);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(62, 13);
+            this.label8.Size = new System.Drawing.Size(93, 13);
             this.label8.TabIndex = 12;
-            this.label8.Text = "Instance ID";
+            this.label8.Text = "Perun Instance ID";
             // 
             // con_txt_dcs_instance
             // 
@@ -375,11 +375,11 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(41, 19);
+            this.label7.Location = new System.Drawing.Point(44, 19);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(59, 13);
+            this.label7.Size = new System.Drawing.Size(56, 13);
             this.label7.TabIndex = 10;
-            this.label7.Text = "Server port";
+            this.label7.Text = "Perun port";
             // 
             // con_txt_dcs_server_port
             // 
