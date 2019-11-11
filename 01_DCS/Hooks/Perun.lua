@@ -29,6 +29,7 @@ Perun.MissionData = {}
 Perun.ServerData = {}
 Perun.StatData = {}
 Perun.StatDataLastType = {}
+Perun.PlayersTableCache = {}
 Perun.MissionHash=""
 Perun.ReconnectTimeout = 30
 Perun.lastSentStatus = 0
@@ -181,11 +182,15 @@ end
 Perun.GetMulticrewAllParameters = function (PlayerId)
 	-- Gets all multicrew parameters
 	local _result = ""
-	local _player_slot=net.get_player_info(PlayerId, 'slot')
 	local _master_type= "?"
 	local _master_slot = nil
 	local _sub_slot = nil
 
+	local _player_slot = net.get_player_info(PlayerId, 'slot')
+	if not _player_slot then
+		_player_slot=Perun.PlayersTableCache["p"..PlayerId].slot
+	end
+	
 	if _player_slot and _player_slot ~= '' and not (string.find(_player_slot, 'red') or string.find(_player_slot, 'blue')) then
 		-- Player took model
 		_master_slot = _player_slot
@@ -216,6 +221,9 @@ Perun.GetMulticrewAllParameters = function (PlayerId)
 		end
 		_master_slot = -1
 		_sub_slot = 0
+	else
+		_master_slot = -1
+		_sub_slot = -1
 	end
 	return _master_type,_master_slot,_sub_slot
 end
@@ -418,13 +426,23 @@ Perun.LogStats = function(playerID)
 	_TempData['stat_data_type']= _PlayerStatsTable['ps_type'];
 	_TempData['stat_data_masterslot'] = _PlayerStatsTable['ps_masterslot'];
     _TempData['stat_data_subslot'] = _PlayerStatsTable['ps_subslot'];
-	_TempData['stat_ucid']=net.get_player_info(playerID, 'ucid')
-	_TempData['stat_name']=net.get_player_info(playerID, 'name')
+	_TempData['stat_ucid']=_PlayerStatsTable['ps_ucid'];
+	_TempData['stat_name']=_PlayerStatsTable['ps_name'];
     _TempData['stat_datetime']=os.date('%Y-%m-%d %H:%M:%S')
     _TempData['stat_missionhash']=Perun.MissionHash
 
 	Perun.AddLog("Sending stats data",2)
     Perun.SendToPerun(52,_TempData)
+end
+
+Perun.LogAllStats = function()
+	-- Log all players data
+	local _all_players = net.get_player_list()
+	for PlayerIDIndex, _playerID in ipairs(_all_players) do
+		if _playerID ~= 1 then
+			Perun.LogStats(_playerID)
+		end
+	end
 end
 
 Perun.LogLogin = function(playerID)
@@ -452,6 +470,7 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argTimer)
 		-- Create empty element
 		 local _TempData={}
 		_TempData['ps_ucid'] = net.get_player_info(argPlayerID, 'ucid')
+		_TempData['ps_name'] = net.get_player_info(argPlayerID, 'name')
 		_TempData['ps_type'] = Perun.GetMulticrewParameter(argPlayerID,"subtype")
 		_TempData['ps_masterslot'] = Perun.GetMulticrewParameter(argPlayerID,"masterslot")
 		_TempData['ps_subslot'] = Perun.GetMulticrewParameter(argPlayerID,"subslot")
@@ -481,7 +500,13 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argTimer)
 
 		Perun.StatData[_player_hash]=_TempData
 	end
-
+	
+	if Perun.GetMulticrewParameter(argPlayerID,"subtype") ~= nil then
+		Perun.StatDataLastType[net.get_player_info(argPlayerID, 'ucid')]=_player_hash
+	else
+		-- Do nothing
+	end 
+	
 	if argAction == "eject" then
 		Perun.StatData[_player_hash]['ps_ejections']=Perun.StatData[_player_hash]['ps_ejections']+1
 	elseif  argAction == "pilot_death" then
@@ -530,7 +555,6 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argTimer)
 	elseif  argAction == "tookoff_OTHER" then
 		Perun.StatData[_player_hash]['ps_other_takeoffs']=Perun.StatData[_player_hash]['ps_other_takeoffs']+1
 	elseif  argAction == "timer" then
-		Perun.AddLog("TIMERX",2)
 		Perun.StatData[_player_hash]['ps_time']=Perun.StatData[_player_hash]['ps_time']+1
 	end
 
@@ -541,7 +565,7 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argTimer)
 	Perun.AddLog("Stats data prepared",2)
 	
 	-- If this is timer request do not send data to database
-	if argTimer ~= true or true then
+	if argTimer ~= true then
 		Perun.LogStats(argPlayerID);
 	end
 end
@@ -559,16 +583,21 @@ Perun.LogStatsGet = function(playerID)
 	-- Gets Perun statistics array per player 
 	local next = next -- Make next function local - this improves performance
 	local _player_hash = nil
-
+	
+	local _ucid = net.get_player_info(playerID, 'ucid')
+	if not _ucid then
+		_ucid=Perun.PlayersTableCache["p"..playerID].ucid
+	end
+	
 	if next(Perun.StatDataLastType) == nil then
 		-- Array is empty
-		_player_hash=net.get_player_info(playerID, 'ucid')..Perun.GetMulticrewParameter(playerID,"subtype")
+		_player_hash=_ucid..Perun.GetMulticrewParameter(playerID,"subtype")
 	elseif Perun.StatDataLastType[net.get_player_info(playerID, 'ucid')]== nil then
 		-- Last type entry is empty
-		_player_hash=net.get_player_info(playerID, 'ucid')..Perun.GetMulticrewParameter(playerID,"subtype")
+		_player_hash=_ucid..Perun.GetMulticrewParameter(playerID,"subtype")
 	else
 		-- Return last type entry
-		_player_hash=Perun.StatDataLastType[net.get_player_info(playerID, 'ucid')]
+		_player_hash=Perun.StatDataLastType[_ucid]
 	end
 	
 	local next = next -- Make next function local - this improves performance
@@ -666,6 +695,7 @@ Perun.onSimulationStart = function()
     Perun.LogEvent("SimStart","Mission " .. Perun.MissionHash .. " started",nil,nil);
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
+	Perun.PlayersTableCache = {}
 end
 
 Perun.onSimulationStop = function()
@@ -674,11 +704,14 @@ Perun.onSimulationStop = function()
 	Perun.MissionHash=Perun.GenerateMissionHash();
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
+	Perun.LogAllStats()
+	Perun.PlayersTableCache = {}
 end
 
 Perun.onPlayerDisconnect = function(id, err_code)
 	-- Player disconnected
-    Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.(?)",nil,nil);
+	Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.(?)",nil,nil);
+	
 	return 
 end
 
@@ -718,7 +751,7 @@ Perun.onSimulationFrame = function()
 	end
 	
 	-- Calucalate time on slot per each of players
-	if _now > Perun.lastTimer + 60 then
+	if _now > Perun.lastTimer + 5 then
 		Perun.lastTimer = _now;
 		local _all_players = net.get_player_list()
 		for PlayerIDIndex, _playerID in ipairs(_all_players) do
@@ -824,25 +857,28 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 
     elseif eventName == "change_slot" then
         --"change_slot", playerID, slotID, prevSide
-
-		Perun.LogStatsCount(arg1,"init")
+		
 		_master_type,_master_slot,_sub_slot = Perun.GetMulticrewAllParameters(arg1)
 		if _sub_slot == nil then
 			_sub_slot =""
 		else
 			_sub_slot =" (" .. _sub_slot .. ")  "
 		end       
-	   Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " changed slot to " .. _master_type .. " " .. _sub_slot,nil,nil);
-       
+	    Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " changed slot to " .. _master_type .. " " .. _sub_slot,nil,nil);
+       	
+		Perun.LogStats(arg1);
+		Perun.LogStatsCount(arg1,"init")
+		Perun.PlayersTableCache["p"..arg1]=net.get_player_info(arg1);
 
     elseif eventName == "connect" then
         --"connect", playerID, name
         Perun.LogLogin(arg1);
         Perun.LogEvent(eventName,"Player "..net.get_player_info(arg1, "name") .. " connected",nil,nil);
+		Perun.PlayersTableCache["p"..arg1]=net.get_player_info(arg1);
 
     elseif eventName == "disconnect" then
         --"disconnect", playerID, name, playerSide, reason_code
-        Perun.LogEvent(eventName,"Player " ..  arg2 .. " disconnected (".. arg4 .. ").",arg4,nil);
+        Perun.LogEvent(eventName,"Player " ..  arg2 .. " disconnected (".. arg4 .. ")." ,arg4,nil);
 		Perun.LogStats(arg1);
 
     elseif eventName == "crash" then
