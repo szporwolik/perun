@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `pe_LogStats_playerid` bigint(20) DEFAULT NULL,
   `pe_LogStats_typeid` int(11) DEFAULT NULL,
   `pe_LogStats_masterslot` int(11) DEFAULT NULL,
-  `pe_LogStats_seat` int(10) UNSIGNED DEFAULT NULL,
+  `pe_LogStats_seat` int(10) DEFAULT NULL,
   `ps_kills_X` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_pvp` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_deaths` int(11) UNSIGNED NOT NULL DEFAULT '0',
