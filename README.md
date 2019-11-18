@@ -1,3 +1,4 @@
+![Discord](https://img.shields.io/discord/641759751780302866)
 ![alt text](https://img.shields.io/github/license/szporwolik/perun.svg "MIT")
 ![alt text](https://img.shields.io/github/release-pre/szporwolik/perun.svg "Latest release")
 ![alt text](https://img.shields.io/github/release-date-pre/szporwolik/perun.svg "Latest release date")
@@ -5,20 +6,19 @@
 ![Perun logo](https://i.imgur.com/JkeHYjJ.png)
 
 # Perun for DCS World
-Included lua script extracts data from DCS World multiplayer server and sends information to TCP port and JSON file for further processing. 
+Included lua script extracts data from DCS World multiplayer server and sends information to TCP port for further processing. 
 
 Provided windows app puts received TCP packets to MySQL database; additionaly Perun windows application can be used to merge LotATC and DCS SRS data in one database making Perun for DCS World wannabe ultimate integration tool for the server admins.
 
-However, this software is intended to be used by experienced users - the output is MySQL data and/or JSON file; you will need to process/display it yourself.
+However, this software is intended to be used by experienced users - the output is MySQL data; you will need to process/display it yourself.
 
 ![Perun in action](https://i.imgur.com/JIlLENa.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
 
+Discord server: https://discord.gg/MTahREx
+
 ## Prerequisites
 Core:
- * For JSON Export:
-   * DCS World stable or DCS World beta
- * **(Optional)** For MySQL Export:
    * MySQL database with read/write access running at min. 5.7 server (tested with v5.7.21; native JSON support is required)
    * .NET Framework 4.8.0
 
@@ -29,13 +29,12 @@ Core:
 ## Installing
 * Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
-* **optionaly** create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
+* Create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
 
 ## Running
 * Start DCS World and host multiplayer session
-  * by default the JSON is written into Scripts\Json folder located in your Saved Games DCS folder tree
-  * by default the TCP port 48620 is in use as target port
-* **optionaly** run the Win32 application
+  * by default the TCP port 48620 is in use as target port - ensure that port and instance ID in the options sections of the Lua file matches data 
+* run the Win32 application
 	* set MySQL connection data
 	* **optionaly** point LotATC json file location
 	* **optionaly** point DCS SRS json file location
@@ -68,8 +67,11 @@ Due to resource limitations, "Perun for DCS World" will focus on pulling the dat
 ### I keep getting 1305 MySQL error
 That probably means that your database does not support JSON functions, you shall upgrade your MySQL server to at lease 5.7 version.
 
+### I keep getting 1364 MySQL error
+Make sure that STRICT_TRANS_TABLES is disabled at your MySQL server, see: https://stackoverflow.com/questions/37964325/how-to-find-and-disable-mysql-strict-mode
+
 ### Carrier landing are not tracked correctly
-DCS API does not track carrier landing natively, so there is a trick to achive that. You shall set your carrier to a propoer group name to have landings tracked.
+DCS API does not track carrier or FARP operations natively, so there is a trick to achive that. At this point of time to detect FARP operations, the FARPs shall have "FARP" string in the group name (set in mission editor). For carrier operations the string "SHIP" is required within group name.
 
 # API documentation (for expert users)
 ## MySQL database structure
