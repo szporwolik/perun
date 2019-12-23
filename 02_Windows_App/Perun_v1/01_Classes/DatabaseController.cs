@@ -48,17 +48,17 @@ public class DatabaseController
         {
             // Add entry to chat log
             SQLQueryTxt = "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) SELECT '" + TCPFrame.payload.ucid + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataPlayers` where `pe_DataPlayers_ucid` = '" + TCPFrame.payload.ucid + "' );";
-            SQLQueryTxt += "UPDATE  `pe_DataPlayers` SET `pe_DataPlayers_updated` = " + TCPFrameTimestamp + ",`pe_DataPlayers_lastname`='" + TCPFrame.payload.player + "' WHERE `pe_DataPlayers_ucid`='" + TCPFrame.payload.ucid + "' ;";
+            SQLQueryTxt += "UPDATE  `pe_DataPlayers` SET `pe_DataPlayers_updated` = " + TCPFrameTimestamp + ",`pe_DataPlayers_lastname`=@PAR_payload_player WHERE `pe_DataPlayers_ucid`='" + TCPFrame.payload.ucid + "' ;";
             SQLQueryTxt += "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`,`pe_DataMissionHashes_instance`) SELECT '" + TCPFrame.payload.missionhash + "','" + TCPFrameInstance + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataMissionHashes` where `pe_DataMissionHashes_hash` ='" + TCPFrame.payload.missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + ");";
             SQLQueryTxt += "UPDATE `pe_DataMissionHashes` SET `pe_DataMissionHashes_datetime` = " + TCPFrameTimestamp + " WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + " ;";
-            SQLQueryTxt += "INSERT INTO `pe_LogChat` (`pe_LogChat_id`,`pe_LogChat_datetime`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`,`pe_LogChat_missionhash_id`) VALUES (NULL,'" + TCPFrame.payload.datetime + "', (SELECT `pe_DataPlayers_id` from `pe_DataPlayers` WHERE `pe_DataPlayers_ucid` = '" + TCPFrame.payload.ucid + "'), '" + TCPFrame.payload.msg + "', '" + TCPFrame.payload.all + "',(SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.missionhash + "'));";
+            SQLQueryTxt += "INSERT INTO `pe_LogChat` (`pe_LogChat_id`,`pe_LogChat_datetime`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`,`pe_LogChat_missionhash_id`) VALUES (NULL,'" + TCPFrame.payload.datetime + "', (SELECT `pe_DataPlayers_id` from `pe_DataPlayers` WHERE `pe_DataPlayers_ucid` = '" + TCPFrame.payload.ucid + "'), @PAR_payload_msg, '" + TCPFrame.payload.all + "',(SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.missionhash + "'));";
         }
         else if (TCPFrameType == "51")
         {
             // Add entry to event log
             SQLQueryTxt = "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`,`pe_DataMissionHashes_instance`) SELECT '" + TCPFrame.payload.log_missionhash + "','" + TCPFrameInstance + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataMissionHashes` where `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.log_missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + ");";
             SQLQueryTxt += "UPDATE `pe_DataMissionHashes` SET `pe_DataMissionHashes_datetime` = " + TCPFrameTimestamp + " WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.log_missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + ";";
-            SQLQueryTxt += "INSERT INTO `pe_LogEvent` (`pe_LogEvent_arg1`,`pe_LogEvent_arg2`,`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`,`pe_LogEvent_missionhash_id`) VALUES ('" + TCPFrame.payload.log_arg_1 + "','" + TCPFrame.payload.log_arg_2 + "', NULL, '" + TCPFrame.payload.log_datetime + "', '" + TCPFrame.payload.log_type + "', '" + TCPFrame.payload.log_content + "', (SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.log_missionhash + "'));";
+            SQLQueryTxt += "INSERT INTO `pe_LogEvent` (`pe_LogEvent_arg1`,`pe_LogEvent_arg2`,`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`,`pe_LogEvent_missionhash_id`) VALUES ('" + TCPFrame.payload.log_arg_1 + "','" + TCPFrame.payload.log_arg_2 + "', NULL, '" + TCPFrame.payload.log_datetime + "', '" + TCPFrame.payload.log_type + "', @PAR_log_content, (SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.log_missionhash + "'));";
         }
         else if (TCPFrameType == "52")
         {
@@ -76,8 +76,8 @@ public class DatabaseController
             // User logged in to DCS server
 
             SQLQueryTxt = "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) SELECT '" + TCPFrame.payload.login_ucid + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataPlayers` where pe_DataPlayers_ucid='" + TCPFrame.payload.login_ucid + "');";
-            SQLQueryTxt += "UPDATE `pe_DataPlayers` SET  pe_DataPlayers_lastip='" + TCPFrame.payload.login_ipaddr + "', pe_DataPlayers_lastname='" + TCPFrame.payload.login_name + "',pe_DataPlayers_updated='" + TCPFrame.payload.login_datetime + "' WHERE `pe_DataPlayers_ucid`= '" + TCPFrame.payload.login_ucid + "';";
-            SQLQueryTxt += "INSERT INTO `pe_LogLogins` (`pe_LogLogins_datetime`, `pe_LogLogins_playerid`, `pe_LogLogins_name`, `pe_LogLogins_ip`,`pe_LogLogins_instance`) VALUES ('" + TCPFrame.payload.login_datetime + "', (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + TCPFrame.payload.login_ucid + "'), '" + TCPFrame.payload.login_name + "', '" + TCPFrame.payload.login_ipaddr + "','" + TCPFrameInstance + "');";
+            SQLQueryTxt += "UPDATE `pe_DataPlayers` SET  pe_DataPlayers_lastip='" + TCPFrame.payload.login_ipaddr + "', pe_DataPlayers_lastname=@PAR_login_name,pe_DataPlayers_updated='" + TCPFrame.payload.login_datetime + "' WHERE `pe_DataPlayers_ucid`= '" + TCPFrame.payload.login_ucid + "';";
+            SQLQueryTxt += "INSERT INTO `pe_LogLogins` (`pe_LogLogins_datetime`, `pe_LogLogins_playerid`, `pe_LogLogins_name`, `pe_LogLogins_ip`,`pe_LogLogins_instance`) VALUES ('" + TCPFrame.payload.login_datetime + "', (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + TCPFrame.payload.login_ucid + "'), @PAR_login_name, '" + TCPFrame.payload.login_ipaddr + "','" + TCPFrameInstance + "');";
         }
         else if (TCPFrameType == "-1")
         {
@@ -87,10 +87,10 @@ public class DatabaseController
         else
         {
             // General definition used for 1-10 type packets
-            TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
+      
 
             SQLQueryTxt = "INSERT INTO `pe_DataRaw` (`pe_dataraw_type`,`pe_dataraw_instance`) SELECT '" + TCPFrameType + "','" + TCPFrameInstance + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataRaw` WHERE `pe_dataraw_type` = '" + TCPFrameType + "' AND `pe_dataraw_instance` = " + TCPFrameInstance + ");";
-            SQLQueryTxt += "UPDATE `pe_DataRaw` SET `pe_dataraw_payload` = JSON_QUOTE('" + TCPFramePayload + "'), `pe_dataraw_updated`=" + TCPFrameTimestamp + " WHERE `pe_dataraw_type`=" + TCPFrameType + " AND `pe_dataraw_instance` = " + TCPFrameInstance + ";";
+            SQLQueryTxt += "UPDATE `pe_DataRaw` SET `pe_dataraw_payload` = JSON_QUOTE(@PAR_TCPFramePayload), `pe_dataraw_updated`=" + TCPFrameTimestamp + " WHERE `pe_dataraw_type`=" + TCPFrameType + " AND `pe_dataraw_instance` = " + TCPFrameInstance + ";";
         }
 
         // Connect to mysql and execute sql
@@ -104,7 +104,29 @@ public class DatabaseController
                 DatabaseConnection.Open();
                 DatabaseStatus = true;
                 MySqlCommand DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
-                MySqlDataReader DatabaseReader = DatabaseCommand.ExecuteReader();
+
+                // Add parameters - prevent SQL injection
+                if (TCPFrameType == "50")
+                {
+                    DatabaseCommand.Parameters.AddWithValue("@PAR_payload_player", TCPFrame.payload.player);
+                    DatabaseCommand.Parameters.AddWithValue("@PAR_payload_msg", TCPFrame.payload.msg);
+                }
+                else if (TCPFrameType == "51")
+                {
+                    DatabaseCommand.Parameters.AddWithValue("@PAR_log_content", TCPFrame.payload.log_content);
+                }
+                else if (TCPFrameType == "53")
+                {
+                    DatabaseCommand.Parameters.AddWithValue("@PAR_login_name", TCPFrame.payload.login_name);
+                }
+                else
+                {
+                    TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
+                    DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
+                }
+                // End of add parameters
+
+                    MySqlDataReader DatabaseReader = DatabaseCommand.ExecuteReader();
 
                 if (DatabaseReader.HasRows)
                 {
