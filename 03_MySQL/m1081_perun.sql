@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `pe_Config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `pe_Config` (`pe_Config_id`, `pe_Config_payload`) VALUES
-(1, 'v0.9.2');
+(1, 'v0.9.3');
 
 DROP TABLE IF EXISTS `pe_DataMissionHashes`;
 CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
@@ -116,7 +116,6 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `pe_LogStats_typeid` int(11) DEFAULT NULL,
   `pe_LogStats_masterslot` int(11) DEFAULT NULL,
   `pe_LogStats_seat` int(10) DEFAULT NULL,
-  `ps_kills_X` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_pvp` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_deaths` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_ejections` int(11) UNSIGNED NOT NULL DEFAULT '0',
