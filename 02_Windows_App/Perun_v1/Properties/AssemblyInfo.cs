@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Szymon Porwolik")]
 [assembly: AssemblyProduct("Perun for DCS World")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCopyright("Copyright ©  2019-2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 // Możesz określić wszystkie wartości lub użyć domyślnych numerów kompilacji i poprawki
 // przy użyciu symbolu „*”, tak jak pokazano poniżej:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9.3.0")]
-[assembly: AssemblyFileVersion("0.9.3.0")]
+[assembly: AssemblyVersion("0.9.4.0")]
+[assembly: AssemblyFileVersion("0.9.4.0")]
 [assembly: NeutralResourcesLanguage("en")]
 
