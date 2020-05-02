@@ -515,25 +515,12 @@ namespace Perun_v1
                                 int temp = raw_lotatc.Clients[i].RadioInfo.radios.Count - 1;
                                 for (int j = temp; j >= 0; j--)
                                 {
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].enc.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].encKey.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].encMode.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].freqMax.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].freqMin.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].modulation.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].freqMode.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].volMode.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].expansion.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].channel.Parent.Remove();
-                                    raw_lotatc.Clients[i].RadioInfo.radios[j].simul.Parent.Remove();
 
                                     if (raw_lotatc.Clients[i].RadioInfo.radios[j].name == "No Radio")
                                     {
                                         raw_lotatc.Clients[i].RadioInfo.radios[j].Remove();
                                     }
                                 }
-                                raw_lotatc.Clients[i].ClientChannelId.Parent.Remove();
-                                raw_lotatc.Clients[i].RadioInfo.simultaneousTransmission.Parent.Remove();
                             }
                         }
 

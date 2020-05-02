@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `pe_Config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `pe_Config` (`pe_Config_id`, `pe_Config_payload`) VALUES
-(1, 'v0.9.3');
+(1, 'v0.9.4');
 
 DROP TABLE IF EXISTS `pe_DataMissionHashes`;
 CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
