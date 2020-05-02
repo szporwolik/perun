@@ -3,7 +3,7 @@
 ![alt text](https://img.shields.io/github/release-pre/szporwolik/perun.svg "Latest release")
 ![alt text](https://img.shields.io/github/release-date-pre/szporwolik/perun.svg "Latest release date")
 
-![Perun logo](https://i.imgur.com/JkeHYjJ.png)
+![Perun logo](https://i.imgur.com/PrIkqNA.png)
 
 # Perun for DCS World
 Included lua script extracts data from DCS World multiplayer server and sends information to TCP port for further processing. 
