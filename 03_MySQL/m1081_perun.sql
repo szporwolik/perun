@@ -129,6 +129,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `ps_kills_infantry` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_kills_ships` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_kills_fortification` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_artillery` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `ps_kills_other` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_airfield_takeoffs` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_airfield_landings` int(11) UNSIGNED NOT NULL DEFAULT '0',
