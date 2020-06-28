@@ -9,9 +9,9 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
 Perun.RefreshStatus = 15 																-- (int) [default: 60] Base refresh rate in seconds to send status update
 Perun.RefreshMission = 60 																-- (int) [default: 120] Refresh rate in seconds to send mission information
-Perun.TCPTargetPort = 48620																-- (int) [default: 48621] TCP port to send data to
+Perun.TCPTargetPort = 48622																-- (int) [default: 48621] TCP port to send data to
 Perun.TCPPerunHost = "localhost"														-- (string) [default: "localhost"] IP adress of the Perun instance or "localhost"
-Perun.Instance = 1																		-- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
+Perun.Instance = 2																		-- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
 Perun.JsonStatusLocation = "Scripts\\Json\\" 											-- (string) [default: "Scripts\\Json\\"] Folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
 Perun.MissionStartNoDeathWindow = 300													-- (int) [default: 300] Number of secounds after mission start when death of the pilot will not go to statistics, shall avoid death penalty during spawning DCS bugs
 Perun.DebugMode = 2																		-- (int) [0 (default),1,2] Value greater than 0 will display Perun information in DCS log file, values: 1 - minimal verbose, 2 - all log information will be logged
@@ -140,18 +140,24 @@ Perun.GetCategory = function(id)
     -- Helper function returns object category basing on https://pastebin.com/GUAXrd2U
     local _killed_target_category = DCS.getUnitTypeAttribute(id, "category")
     
-	-- Below, simple hack to get the propper category when DCS API is not returning correct value
-	if _killed_target_category == nil then
-        local _killed_target_cat_check_ship = DCS.getUnitTypeAttribute(id, "DeckLevel")
-        local _killed_target_cat_check_plane = DCS.getUnitTypeAttribute(id, "WingSpan")
-        if _killed_target_cat_check_ship ~= nil and _killed_target_cat_check_plane == nil then
-            _killed_target_category = "Ships"
-        elseif _killed_target_cat_check_ship == nil and _killed_target_cat_check_plane ~= nil then
-            _killed_target_category = "Planes"
-        else
-            _killed_target_category = "Helicopters"
-        end
-    end
+	-- Sometimes we get empty object id
+	if id == nil then
+		_killed_target_category = "Other"
+	else
+		-- Below, simple hack to get the propper category when DCS API is not returning correct value
+		if _killed_target_category == nil then
+			local _killed_target_cat_check_ship = DCS.getUnitTypeAttribute(id, "DeckLevel")
+			local _killed_target_cat_check_plane = DCS.getUnitTypeAttribute(id, "WingSpan")
+			if _killed_target_cat_check_ship ~= nil and _killed_target_cat_check_plane == nil then
+				_killed_target_category = "Ships"
+			elseif _killed_target_cat_check_ship == nil and _killed_target_cat_check_plane ~= nil then
+				_killed_target_category = "Planes"
+			else
+				_killed_target_category = "Helicopters"
+			end
+		end
+	end
+	
     return _killed_target_category
 end
 
