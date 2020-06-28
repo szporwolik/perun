@@ -494,6 +494,7 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argTimer)
 		_TempData['ps_kills_infantry'] = 0
 		_TempData['ps_kills_ships'] = 0
 		_TempData['ps_kills_fortification'] = 0
+		_TempData['ps_kills_artillery'] = 0
 		_TempData['ps_kills_other'] = 0
 		_TempData['ps_airfield_takeoffs'] = 0
 		_TempData['ps_airfield_landings'] = 0
@@ -552,6 +553,8 @@ Perun.LogStatsCount = function(argPlayerID,argAction,argTimer)
 		Perun.StatData[_player_hash]['ps_kills_infantry']=Perun.StatData[_player_hash]['ps_kills_infantry']+1
 	elseif  argAction == "kill_Fortification" then
 		Perun.StatData[_player_hash]['ps_kills_fortification']=Perun.StatData[_player_hash]['ps_kills_fortification']+1
+	elseif  argAction == "kill_Artillery" then
+		Perun.StatData[_player_hash]['ps_kills_artillery']=Perun.StatData[_player_hash]['ps_kills_artillery']+1	
 	elseif  argAction == "kill_Other" then
 		Perun.StatData[_player_hash]['ps_kills_other']=Perun.StatData[_player_hash]['ps_kills_other']+1
 	elseif  argAction == "kill_PvP" then
@@ -834,6 +837,8 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 					_temp_event_type="kill_Infantry"
 				elseif _temp_category == "Fortification" then
 					_temp_event_type="kill_Fortification"
+				elseif _temp_category == "Artillery" then
+					_temp_event_type="kill_Artillery"
 				else 
 					_temp_event_type="kill_Other"
 				end
