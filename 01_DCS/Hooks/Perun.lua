@@ -9,7 +9,7 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
 Perun.RefreshStatus = 15 																-- (int) [default: 60] Base refresh rate in seconds to send status update
 Perun.RefreshMission = 60 																-- (int) [default: 120] Refresh rate in seconds to send mission information
-Perun.TCPTargetPort = 48620																-- (int) [default: 48621] TCP port to send data to
+Perun.TCPTargetPort = 48621																-- (int) [default: 48621] TCP port to send data to
 Perun.TCPPerunHost = "localhost"														-- (string) [default: "localhost"] IP adress of the Perun instance or "localhost"
 Perun.Instance = 1																		-- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
 Perun.JsonStatusLocation = "Scripts\\Json\\" 											-- (string) [default: "Scripts\\Json\\"] Folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
@@ -795,33 +795,6 @@ end
 Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 	-- Game event has occured
 	Perun.AddLog("Event handler for ".. eventName .. " started",2)
-	
-	-- Below debug helper
-	local event_arguments = eventName
-	
-	if arg1 ~= "" then
-		event_arguments = event_arguments .. "  arg1: " .. arg1
-	end
-	if arg2 ~= "" then
-		event_arguments = event_arguments .. "  arg2: ".. arg2
-	end
-	if arg3 ~= "" then
-		event_arguments = event_arguments .. "  arg3: ".. arg3
-	end
-	if arg4 ~= "" then
-		event_arguments = event_arguments .. "  arg4: ".. arg4
-	end
-	if arg5 ~= "" then
-		event_arguments = event_arguments .. "  arg5: ".. arg5
-	end
-	if arg6 ~= "" then
-		event_arguments = event_arguments .. "  arg6: ".. arg6
-	end
-	if arg7 ~= "" then
-		event_arguments = event_arguments .. "  arg7: ".. arg7
-	end
-
-	Perun.AddLog("DEBUG onGameEvent:" .. event_arguments,2)
 	
     if eventName == "friendly_fire" then
         --"friendly_fire", playerID, weaponName, victimPlayerID
