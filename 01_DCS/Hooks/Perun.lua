@@ -9,9 +9,9 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
 Perun.RefreshStatus = 15 																-- (int) [default: 60] Base refresh rate in seconds to send status update
 Perun.RefreshMission = 60 																-- (int) [default: 120] Refresh rate in seconds to send mission information
-Perun.TCPTargetPort = 48622																-- (int) [default: 48621] TCP port to send data to
+Perun.TCPTargetPort = 48620																-- (int) [default: 48621] TCP port to send data to
 Perun.TCPPerunHost = "localhost"														-- (string) [default: "localhost"] IP adress of the Perun instance or "localhost"
-Perun.Instance = 2																		-- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
+Perun.Instance = 1																		-- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
 Perun.JsonStatusLocation = "Scripts\\Json\\" 											-- (string) [default: "Scripts\\Json\\"] Folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
 Perun.MissionStartNoDeathWindow = 300													-- (int) [default: 300] Number of secounds after mission start when death of the pilot will not go to statistics, shall avoid death penalty during spawning DCS bugs
 Perun.DebugMode = 2																		-- (int) [0 (default),1,2] Value greater than 0 will display Perun information in DCS log file, values: 1 - minimal verbose, 2 - all log information will be logged
@@ -138,12 +138,12 @@ end
 
 Perun.GetCategory = function(id)
     -- Helper function returns object category basing on https://pastebin.com/GUAXrd2U
-    local _killed_target_category = DCS.getUnitTypeAttribute(id, "category")
+    local _killed_target_category = "Other"
     
-	-- Sometimes we get empty object id
-	if id == nil then
-		_killed_target_category = "Other"
-	else
+	-- Sometimes we get empty object id (seems like DCS API bug)
+	if id ~= nil and id ~= "" then
+		_killed_target_category = DCS.getUnitTypeAttribute(id, "category")
+		
 		-- Below, simple hack to get the propper category when DCS API is not returning correct value
 		if _killed_target_category == nil then
 			local _killed_target_cat_check_ship = DCS.getUnitTypeAttribute(id, "DeckLevel")
@@ -169,7 +169,11 @@ Perun.SideID2Name = function(id)
         [2] = 'BLUE',
 		[3] = 'NEUTRAL',	-- TBD check once this is released in DCS
     }
-    return _sides[id]
+	if id > 0 then
+		return _sides[id]
+	else 
+		return "?"
+	end
 end
 
 Perun.AddLog = function(text,LogLevel)
@@ -791,6 +795,34 @@ end
 Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 	-- Game event has occured
 	Perun.AddLog("Event handler for ".. eventName .. " started",2)
+	
+	-- Below debug helper
+	local event_arguments = eventName
+	
+	if arg1 ~= "" then
+		event_arguments = event_arguments .. "  arg1: " .. arg1
+	end
+	if arg2 ~= "" then
+		event_arguments = event_arguments .. "  arg2: ".. arg2
+	end
+	if arg3 ~= "" then
+		event_arguments = event_arguments .. "  arg3: ".. arg3
+	end
+	if arg4 ~= "" then
+		event_arguments = event_arguments .. "  arg4: ".. arg4
+	end
+	if arg5 ~= "" then
+		event_arguments = event_arguments .. "  arg5: ".. arg5
+	end
+	if arg6 ~= "" then
+		event_arguments = event_arguments .. "  arg6: ".. arg6
+	end
+	if arg7 ~= "" then
+		event_arguments = event_arguments .. "  arg7: ".. arg7
+	end
+
+	Perun.AddLog("DEBUG onGameEvent:" .. event_arguments,2)
+	
     if eventName == "friendly_fire" then
         --"friendly_fire", playerID, weaponName, victimPlayerID
 		if arg2 == "" then
@@ -858,8 +890,13 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 		if arg7 == "" then
 			arg7 = "Cannon"
 		end
-
-		Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp_killers .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp_victims .. " in " .. arg5  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]",arg7,Perun.GetCategory(arg5));
+		
+		local victim_vehicle = arg5
+		if victim_vehicle == "" then
+			victim_vehicle = "?"
+		end
+		
+		Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp_killers .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp_victims .. " in " .. victim_vehicle  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]",arg7,Perun.GetCategory(arg5));
 
     elseif eventName == "self_kill" then
         --"self_kill", playerID
