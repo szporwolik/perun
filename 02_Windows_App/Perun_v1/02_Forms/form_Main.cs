@@ -67,6 +67,19 @@ namespace Perun_v1
                 }
             }
 
+            if (args.Length > 5)
+            {
+                // Get argument lotATC file path
+                if (args[5] != null)
+                {
+                    if (args[5] == "1")
+                    {
+                        TIM_Autostart.Enabled = true;
+                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Autostart parameter provided", 0, 1);
+                    }
+                }
+            }
+
             // Initialize controls
             con_img_db.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
             con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
@@ -157,7 +170,7 @@ namespace Perun_v1
             con_check_3rd_srs.Enabled = true;
             con_txt_dcs_server_port.Enabled = true;
             con_txt_dcs_instance.Enabled = true;
-            
+
         }
 
         // ################################ User input ################################
@@ -183,7 +196,7 @@ namespace Perun_v1
             DatabaseConnection.DatabaseConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
 
             // Start listening
-            PerunHelper.AddLog(ref Globals.AppLogHistory, "Opening connections",0,1);
+            PerunHelper.AddLog(ref Globals.AppLogHistory, "Opening connections", 0, 1);
             TCPServer.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.AppLogHistory, ref DatabaseSendBuffer);
             TCPServer.thrTCPListener = new Thread(TCPServer.StartListen);
             TCPServer.thrTCPListener.Start();
@@ -197,13 +210,14 @@ namespace Perun_v1
             // Send initial data
             Tim_MySQL_Tick(null, null);
             tim_3rdparties_Tick(null, null);
+            TIM_Autostart.Enabled = false;
         }
 
         private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
         {
             // Stop listening
             // Prepare GUI
-            PerunHelper.AddLog(ref Globals.AppLogHistory, "Closing connections",0,1);
+            PerunHelper.AddLog(ref Globals.AppLogHistory, "Closing connections", 0, 1);
             con_Button_Listen_OFF.Enabled = false;
             Tim_GUI_Tick(null, null);
             this.Refresh();
@@ -239,7 +253,7 @@ namespace Perun_v1
             con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
 
             // Display information about closed connections
-            PerunHelper.AddLog(ref Globals.AppLogHistory, "Connections closed",0,1);
+            PerunHelper.AddLog(ref Globals.AppLogHistory, "Connections closed", 0, 1);
             Tim_GUI_Tick(null, null);
 
             // Set title bar
@@ -483,9 +497,9 @@ namespace Perun_v1
             // Send ping to check for possible connection issues
             DatabaseConnection.SendToMySql("", true);
 
-            if (PerunHelper.CheckVersions()==0)
+            if (PerunHelper.CheckVersions() == 0)
             {
-                MessageBox.Show("Version mismatch detected - please check log files and update.\n\nPerun will now terminate.", "Perun ERROR!",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("Version mismatch detected - please check log files and update.\n\nPerun will now terminate.", "Perun ERROR!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 con_Button_Listen_OFF_Click(null, null);
             }
 
@@ -609,7 +623,7 @@ namespace Perun_v1
                 Globals.AppForceIconReload = true;
 
                 // Add information
-                PerunHelper.AddLog(ref Globals.AppLogHistory, "Resetted error counter",0,1);
+                PerunHelper.AddLog(ref Globals.AppLogHistory, "Resetted error counter", 0, 1);
             }
             else if (dialogResult == DialogResult.No)
             {
@@ -621,7 +635,14 @@ namespace Perun_v1
         private void con_Button_Add_Marker_Click(object sender, EventArgs e)
         {
             // Added user marker
-            PerunHelper.AddLog(ref Globals.AppLogHistory, "User Marker",0,1);
+            PerunHelper.AddLog(ref Globals.AppLogHistory, "User Marker", 0, 1);
+        }
+
+        private void TIM_Autostart_Tick(object sender, EventArgs e)
+        {
+            // Handle autostart parameter from command line
+            TIM_Autostart.Enabled = false; // Disable timer
+            con_Button_Listen_ON_Click(sender,e); // Simulate button click
         }
     }
 }

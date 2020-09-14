@@ -77,6 +77,7 @@
             this.con_img_dcs = new System.Windows.Forms.PictureBox();
             this.con_img_db = new System.Windows.Forms.PictureBox();
             this.con_Button_Add_Marker = new System.Windows.Forms.Button();
+            this.TIM_Autostart = new System.Windows.Forms.Timer(this.components);
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -524,6 +525,10 @@
             this.con_Button_Add_Marker.UseVisualStyleBackColor = true;
             this.con_Button_Add_Marker.Click += new System.EventHandler(this.con_Button_Add_Marker_Click);
             // 
+            // TIM_Autostart
+            // 
+            this.TIM_Autostart.Interval = 500;
+            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -573,7 +578,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
+            // TIM_Autostart
+            // 
+            this.TIM_Autostart.Tick += new System.EventHandler(this.TIM_Autostart_Tick);
+            // 
         }
 
         #endregion
@@ -625,6 +633,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Button con_Button_Add_Marker;
+        private System.Windows.Forms.Timer TIM_Autostart;
     }
 }
 

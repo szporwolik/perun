@@ -22,7 +22,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"
 -- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
 
 -- Variable init
-Perun.Version = "v0.10.0"
+Perun.Version = "v0.10.1"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -842,7 +842,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 					_temp_event_type="kill_Infantry"
 				elseif _temp_category == "Fortification" then
 					_temp_event_type="kill_Fortification"
-				elseif _temp_category == "Artillery" then
+				elseif _temp_category == "Artillery" or _temp_category == "MissilesSS" then
 					_temp_event_type="kill_Artillery"
 				else 
 					_temp_event_type="kill_Other"
