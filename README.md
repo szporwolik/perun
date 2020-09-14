@@ -60,6 +60,8 @@ Data displaying and handling is not in the current scope of this project. Since 
 ![Mission statistics](https://i.imgur.com/uiRSa9e.png)
 Due to resource limitations, "Perun for DCS World" will focus on pulling the data from DCS (and external modules) and pushing it to MySQL server, but if anyone would like to develop open sourced PHP applets for data/statistics displaying we're willing to cooperate and support such projects. Unfortunetly it's not possible to share the hardcoded code from forum.gildia.org.
 
+Basic example was provided [HERE](/04_Misc/05_PHP_Example/index.php) , support is available via Perun community at our [Discord](https://discord.gg/MTahREx).
+
 ## Troubleshooting - FAQ
 - [I keep getting 1305 MySQL error](#i-keep-getting-1305-mysql-error)
 - [Carrier landing are not tracked correctly](#carrier-landing-are-not-tracked-correctly)
@@ -83,6 +85,8 @@ DCS API does not track carrier or FARP operations natively, so there is a trick 
 * table: pe_LogEvent - holds event history
 * table: pe_LogLogins - holds login to server event history
 * table: pe_LogStats - holds static information
+
+![Database Scheme](https://i.imgur.com/dmJ2pIY.png "MIT")
 
 ## Data packets - send from lua to TCP port 
 * ```ID: 1```, contains version/diagnostic information
