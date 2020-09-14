@@ -2,6 +2,7 @@
 ![alt text](https://img.shields.io/github/license/szporwolik/perun.svg "MIT")
 ![alt text](https://img.shields.io/github/release-pre/szporwolik/perun.svg "Latest release")
 ![alt text](https://img.shields.io/github/release-date-pre/szporwolik/perun.svg "Latest release date")
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZBW8R5L25A8QW&currency_code=EUR&source=url)
 
 ![Perun logo](https://i.imgur.com/PrIkqNA.png)
 
@@ -131,6 +132,10 @@ See also the list of [contributors](https://github.com/szporwolik/perun/contribu
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Donation
+This software is provide "as it is" without any warranties, but if you would like to thank me for development/support please 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZBW8R5L25A8QW&currency_code=EUR&source=url)
 
 ## Acknowledgments
 ![Gildia.org Logo](https://images.weserv.nl/?url=https://i.imgur.com/nFHxQMy.png&w=140&il)
