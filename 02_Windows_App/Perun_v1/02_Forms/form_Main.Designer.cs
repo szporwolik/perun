@@ -527,7 +527,7 @@
             // 
             // TIM_Autostart
             // 
-            this.TIM_Autostart.Interval = 5000;
+            this.TIM_Autostart.Interval = 500;
             // 
             // form_Main
             // 

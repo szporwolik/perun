@@ -75,6 +75,7 @@ namespace Perun_v1
                     if (args[5] == "1")
                     {
                         TIM_Autostart.Enabled = true;
+                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Autostart parameter provided", 0, 1);
                     }
                 }
             }
@@ -209,6 +210,7 @@ namespace Perun_v1
             // Send initial data
             Tim_MySQL_Tick(null, null);
             tim_3rdparties_Tick(null, null);
+            TIM_Autostart.Enabled = false;
         }
 
         private void con_Button_Listen_OFF_Click(object sender, EventArgs e)
