@@ -49,6 +49,7 @@ The following arguments are accepted (keep the order!):
 * instance ID (shall be the same as in the lua file!)
 * path to SRS client-list.json
 * path to LotATC stats.json
+* 1 - numeric value (without quotes), set 1 for Autostart (Perun will start within 5 secounds after starting up)
 
 Example for windows shortcut:
 ```
