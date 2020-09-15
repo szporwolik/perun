@@ -2,6 +2,7 @@
 ![alt text](https://img.shields.io/github/license/szporwolik/perun.svg "MIT")
 ![alt text](https://img.shields.io/github/release-pre/szporwolik/perun.svg "Latest release")
 ![alt text](https://img.shields.io/github/release-date-pre/szporwolik/perun.svg "Latest release date")
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZBW8R5L25A8QW&currency_code=EUR&source=url)
 
 ![Perun logo](https://i.imgur.com/PrIkqNA.png)
 
@@ -49,6 +50,7 @@ The following arguments are accepted (keep the order!):
 * instance ID (shall be the same as in the lua file!)
 * path to SRS client-list.json
 * path to LotATC stats.json
+* numeric value (without quotes), set 1 for Autostart (Perun will start within 500ms after starting up)
 
 Example for windows shortcut:
 ```
@@ -59,6 +61,8 @@ Data displaying and handling is not in the current scope of this project. Since 
 ![Who is online](https://i.imgur.com/5lVwsJw.png)
 ![Mission statistics](https://i.imgur.com/uiRSa9e.png)
 Due to resource limitations, "Perun for DCS World" will focus on pulling the data from DCS (and external modules) and pushing it to MySQL server, but if anyone would like to develop open sourced PHP applets for data/statistics displaying we're willing to cooperate and support such projects. Unfortunetly it's not possible to share the hardcoded code from forum.gildia.org.
+
+Basic example was provided [HERE](/04_Misc/05_PHP_Example/index.php) , support is available via Perun community at our [Discord](https://discord.gg/MTahREx).
 
 ## Troubleshooting - FAQ
 - [I keep getting 1305 MySQL error](#i-keep-getting-1305-mysql-error)
@@ -83,6 +87,8 @@ DCS API does not track carrier or FARP operations natively, so there is a trick 
 * table: pe_LogEvent - holds event history
 * table: pe_LogLogins - holds login to server event history
 * table: pe_LogStats - holds static information
+
+![Database Scheme](https://i.imgur.com/dmJ2pIY.png "MIT")
 
 ## Data packets - send from lua to TCP port 
 * ```ID: 1```, contains version/diagnostic information
@@ -126,6 +132,10 @@ See also the list of [contributors](https://github.com/szporwolik/perun/contribu
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Donation
+This software is provide "as it is" without any warranties, but if you would like to thank me for development/support please 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZBW8R5L25A8QW&currency_code=EUR&source=url)
 
 ## Acknowledgments
 ![Gildia.org Logo](https://images.weserv.nl/?url=https://i.imgur.com/nFHxQMy.png&w=140&il)
