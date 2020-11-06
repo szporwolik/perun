@@ -37,7 +37,10 @@ namespace Perun_v1
                 // Get argument server port
                 if (args[1] != null)
                 {
-                    con_txt_dcs_server_port.Text = args[1];
+                    if (args[1] != "-1")
+                    {
+                        con_txt_dcs_server_port.Text = args[1];
+                    }
                 }
             }
             if (args.Length > 2)
@@ -45,16 +48,23 @@ namespace Perun_v1
                 // Get argument instance id
                 if (args[2] != null)
                 {
-                    con_txt_dcs_instance.Text = args[2];
+                    if (args[2] != "-1")
+                    {
+                        con_txt_dcs_instance.Text = args[2];
+                    }
                 }
             }
+        
             if (args.Length > 3)
             {
                 // Get argument DCS SRS file path
                 if (args[3] != null)
                 {
-                    con_txt_3rd_srs.Text = args[3];
-                    con_check_3rd_srs.Checked = true;
+                    if (args[3] != "-1")
+                    {
+                        con_txt_3rd_srs.Text = args[3];
+                        con_check_3rd_srs.Checked = true;
+                    }
                 }
             }
             if (args.Length > 4)
@@ -62,8 +72,11 @@ namespace Perun_v1
                 // Get argument lotATC file path
                 if (args[4] != null)
                 {
-                    con_txt_3rd_lotatc.Text = args[4];
-                    con_check_3rd_lotatc.Checked = true;
+                    if (args[4] != "-1")
+                    {
+                        con_txt_3rd_lotatc.Text = args[4];
+                        con_check_3rd_lotatc.Checked = true;
+                    }
                 }
             }
 
@@ -74,8 +87,11 @@ namespace Perun_v1
                 {
                     if (args[5] == "1")
                     {
-                        TIM_Autostart.Enabled = true;
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Autostart parameter provided", 0, 1);
+                        if (args[5] != "-1")
+                        {
+                            TIM_Autostart.Enabled = true;
+                            PerunHelper.AddLog(ref Globals.AppLogHistory, "Autostart parameter provided", 0, 1);
+                        }
                     }
                 }
             }
