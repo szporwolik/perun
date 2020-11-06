@@ -172,6 +172,32 @@ END
 $$
 DELIMITER ;
 
+DROP TABLE IF EXISTS `pe_OnlinePlayers`;
+CREATE TABLE IF NOT EXISTS `pe_OnlinePlayers` (
+  `pe_OnlinePlayers_id` int(11) NOT NULL,
+  `pe_OnlinePlayers_instance` int(11) NOT NULL,
+  `pe_OnlinePlayers_ping` int(11) NOT NULL,
+  `pe_OnlinePlayers_side` int(11) NOT NULL,
+  `pe_OnlinePlayers_slot` varchar(255) NOT NULL,
+  `pe_OnlinePlayers_ucid` varchar(255) NOT NULL,
+  `pe_OnlinePlayers_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `pe_OnlineStatus`;
+CREATE TABLE IF NOT EXISTS `pe_OnlineStatus` (
+  `pe_OnlineStatus_instance` int(11) NOT NULL,
+  `pe_OnlineStatus_theatre` varchar(255) NOT NULL,
+  `pe_OnlineStatus_name` varchar(255) NOT NULL,
+  `pe_OnlineStatus_pause` varchar(255) NOT NULL,
+  `pe_OnlineStatus_multiplayer` varchar(255) NOT NULL,
+  `pe_OnlineStatus_realtime` varchar(255) NOT NULL,
+  `pe_OnlineStatus_modeltime` varchar(255) NOT NULL,
+  `pe_OnlineStatus_players` int(11) NOT NULL,
+  `pe_OnlineStatus_perunversion_winapp` varchar(255) NOT NULL,
+  `pe_OnlineStatus_perunversion_dcshook` varchar(255) NOT NULL,
+  `pe_OnlineStatus_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 ALTER TABLE `pe_DataMissionHashes` ADD FULLTEXT KEY `pe_DataMissionHashes_hash` (`pe_DataMissionHashes_hash`);
 
