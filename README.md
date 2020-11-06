@@ -48,8 +48,8 @@ Windows app supports command line arguments, what may be handy in case of multip
 The following arguments are accepted (keep the order!):
 * server port (shall be the same as in the lua file!)
 * instance ID (shall be the same as in the lua file!)
-* path to SRS client-list.json
-* path to LotATC stats.json
+* path to SRS client-list.json OR put -1 if you do not want to use DCS SRS
+* path to LotATC stats.json OR put -1 if you do not want to use LotATC
 * numeric value (without quotes), set 1 for Autostart (Perun will start within 500ms after starting up)
 
 Example for windows shortcut:
@@ -88,7 +88,7 @@ DCS API does not track carrier or FARP operations natively, so there is a trick 
 * table: pe_LogLogins - holds login to server event history
 * table: pe_LogStats - holds static information
 
-![Database Scheme](https://i.imgur.com/dmJ2pIY.png "MIT")
+![Database Scheme](https://i.imgur.com/zJsFxV0.png "MIT")
 
 ## Data packets - send from lua to TCP port 
 * ```ID: 1```, contains version/diagnostic information

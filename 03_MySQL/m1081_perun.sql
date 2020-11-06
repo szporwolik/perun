@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `pe_Config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `pe_Config` (`pe_Config_id`, `pe_Config_payload`) VALUES
-(1, 'v0.10.1');
+(1, 'v0.11.0');
 
 DROP TABLE IF EXISTS `pe_DataMissionHashes`;
 CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
@@ -40,7 +40,6 @@ CREATE TABLE IF NOT EXISTS `pe_DataPlayers` (
   PRIMARY KEY (`pe_DataPlayers_id`),
   UNIQUE KEY `UNIQUE_UCID` (`pe_DataPlayers_ucid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 DROP TABLE IF EXISTS `pe_DataRaw`;
 CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
@@ -116,6 +115,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `pe_LogStats_typeid` int(11) DEFAULT NULL,
   `pe_LogStats_masterslot` int(11) DEFAULT NULL,
   `pe_LogStats_seat` int(10) DEFAULT NULL,
+  `ps_kills_X` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_pvp` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_deaths` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_ejections` int(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   `ps_kills_infantry` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_kills_ships` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_kills_fortification` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `ps_kills_artillery` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `ps_kills_artillery` int(10) NOT NULL DEFAULT '0',
   `ps_kills_other` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_airfield_takeoffs` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `ps_airfield_landings` int(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -150,7 +150,6 @@ CREATE TABLE IF NOT EXISTS `pe_LogStats` (
   KEY `pe_LogStats_mstatus` (`pe_LogStats_mstatus`),
   KEY `pe_LogStats_seat` (`pe_LogStats_seat`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 DROP TRIGGER IF EXISTS `pe_LogStats_UPDATE`;
 DELIMITER $$
 CREATE TRIGGER `pe_LogStats_UPDATE` BEFORE UPDATE ON `pe_LogStats` FOR EACH ROW BEGIN

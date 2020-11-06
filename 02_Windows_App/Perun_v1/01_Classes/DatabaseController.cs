@@ -93,6 +93,38 @@ public class DatabaseController
             SQLQueryTxt += "UPDATE `pe_DataRaw` SET `pe_dataraw_payload` = @PAR_TCPFramePayload, `pe_dataraw_updated`=" + TCPFrameTimestamp + " WHERE `pe_dataraw_type`=" + TCPFrameType + " AND `pe_dataraw_instance` = " + TCPFrameInstance + ";";
         }
 
+        // Handling of special data (like parsing JSONs to DB)
+        switch (Int32.Parse(TCPFrameType))
+        {
+            case 1:
+                // General status information
+                SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
+                SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_perunversion_winapp` = '" + TCPFrame.payload.v_win + "', `pe_OnlineStatus_perunversion_dcshook` ='" + TCPFrame.payload.v_dcs_hook  + "' WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "' ;";
+                
+                break;
+
+            case 2:
+                // SRS Data
+                SQLQueryTxt += "DELETE FROM pe_OnlinePlayers WHERE pe_OnlinePlayers_instance = " + Int32.Parse(TCPFrameInstance) +";";
+
+                int player_count = 0;
+                foreach (var record_player in TCPFrame.payload.players)
+                {
+                    SQLQueryTxt += "INSERT INTO `pe_OnlinePlayers` (`pe_OnlinePlayers_id`, `pe_OnlinePlayers_instance`, `pe_OnlinePlayers_ping`, `pe_OnlinePlayers_side`, `pe_OnlinePlayers_slot`, `pe_OnlinePlayers_ucid`) VALUES ("+ record_player.id + ", '"+ Int32.Parse(TCPFrameInstance)  + "', '" + record_player.ping + "', '" + record_player.side + "', '" + record_player.slot + "', '" + record_player.ucid + "');";
+                    player_count++;
+                }
+
+                //SQLQueryTxt += "DELETE FROM pe_OnlineStatus WHERE pe_OnlineStatus_instance = " + Int32.Parse(TCPFrameInstance) + ";";
+                SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
+                SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_theatre` = '" + TCPFrame.payload.mission.theatre + "', `pe_OnlineStatus_name` = '" + TCPFrame.payload.mission.name + "' , `pe_OnlineStatus_pause` = '" + TCPFrame.payload.mission.pause + "', `pe_OnlineStatus_multiplayer` = '" + TCPFrame.payload.mission.multiplayer + "', `pe_OnlineStatus_realtime` = '" + TCPFrame.payload.mission.realtime + "', `pe_OnlineStatus_modeltime` = '" + TCPFrame.payload.mission.modeltime + "', `pe_OnlineStatus_players` =  " + player_count + " WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "';";
+
+                break;
+
+            default:
+                break;
+        }
+
+
         // Connect to mysql and execute sql
         try
         {
