@@ -88,7 +88,7 @@ DCS API does not track carrier or FARP operations natively, so there is a trick 
 * table: pe_LogLogins - holds login to server event history
 * table: pe_LogStats - holds static information
 
-![Database Scheme](https://i.imgur.com/dmJ2pIY.png "MIT")
+![Database Scheme](https://i.imgur.com/zJsFxV0.png "MIT")
 
 ## Data packets - send from lua to TCP port 
 * ```ID: 1```, contains version/diagnostic information

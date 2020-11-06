@@ -22,7 +22,7 @@ Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"
 -- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
 
 -- Variable init
-Perun.Version = "v0.10.1"
+Perun.Version = "v0.11.0"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
