@@ -31,6 +31,7 @@ Core:
 * Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
 * Create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
+* Ensure that your MySQL config is not using STRICT_TRANS_TABLES 
 
 ## Running
 * Start DCS World and host multiplayer session
