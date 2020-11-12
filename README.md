@@ -31,10 +31,11 @@ Core:
 * Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
 * Create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
+* Ensure that your MySQL config is not using STRICT_TRANS_TABLES 
 
 ## Running
 * Start DCS World and host multiplayer session
-  * by default the TCP port 48620 is in use as target port - ensure that port and instance ID in the options sections of the Lua file matches data 
+  * by default the TCP port 48621 is in use as target port - ensure that port and instance ID in the options sections of the Lua file matches data 
 * run the Win32 application
 	* set MySQL connection data
 	* **optionaly** point LotATC json file location
@@ -87,6 +88,8 @@ DCS API does not track carrier or FARP operations natively, so there is a trick 
 * table: pe_LogEvent - holds event history
 * table: pe_LogLogins - holds login to server event history
 * table: pe_LogStats - holds static information
+* table: pe_OnlinePlayers - holds the list of actual players connected to the server
+* table: pe_OnlineStatus - holds the information about server status of all instantes
 
 ![Database Scheme](https://i.imgur.com/zJsFxV0.png "MIT")
 
@@ -141,3 +144,5 @@ This software is provide "as it is" without any warranties, but if you would lik
 ![Gildia.org Logo](https://images.weserv.nl/?url=https://i.imgur.com/nFHxQMy.png&w=140&il)
 
 Thanks to [Gildia DCS](https://forum.gildia.org) Polish community of DCS World pilots.
+
+Thanks to our Discord community for all the disussions, tests and proposals!
