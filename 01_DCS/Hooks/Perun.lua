@@ -265,7 +265,7 @@ Perun.GetMulticrewCrew = function (owner_playerID)
 
 	local _crew = {}
 	table.insert(_crew, owner_playerID)
-	if _master_type == "F-14B" or _master_type == "Yak-52" or _master_type == "L-39C" or _master_type == "SA342M" or _master_type =="SA342Minigun" or _master_type == "SA342Mistral" or _master_type == "SA342L" then -- TBD add additional multicrew model types
+	if _master_type == "F-14B" or _master_type == "Yak-52" or _master_type == "L-39C" or _master_type == "SA342M" or _master_type =="SA342Minigun" or _master_type == "SA342Mistral" or _master_type == "SA342L" or _master_type == "F-14A-135-GR" or _master_type == "C-101EB" or _master_type == "UH-1H" or _master_type == "C-101CC" then -- TBD add additional multicrew model types
 		local _owner_side=net.get_player_info(owner_playerID, 'side')
 		
 		if _master_slot and _master_slot ~= "" then
