@@ -1,28 +1,26 @@
 -- Perun for DCS World https://github.com/szporwolik/perun -> DCS Hook component
+net.log("Loading - Perun")	-- Display perun information in log
 
 -- Initial init
 local Perun = {}
-package.path  = package.path..";"..lfs.currentdir().."/LuaSocket/?.lua"
+
+-- Load Lua Socket
+package.path  = package.path..";"..lfs.currentdir().."/LuaSocket/?.lua"..";"..lfs.writedir() .. "/Mods/services/Perun/lua/?.lua"
 package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
--- ###################### SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION #############################
-
-Perun.RefreshStatus = 15 																-- (int) [default: 60] Base refresh rate in seconds to send status update
-Perun.RefreshMission = 60 																-- (int) [default: 120] Refresh rate in seconds to send mission information
-Perun.TCPTargetPort = 48621																-- (int) [default: 48621] TCP port to send data to
-Perun.TCPPerunHost = "localhost"														-- (string) [default: "localhost"] IP adress of the Perun instance or "localhost"
-Perun.Instance = 1																		-- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
-Perun.JsonStatusLocation = "Scripts\\Json\\" 											-- (string) [default: "Scripts\\Json\\"] Folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
-Perun.MissionStartNoDeathWindow = 300													-- (int) [default: 300] Number of secounds after mission start when death of the pilot will not go to statistics, shall avoid death penalty during spawning DCS bugs
-Perun.DebugMode = 2																		-- (int) [0 (default),1,2] Value greater than 0 will display Perun information in DCS log file, values: 1 - minimal verbose, 2 - all log information will be logged
-Perun.LogServerMessages = 1																-- (int) [0,1 (default)] Set to 1 if you want to log also the chat messages send by server
-Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"										-- (string) Message send to players connecting the server - Line 1
-Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"		-- (string) Message send to players connecting the server - Line 2
-
--- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
+-- Load config file
+local Config = require "perun_config"
+Perun.RefreshMission = Config.RefreshMission
+Perun.TCPTargetPort = Config.TCPTargetPort
+Perun.TCPPerunHost = Config.TCPPerunHost
+Perun.Instance = Config.Instance
+Perun.MissionStartNoDeathWindow = Config.MissionStartNoDeathWindow
+Perun.DebugMode = Config.DebugMode
+Perun.MOTD_L1 = Config.MOTD_L1
+Perun.MOTD_L2 = Config.MOTD_L2
 
 -- Variable init
-Perun.Version = "v0.11.1"
+Perun.Version = "v0.11.2"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -40,7 +38,6 @@ Perun.lastTimer = 0
 Perun.lastReconnect = (-1) * Perun.ReconnectTimeout
 Perun.SendRetries = 2
 Perun.RefreshKeepAlive = 3
-Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
 Perun.socket  = require("socket")
 Perun.IsServer = DCS.isServer( )								
 Perun.ConnectionError = "[Perun] ERROR: Connection broken - contact server admin!"
@@ -628,7 +625,7 @@ Perun.LogStatsGet = function(playerID)
 end
 
 Perun.UpdateStatus = function()
-    -- Main function for status updates
+ -- Main function for status updates
 
     -- Diagnostic data
 		-- Update version data
@@ -666,11 +663,18 @@ Perun.UpdateStatus = function()
 		-- Send
 		Perun.AddLog("Sending status data",2)
 		Perun.SendToPerun(2,Perun.StatusData)
+end
 
-    -- Update slots data
+Perun.UpdateMission = function()
+    -- Main function for mission information updates
+	Perun.AddLog("Updating mission data",2)
+	
+	-- Get mission information
+    Perun.MissionData=DCS.getCurrentMission()
+	
+	-- Update and send slots data
 		Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
 		Perun.SlotsData['slots']={}
-
 		-- Build up slot table
 		for _j, _i in pairs(Perun.SlotsData['coalitions']) do
 			Perun.SlotsData['slots'][_j]=DCS.getAvailableSlots(_j)
@@ -687,16 +691,11 @@ Perun.UpdateStatus = function()
 			end
 		end
 
-		-- Send
 		Perun.AddLog("Sending slots data",2)
 		Perun.SendToPerun(3,Perun.SlotsData)
-end
-
-Perun.UpdateMission = function()
-    -- Main function for mission information updates
-	Perun.AddLog("Updating mission data",2)
-    Perun.MissionData=DCS.getCurrentMission()
+	
 	-- Perun.SendToPerun(4,Perun.MissionData) -- TBD can cause data transmission troubles
+	
 	Perun.AddLog("Mission data updated",2)
 end
 
@@ -747,20 +746,20 @@ Perun.onSimulationFrame = function()
     if _now > Perun.lastSentMission + Perun.RefreshMission then
         Perun.lastSentMission = _now
 
-        Perun.UpdateMission()
+        -- Perun.UpdateMission() XXX
     end
 
     -- Send status update
     if _now > Perun.lastSentStatus + Perun.RefreshStatus then
         Perun.lastSentStatus = _now
 
-        Perun.UpdateStatus()
+        Perun.UpdateStatus() 
     end
 	
 	-- Send keepalive
-	if _now > Perun.lastSentKeepAlive + Perun.SendRetries then
+	if _now > Perun.lastSentKeepAlive + Perun.RefreshKeepAlive then 
 		Perun.lastSentKeepAlive = _now
-		Perun.SendToPerun(0,nil)
+		Perun.SendToPerun(0,nil) 
 	end
 	
 	-- Calucalate time on slot per each of players
@@ -773,7 +772,6 @@ Perun.onSimulationFrame = function()
 			end
 		end
 	end
-	
 	
 end
 
@@ -951,6 +949,6 @@ if Perun.IsServer then
 	-- If this game instance is hosting multiplayer game, start Perun
 	Perun.MissionHash=Perun.GenerateMissionHash()														-- Generate initial missionhash
 	DCS.setUserCallbacks(Perun)																			-- Set user callbacs,  map DCS event handlers with functions defined above
-	net.log("Perun by VladMordock was loaded: " .. Perun.Version )										-- Display perun information in log
+	net.log("Loaded - Perun - VladMordock: " .. Perun.Version )											-- Display perun information in log
 	Perun.ConnectToPerun()																				-- Connect to Perun server
 end
