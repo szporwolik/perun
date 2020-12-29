@@ -10,6 +10,7 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
 -- Load config file
 local Config = require "perun_config"
+Perun.RefreshStatus = Config.RefreshStatus
 Perun.RefreshMission = Config.RefreshMission
 Perun.TCPTargetPort = Config.TCPTargetPort
 Perun.TCPPerunHost = Config.TCPPerunHost
@@ -665,37 +666,39 @@ Perun.UpdateStatus = function()
 		Perun.SendToPerun(2,Perun.StatusData)
 end
 
+Perun.UpdateSlots = function()
+	-- Update and send slots data
+
+	Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
+	Perun.SlotsData['slots']={}
+
+	-- Build up slot table
+	for _j, _i in pairs(Perun.SlotsData['coalitions']) do
+		Perun.SlotsData['slots'][_j]=DCS.getAvailableSlots(_j)
+		
+		for _sj, _si in pairs(Perun.SlotsData['slots'][_j]) do
+			Perun.SlotsData['slots'][_j][_sj]['countryName']= nil
+			Perun.SlotsData['slots'][_j][_sj]['onboard_num']= nil
+			Perun.SlotsData['slots'][_j][_sj]['groupSize']= nil
+			Perun.SlotsData['slots'][_j][_sj]['groupName']= nil
+			Perun.SlotsData['slots'][_j][_sj]['callsign']= nil
+			Perun.SlotsData['slots'][_j][_sj]['task']= nil
+			Perun.SlotsData['slots'][_j][_sj]['airdromeId']= nil
+			Perun.SlotsData['slots'][_j][_sj]['helipadName']= nil
+		end
+	end
+
+	Perun.AddLog("Sending slots data",2)
+	Perun.SendToPerun(3,Perun.SlotsData)
+end
+
 Perun.UpdateMission = function()
     -- Main function for mission information updates
 	Perun.AddLog("Updating mission data",2)
 	
 	-- Get mission information
     Perun.MissionData=DCS.getCurrentMission()
-	
-	-- Update and send slots data
-		Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
-		Perun.SlotsData['slots']={}
-		-- Build up slot table
-		for _j, _i in pairs(Perun.SlotsData['coalitions']) do
-			Perun.SlotsData['slots'][_j]=DCS.getAvailableSlots(_j)
-			
-			for _sj, _si in pairs(Perun.SlotsData['slots'][_j]) do
-				Perun.SlotsData['slots'][_j][_sj]['countryName']= nil
-				Perun.SlotsData['slots'][_j][_sj]['onboard_num']= nil
-				Perun.SlotsData['slots'][_j][_sj]['groupSize']= nil
-				Perun.SlotsData['slots'][_j][_sj]['groupName']= nil
-				Perun.SlotsData['slots'][_j][_sj]['callsign']= nil
-				Perun.SlotsData['slots'][_j][_sj]['task']= nil
-				Perun.SlotsData['slots'][_j][_sj]['airdromeId']= nil
-				Perun.SlotsData['slots'][_j][_sj]['helipadName']= nil
-			end
-		end
 
-		Perun.AddLog("Sending slots data",2)
-		Perun.SendToPerun(3,Perun.SlotsData)
-	
-	-- Perun.SendToPerun(4,Perun.MissionData) -- TBD can cause data transmission troubles
-	
 	Perun.AddLog("Mission data updated",2)
 end
 
@@ -738,15 +741,17 @@ Perun.onSimulationFrame = function()
     local _now = DCS.getRealTime()
 
     -- First run
-    if Perun.lastSentMission ==0 and Perun.lastSentStatus ==0 then
-        Perun.UpdateMission()
+	if Perun.lastSentMission == 0 and Perun.lastSentStatus == 0 then
+		Perun.lastSentMission = _now
+		Perun.UpdateMission()
+		Perun.UpdateSlots()
     end
 
     -- Send mission update and update JSON
     if _now > Perun.lastSentMission + Perun.RefreshMission then
         Perun.lastSentMission = _now
 
-        -- Perun.UpdateMission() XXX
+        Perun.UpdateMission()
     end
 
     -- Send status update
