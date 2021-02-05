@@ -180,36 +180,36 @@ public class DatabaseController
                 switch (Int32.Parse(TCPFrameType))
                 {
                     case 1:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Connected players: " + TCPFrame.payload["c_players"], 1,0,"1");
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "Connected players: " + TCPFrame.payload["c_players"], 1,0,"1");
                         break;
                     case 2:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Mission: \"" + TCPFrame.payload["mission"]["name"]+"\""+ ", time:" + TCPFrame.payload["mission"]["modeltime"], 1, 0, "2");
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "Mission: \"" + TCPFrame.payload["mission"]["name"]+"\""+ ", time:" + TCPFrame.payload["mission"]["modeltime"], 1, 0, "2");
                         break;
                     case 3:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Slots data updated", 1, 0, "3");
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "Slots data updated", 1, 0, "3");
                         break;
                     case 50:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Player's \""+ TCPFrame.payload.player + "\" chat message saved", 1, 0, "50");
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "Player's \""+ TCPFrame.payload.player + "\" chat message saved", 1, 0, "50");
                         break;
                     case 51:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Game event: \""+ TCPFrame.payload.log_content +"\"", 1, 0, "51");
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "Game event: \""+ TCPFrame.payload.log_content +"\"", 1, 0, "51");
                         break;
                     case 52:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Player's \""+ TCPFrame.payload.stat_name + "\" stats saved", 1, 0, "52");
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "Player's \""+ TCPFrame.payload.stat_name + "\" stats saved", 1, 0, "52");
                         break;
                     case 53:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Player \""+ TCPFrame.payload.login_name + "\" logged in", 1, 0, "53");
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "Player \""+ TCPFrame.payload.login_name + "\" logged in", 1, 0, "53");
                         break;
                     case 100:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "SRS data send", 1,0,"100");
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "SRS data send", 1,0,"100");
                         break;
                     case 101:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "LotATC data send", 1,0,"101");
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "LotATC data send", 1,0,"101");
                         break;
                     case -1:
                         break;
                     default:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "Data send", 1,0, TCPFrameType);
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, "Data send", 1,0, TCPFrameType);
                         break;
                 }
                 
@@ -218,7 +218,7 @@ public class DatabaseController
             {
                 // General exception found
                 Console.WriteLine(a_ex.ToString());
-                PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR MySQL - error: " + a_ex.Message,1,1, TCPFrameType);
+                PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - error: " + a_ex.Message,1,1, TCPFrameType);
                 Globals.ErrorsGame++;
                 DatabaseStatus = false;
                 ReturnValue = 0;
@@ -229,25 +229,25 @@ public class DatabaseController
                 switch (m_ex.Number)
                 {
                     case 1042: // Unable to connect to any of the specified MySQL hosts (Check Server,Port)
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR MySQL - unable to connect, error: " + m_ex.Message,1,1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - unable to connect, error: " + m_ex.Message,1,1, TCPFrameType);
                         DatabaseStatus = false;
                         ReturnValue = 0;
                         break;
                     case 0: // Access denied (Check DB name,username,password)
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR MySQL - access denied, error: " + m_ex.Message,1,1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - access denied, error: " + m_ex.Message,1,1, TCPFrameType);
                         DatabaseStatus = false;
                         ReturnValue = 0;
                         break;
                     case 1064: // Incorrect query
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR MySQL - query: " + SQLQueryTxt, 1, 1, TCPFrameType);
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR MySQL - error: " + m_ex.Message, 1, 1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - query: " + SQLQueryTxt, 1, 1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - error: " + m_ex.Message, 1, 1, TCPFrameType);
                         DatabaseStatus = true; // True as connection is not broken
                         ReturnValue = 1; // Return a value to remove this query from quae
                         break;
                     default:
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR MySQL - error id: " + m_ex.Number,1,1, TCPFrameType);
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR MySQL - query: " + SQLQueryTxt, 1, 1, TCPFrameType);
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR MySQL - error: " + m_ex.Message,1,1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - error id: " + m_ex.Number,1,1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - query: " + SQLQueryTxt, 1, 1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - error: " + m_ex.Message,1,1, TCPFrameType);
                         DatabaseStatus = false;
                         ReturnValue = 0;
                         break;
@@ -260,7 +260,7 @@ public class DatabaseController
         }
         catch (ArgumentException x_ex)
         {
-            PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR MySQL - unable to connect, error: " + x_ex.Message,1,1, TCPFrameType);
+            PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - unable to connect, error: " + x_ex.Message,1,1, TCPFrameType);
             ReturnValue = 0;
             Globals.ErrorsGame++;
         }
