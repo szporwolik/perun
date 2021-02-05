@@ -154,5 +154,20 @@ namespace Perun_v1.Properties {
                 this["DCS_Instance"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int LOG_LEVEL
+        {
+            get
+            {
+                return ((int)(this["LOG_LEVEL"]));
+            }
+            set
+            {
+                this["LOG_LEVEL"] = value;
+            }
+        }
     }
 }

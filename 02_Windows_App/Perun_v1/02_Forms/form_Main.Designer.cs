@@ -78,6 +78,8 @@
             this.con_img_db = new System.Windows.Forms.PictureBox();
             this.con_Button_Add_Marker = new System.Windows.Forms.Button();
             this.TIM_Autostart = new System.Windows.Forms.Timer(this.components);
+            this.label15 = new System.Windows.Forms.Label();
+            this.cboLogLevel = new System.Windows.Forms.ComboBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -95,7 +97,7 @@
             this.con_List_Received.FormattingEnabled = true;
             this.con_List_Received.Items.AddRange(new object[] {
             "Not connected"});
-            this.con_List_Received.Location = new System.Drawing.Point(11, 19);
+            this.con_List_Received.Location = new System.Drawing.Point(8, 44);
             this.con_List_Received.Name = "con_List_Received";
             this.con_List_Received.Size = new System.Drawing.Size(307, 134);
             this.con_List_Received.TabIndex = 0;
@@ -123,10 +125,13 @@
             // 
             // con_GroupBox_1
             // 
+            this.con_GroupBox_1.Controls.Add(this.label15);
+            this.con_GroupBox_1.Controls.Add(this.cboLogLevel);
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
-            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 434);
+            this.con_GroupBox_1.Controls.Add(this.con_Button_Add_Marker);
+            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 412);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
-            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 162);
+            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 184);
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "Data log";
@@ -394,7 +399,7 @@
             this.label9.AutoSize = true;
             this.label9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(21, 396);
+            this.label9.Location = new System.Drawing.Point(20, 393);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(61, 13);
             this.label9.TabIndex = 1;
@@ -405,7 +410,7 @@
             this.label10.AutoSize = true;
             this.label10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(117, 396);
+            this.label10.Location = new System.Drawing.Point(88, 393);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(39, 13);
             this.label10.TabIndex = 14;
@@ -416,7 +421,7 @@
             this.label11.AutoSize = true;
             this.label11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(205, 396);
+            this.label11.Location = new System.Drawing.Point(149, 393);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(32, 13);
             this.label11.TabIndex = 15;
@@ -427,7 +432,7 @@
             this.label12.AutoSize = true;
             this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(282, 396);
+            this.label12.Location = new System.Drawing.Point(198, 393);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(49, 13);
             this.label12.TabIndex = 16;
@@ -437,9 +442,9 @@
             // 
             this.con_Button_Reset_Flags.Enabled = false;
             this.con_Button_Reset_Flags.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(224, 414);
+            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(266, 362);
             this.con_Button_Reset_Flags.Name = "con_Button_Reset_Flags";
-            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(114, 20);
+            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(61, 36);
             this.con_Button_Reset_Flags.TabIndex = 17;
             this.con_Button_Reset_Flags.Text = "Reset error flags";
             this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
@@ -478,7 +483,7 @@
             // 
             // con_img_lotATC
             // 
-            this.con_img_lotATC.Location = new System.Drawing.Point(292, 362);
+            this.con_img_lotATC.Location = new System.Drawing.Point(207, 362);
             this.con_img_lotATC.Name = "con_img_lotATC";
             this.con_img_lotATC.Size = new System.Drawing.Size(29, 28);
             this.con_img_lotATC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -487,7 +492,7 @@
             // 
             // con_img_srs
             // 
-            this.con_img_srs.Location = new System.Drawing.Point(207, 362);
+            this.con_img_srs.Location = new System.Drawing.Point(150, 362);
             this.con_img_srs.Name = "con_img_srs";
             this.con_img_srs.Size = new System.Drawing.Size(29, 28);
             this.con_img_srs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -496,7 +501,7 @@
             // 
             // con_img_dcs
             // 
-            this.con_img_dcs.Location = new System.Drawing.Point(122, 362);
+            this.con_img_dcs.Location = new System.Drawing.Point(93, 362);
             this.con_img_dcs.Name = "con_img_dcs";
             this.con_img_dcs.Size = new System.Drawing.Size(29, 28);
             this.con_img_dcs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -506,7 +511,7 @@
             // con_img_db
             // 
             this.con_img_db.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.con_img_db.Location = new System.Drawing.Point(37, 362);
+            this.con_img_db.Location = new System.Drawing.Point(36, 362);
             this.con_img_db.Name = "con_img_db";
             this.con_img_db.Size = new System.Drawing.Size(29, 28);
             this.con_img_db.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -517,9 +522,9 @@
             // 
             this.con_Button_Add_Marker.Enabled = false;
             this.con_Button_Add_Marker.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_Button_Add_Marker.Location = new System.Drawing.Point(12, 414);
+            this.con_Button_Add_Marker.Location = new System.Drawing.Point(229, 17);
             this.con_Button_Add_Marker.Name = "con_Button_Add_Marker";
-            this.con_Button_Add_Marker.Size = new System.Drawing.Size(114, 20);
+            this.con_Button_Add_Marker.Size = new System.Drawing.Size(86, 20);
             this.con_Button_Add_Marker.TabIndex = 21;
             this.con_Button_Add_Marker.Text = "Add log marker";
             this.con_Button_Add_Marker.UseVisualStyleBackColor = true;
@@ -528,17 +533,44 @@
             // TIM_Autostart
             // 
             this.TIM_Autostart.Interval = 500;
+            this.TIM_Autostart.Tick += new System.EventHandler(this.TIM_Autostart_Tick);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(9, 21);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(50, 13);
+            this.label15.TabIndex = 22;
+            this.label15.Text = "Log level";
+            // 
+            // cboLogLevel
+            // 
+            this.cboLogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboLogLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F);
+            this.cboLogLevel.FormattingEnabled = true;
+            this.cboLogLevel.Items.AddRange(new object[] {
+            "Error",
+            "Warning",
+            "Info",
+            "Debug"});
+            this.cboLogLevel.Location = new System.Drawing.Point(65, 18);
+            this.cboLogLevel.Name = "cboLogLevel";
+            this.cboLogLevel.Size = new System.Drawing.Size(102, 20);
+            this.cboLogLevel.TabIndex = 23;
+            this.cboLogLevel.SelectedIndexChanged += new System.EventHandler(this.cboLogLevel_SelectedIndexChanged);
             // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 653);
-            this.Controls.Add(this.con_Button_Add_Marker);
+            this.ClientSize = new System.Drawing.Size(346, 652);
+            this.Controls.Add(this.con_Button_Reset_Flags);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.con_img_logo);
-            this.Controls.Add(this.con_Button_Reset_Flags);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
@@ -565,6 +597,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.form_Main_FormClosing);
             this.Load += new System.EventHandler(this.form_Main_Load);
             this.con_GroupBox_1.ResumeLayout(false);
+            this.con_GroupBox_1.PerformLayout();
             this.con_GroupBox_2.ResumeLayout(false);
             this.con_GroupBox_2.PerformLayout();
             this.con_GroupBox_3.ResumeLayout(false);
@@ -578,10 +611,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-            // TIM_Autostart
-            // 
-            this.TIM_Autostart.Tick += new System.EventHandler(this.TIM_Autostart_Tick);
-            // 
+
         }
 
         #endregion
@@ -634,6 +664,8 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Button con_Button_Add_Marker;
         private System.Windows.Forms.Timer TIM_Autostart;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ComboBox cboLogLevel;
     }
 }
 
