@@ -5,7 +5,27 @@ using System.Text.RegularExpressions;
 
 internal class PerunHelper
 {
-    public static void AddLog(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
+    public static void LogError(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
+    {
+        AddLog(0, ref arrLogHistory, strEntryToAdd, intDirection, intMarker, strType, bSkipGui);
+    }
+
+    public static void LogWarning(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
+    {
+        AddLog(1, ref arrLogHistory, strEntryToAdd, intDirection, intMarker, strType, bSkipGui);
+    }
+
+    public static void LogInfo(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
+    {
+        AddLog(2, ref arrLogHistory, strEntryToAdd, intDirection, intMarker, strType, bSkipGui);
+    }
+
+    public static void LogDebug(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
+    {
+        AddLog(3, ref arrLogHistory, strEntryToAdd, intDirection, intMarker, strType, bSkipGui);
+    }
+
+    private static void AddLog(int logLevel, ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
         // Declare values
         string LogDirection;
@@ -48,7 +68,7 @@ internal class PerunHelper
             Globals.AppUpdateGUI = true;
         }
         // Add the entry to log file
-        LogController.WriteLog(DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.AppInstanceID + " | " + LogMarker + " | "+ LogDirection + " | "+ strType + " | " + strEntryToAdd);
+        LogController.instance.WriteLog(logLevel, DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.AppInstanceID + " | " + LogMarker + " | "+ LogDirection + " | "+ strType + " | " + strEntryToAdd);
     }
 
     public static string GetAppVersion(string strBeginning)
@@ -72,7 +92,7 @@ internal class PerunHelper
             if(VersionApp != Globals.VersionDatabase)
             {
                 // Incorrect database version
-                PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR Incorrect database revision : "+ Globals.VersionDatabase, 1, 1, "?");
+                PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR Incorrect database revision : "+ Globals.VersionDatabase, 1, 1, "?");
                 Globals.ErrorsDatabase++;
                 ReturnValue = 0;
             }
@@ -84,7 +104,7 @@ internal class PerunHelper
             if (VersionApp != Globals.VersionDCSHook)
             {
                 // Incorrect dcs script version
-                PerunHelper.AddLog(ref Globals.AppLogHistory, "ERROR Incorrect DCS hook revision : " + Globals.VersionDCSHook, 2, 1, "?");
+                PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR Incorrect DCS hook revision : " + Globals.VersionDCSHook, 2, 1, "?");
                 Globals.ErrorsGame++;
                 ReturnValue = 0;
             }

@@ -54,7 +54,7 @@ namespace Perun_v1
                     }
                 }
             }
-        
+
             if (args.Length > 3)
             {
                 // Get argument DCS SRS file path
@@ -90,7 +90,7 @@ namespace Perun_v1
                         if (args[5] != "-1")
                         {
                             TIM_Autostart.Enabled = true;
-                            PerunHelper.AddLog(ref Globals.AppLogHistory, "Autostart parameter provided", 0, 1);
+                            PerunHelper.LogInfo(ref Globals.AppLogHistory, "Autostart parameter provided", 0, 1);
                         }
                     }
                 }
@@ -124,6 +124,8 @@ namespace Perun_v1
             con_check_3rd_srs.Checked = Properties.Settings.Default.OTHER_SRS_USE;
             con_txt_dcs_server_port.Text = Properties.Settings.Default.DCS_Server_Port.ToString();
             con_txt_dcs_instance.Text = Properties.Settings.Default.DCS_Instance.ToString();
+            cboLogLevel.SelectedIndex = Properties.Settings.Default.LOG_LEVEL;
+            chkCloseToTray.Checked = Properties.Settings.Default.CLOSE_TO_TRAY;
         }
 
         private void form_Main_SaveSettings()
@@ -142,6 +144,8 @@ namespace Perun_v1
             Properties.Settings.Default.OTHER_SRS_USE = con_check_3rd_srs.Checked;
             Properties.Settings.Default.DCS_Server_Port = Int32.Parse(con_txt_dcs_server_port.Text);
             Properties.Settings.Default.DCS_Instance = Int32.Parse(con_txt_dcs_instance.Text);
+            Properties.Settings.Default.LOG_LEVEL = cboLogLevel.SelectedIndex;
+            Properties.Settings.Default.CLOSE_TO_TRAY = chkCloseToTray.Checked;
 
             Properties.Settings.Default.Save();
         }
@@ -165,6 +169,7 @@ namespace Perun_v1
             con_check_3rd_srs.Enabled = false;
             con_txt_dcs_server_port.Enabled = false;
             con_txt_dcs_instance.Enabled = false;
+            cboLogLevel.Enabled = true;
         }
 
         private void form_Main_SetControlsToDisconnected()
@@ -186,6 +191,7 @@ namespace Perun_v1
             con_check_3rd_srs.Enabled = true;
             con_txt_dcs_server_port.Enabled = true;
             con_txt_dcs_instance.Enabled = true;
+            cboLogLevel.Enabled = true;
 
         }
 
@@ -212,7 +218,7 @@ namespace Perun_v1
             DatabaseConnection.DatabaseConnectionString = "server=" + con_txt_mysql_server.Text + ";user=" + con_txt_mysql_username.Text + ";database=" + con_txt_mysql_database.Text + ";port=" + con_txt_mysql_port.Text + ";password=" + con_txt_mysql_password.Text;
 
             // Start listening
-            PerunHelper.AddLog(ref Globals.AppLogHistory, "Opening connections", 0, 1);
+            PerunHelper.LogInfo(ref Globals.AppLogHistory, "Opening connections", 0, 1);
             TCPServer.Create(Int32.Parse(con_txt_dcs_server_port.Text), ref Globals.AppLogHistory, ref DatabaseSendBuffer);
             TCPServer.thrTCPListener = new Thread(TCPServer.StartListen);
             TCPServer.thrTCPListener.Start();
@@ -233,7 +239,7 @@ namespace Perun_v1
         {
             // Stop listening
             // Prepare GUI
-            PerunHelper.AddLog(ref Globals.AppLogHistory, "Closing connections", 0, 1);
+            PerunHelper.LogInfo(ref Globals.AppLogHistory, "Closing connections", 0, 1);
             con_Button_Listen_OFF.Enabled = false;
             Tim_GUI_Tick(null, null);
             this.Refresh();
@@ -251,7 +257,7 @@ namespace Perun_v1
             }
             catch (Exception ex)
             {
-                PerunHelper.AddLog(ref Globals.AppLogHistory, "TCP ERROR, error: " + ex.Message, 2, 1, "?");
+                PerunHelper.LogError(ref Globals.AppLogHistory, "TCP ERROR, error: " + ex.Message, 2, 1, "?");
                 Console.WriteLine(ex.ToString());
             }
 
@@ -269,7 +275,7 @@ namespace Perun_v1
             con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
 
             // Display information about closed connections
-            PerunHelper.AddLog(ref Globals.AppLogHistory, "Connections closed", 0, 1);
+            PerunHelper.LogInfo(ref Globals.AppLogHistory, "Connections closed", 0, 1);
             Tim_GUI_Tick(null, null);
 
             // Set title bar
@@ -374,7 +380,13 @@ namespace Perun_v1
             if (e.CloseReason == CloseReason.UserClosing && !AppCanClose)
             {
                 e.Cancel = true;
-                form_Main_SendToTray(); // Send app to system tray
+                if (Properties.Settings.Default.CLOSE_TO_TRAY)
+                {
+                    form_Main_SendToTray(); // Send app to system tray
+                } else
+                {
+                    con_Button_Quit_Click(sender, e);
+                }
             }
         }
 
@@ -558,12 +570,12 @@ namespace Perun_v1
                         ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + ExtSRSJson + "'}";
 
                         ExtSRSUseDefault = false;
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "SRS data loaded", 3, 0, "100", true);
+                        PerunHelper.LogInfo(ref Globals.AppLogHistory, "SRS data loaded", 3, 0, "100", true);
                         ExtSRSStatus = true;
                     }
                     catch (Exception exc_srs)
                     {
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "SRS data ERROR , error: " + exc_srs.Message, 3, 1, "100");
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "SRS data ERROR , error: " + exc_srs.Message, 3, 1, "100");
                         ExtSRSStatus = false;
                         Globals.ErrorsSRS++;
                     }
@@ -592,12 +604,12 @@ namespace Perun_v1
 
                         ExtLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + ExtLotATCJson + "'}";
                         ExtLotATCUseDefault = false;
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "LotATC data loaded", 3, 0, "101", true);
+                        PerunHelper.LogInfo(ref Globals.AppLogHistory, "LotATC data loaded", 3, 0, "101", true);
                         ExtLotATCStatus = true;
                     }
                     catch (Exception exc_lotatc)
                     {
-                        PerunHelper.AddLog(ref Globals.AppLogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message, 3, 1, "101");
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message, 3, 1, "101");
                         ExtLotATCStatus = false;
                         Globals.ErrorsLotATC++;
                     }
@@ -639,7 +651,7 @@ namespace Perun_v1
                 Globals.AppForceIconReload = true;
 
                 // Add information
-                PerunHelper.AddLog(ref Globals.AppLogHistory, "Resetted error counter", 0, 1);
+                PerunHelper.LogInfo(ref Globals.AppLogHistory, "Resetted error counter", 0, 1);
             }
             else if (dialogResult == DialogResult.No)
             {
@@ -651,7 +663,7 @@ namespace Perun_v1
         private void con_Button_Add_Marker_Click(object sender, EventArgs e)
         {
             // Added user marker
-            PerunHelper.AddLog(ref Globals.AppLogHistory, "User Marker", 0, 1);
+            PerunHelper.LogInfo(ref Globals.AppLogHistory, "User Marker", 0, 1);
         }
 
         private void TIM_Autostart_Tick(object sender, EventArgs e)
@@ -659,6 +671,16 @@ namespace Perun_v1
             // Handle autostart parameter from command line
             TIM_Autostart.Enabled = false; // Disable timer
             con_Button_Listen_ON_Click(sender,e); // Simulate button click
+        }
+
+        private void cboLogLevel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LogController.instance.level = cboLogLevel.SelectedIndex;
+        }
+
+        private void chkCloseToTray_Validated(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.CLOSE_TO_TRAY = chkCloseToTray.Checked;
         }
     }
 }
