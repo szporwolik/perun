@@ -9,19 +9,19 @@ package.path  = package.path..";"..lfs.currentdir().."/LuaSocket/?.lua"..";"..lf
 package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
 -- Load config file
-local Config = require "perun_config"
-Perun.RefreshStatus = Config.RefreshStatus
-Perun.RefreshMission = Config.RefreshMission
-Perun.TCPTargetPort = Config.TCPTargetPort
-Perun.TCPPerunHost = Config.TCPPerunHost
-Perun.Instance = Config.Instance
-Perun.MissionStartNoDeathWindow = Config.MissionStartNoDeathWindow
-Perun.DebugMode = Config.DebugMode
-Perun.MOTD_L1 = Config.MOTD_L1
-Perun.MOTD_L2 = Config.MOTD_L2
+local PerunConfig = require "perun_config"
+Perun.RefreshStatus = PerunConfig.RefreshStatus
+Perun.RefreshMission = PerunConfig.RefreshMission
+Perun.TCPTargetPort = PerunConfig.TCPTargetPort
+Perun.TCPPerunHost = PerunConfig.TCPPerunHost
+Perun.Instance = PerunConfig.Instance
+Perun.MissionStartNoDeathWindow = PerunConfig.MissionStartNoDeathWindow
+Perun.DebugMode = PerunConfig.DebugMode
+Perun.MOTD_L1 = PerunConfig.MOTD_L1
+Perun.MOTD_L2 = PerunConfig.MOTD_L2
 
 -- Variable init
-Perun.Version = "v0.11.2"
+Perun.Version = "v0.12.0"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
