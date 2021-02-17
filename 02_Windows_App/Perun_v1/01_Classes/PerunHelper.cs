@@ -86,13 +86,13 @@ internal class PerunHelper
             }
 
             // Add new entry
-            arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss.fff") + " " + LogDirection + " " + LogType + " " + strEntryToAdd; // Add entry at the last position
+            arrLogHistory[arrLogHistory.Length - 1] = $"{DateTime.Now.ToString("HH:mm:ss.fff")} {LogDirection} {LogType} {strEntryToAdd}"; // Add entry at the last position
 
             // Update control at my window
             Globals.AppUpdateGUI = true;
         }
         // Add the entry to log file
-        LogController.instance.WriteLog(logLevel, DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss.fff") + " | " + Globals.HardwareMonitor.LastCurrentCpuUsage + " | " + Globals.HardwareMonitor.LastCurrentRamUsage + " | " + Globals.AppInstanceID + " | " + LogMarker + " | " + LogDirection + " | " + strType + " | " + strEntryToAdd);
+        LogController.instance.WriteLog(logLevel, $"{DateTime.Now.ToString("yyyy-MM-dd ")} {DateTime.Now.ToString("HH:mm:ss.fff")} | {Globals.HardwareMonitor.LastCurrentCpuUsage} | {Globals.HardwareMonitor.LastCurrentRamUsage} | {Globals.AppInstanceID} | {LogMarker} | {LogDirection} | {strType} | {strEntryToAdd}");
     }
 
     // Gets build version
@@ -100,9 +100,9 @@ internal class PerunHelper
     {
         Globals.VersionPerun = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 #if DEBUG
-        Globals.VersionPerun = Globals.VersionPerun + "(d)";
+        Globals.VersionPerun = $"{Globals.VersionPerun} (DEV)";
 #endif
-        return strBeginning + "v" + Globals.VersionPerun + strEnding;
+        return $"{strBeginning}v{Globals.VersionPerun}{strEnding}";
     }
 
     public static int CheckVersions()
@@ -120,7 +120,7 @@ internal class PerunHelper
             if(VersionApp != Globals.VersionDatabase)
             {
                 // Incorrect database version
-                PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR Incorrect database revision : "+ Globals.VersionDatabase, 1, 1, "?");
+                PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR Incorrect database revision : {Globals.VersionDatabase}", 1, 1, "?");
                 Globals.ErrorsDatabase++;
                 ReturnValue = 0;
             }
@@ -132,7 +132,7 @@ internal class PerunHelper
             if (VersionApp != Globals.VersionDCSHook)
             {
                 // Incorrect dcs script version
-                PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR Incorrect DCS hook revision : " + Globals.VersionDCSHook, 2, 1, "?");
+                PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR Incorrect DCS hook revision: {Globals.VersionDCSHook}", 2, 1, "?");
                 Globals.ErrorsGame++;
                 ReturnValue = 0;
             }
@@ -142,10 +142,5 @@ internal class PerunHelper
 #else
         return 1;
 #endif
-    }
-
-    public static string ConvertSecoundsToString (Double NumberOfSecounds){
-        // TBD - convert number of secounds to HHhMMm format
-        return NumberOfSecounds.ToString();
     }
 }

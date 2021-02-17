@@ -271,7 +271,7 @@ namespace Perun_v1
             }
             catch (Exception ex)
             {
-                PerunHelper.LogError(ref Globals.AppLogHistory, "TCP ERROR, error: " + ex.Message, 2, 1, "?");
+                PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR TCP, error: {ex.Message}", 2, 1, "?");
                 Console.WriteLine(ex.ToString());
             }
 
@@ -384,7 +384,7 @@ namespace Perun_v1
         private void con_Button_Add_Marker_Click(object sender, EventArgs e)
         {
             // Added user marker
-            PerunHelper.LogInfo(ref Globals.AppLogHistory, "User Marker", 0, 1);
+            PerunHelper.LogError(ref Globals.AppLogHistory, "User Marker", 0, 1);
         }
 
         // ################################ Form state ################################
@@ -493,7 +493,7 @@ namespace Perun_v1
 
                 if (Globals.CurrentMission.Pause == "True")
                 {
-                    label21.Text = label21.Text + " (paused)";
+                    label21.Text = $"{label21.Text} (paused)";
                 }
             }
             else
@@ -658,7 +658,7 @@ namespace Perun_v1
                         }
 
                         ExtSRSJson = JsonConvert.SerializeObject(raw_dcssrs);
-                        ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + ExtSRSJson + "'}";
+                        ExtSRSJson = $"{{'type':'100','instance':'{Int32.Parse(con_txt_dcs_instance.Text)}','payload':'{ExtSRSJson}'}}";
 
                         ExtSRSUseDefault = false;
                         PerunHelper.LogInfo(ref Globals.AppLogHistory, "SRS data loaded", 3, 0, "100", true);
@@ -666,7 +666,7 @@ namespace Perun_v1
                     }
                     catch (Exception exc_srs)
                     {
-                        PerunHelper.LogError(ref Globals.AppLogHistory, "SRS data ERROR , error: " + exc_srs.Message, 3, 1, "100");
+                        PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR SRS Data, error: {exc_srs.Message}", 3, 1, "100");
                         ExtSRSStatus = false;
                         Globals.ErrorsSRS++;
                     }
@@ -675,7 +675,7 @@ namespace Perun_v1
                 }
                 if (ExtSRSUseDefault)
                 {
-                    ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";
+                    ExtSRSJson = $"{{'type':'100','instance':'{Int32.Parse(con_txt_dcs_instance.Text)}','payload':{{'ignore':'true'}}";
                 }
                 if (ExtSRSStatus)
                 {
@@ -693,14 +693,14 @@ namespace Perun_v1
                         ExtLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
                         dynamic raw_srs = JsonConvert.DeserializeObject(ExtLotATCJson);
 
-                        ExtLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + ExtLotATCJson + "'}";
+                        ExtLotATCJson = $"{{'type':'101','instance':'{Int32.Parse(con_txt_dcs_instance.Text)}','payload':'{ExtLotATCJson}'}}";
                         ExtLotATCUseDefault = false;
                         PerunHelper.LogInfo(ref Globals.AppLogHistory, "LotATC data loaded", 3, 0, "101", true);
                         ExtLotATCStatus = true;
                     }
                     catch (Exception exc_lotatc)
                     {
-                        PerunHelper.LogError(ref Globals.AppLogHistory, "LotATC data ERROR, error: " + exc_lotatc.Message, 3, 1, "101");
+                        PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR LotATC Data, error: {exc_lotatc.Message}", 3, 1, "101");
                         ExtLotATCStatus = false;
                         Globals.ErrorsLotATC++;
                     }
@@ -709,7 +709,7 @@ namespace Perun_v1
                 }
                 if (ExtLotATCUseDefault)
                 {
-                    ExtLotATCJson = "{'type':'101','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':{'ignore':'true'}}";   // No LotATC controller connected
+                    ExtLotATCJson = $"{{'type':'101','instance':'{Int32.Parse(con_txt_dcs_instance.Text)}','payload':{{'ignore':'true'}}}}";   // No LotATC controller connected
                 }
                 if (ExtLotATCStatus)
                 {
@@ -728,8 +728,8 @@ namespace Perun_v1
         private void tim_HW_status_Tick(object sender, EventArgs e)
         {
             //Handle getting of system status
-            label28.Text = Globals.HardwareMonitor.getCurrentCpuUsage() + "%";
-            label29.Text = Globals.HardwareMonitor.getCurrentRamUsage() + "%";
+            label28.Text = $"{Globals.HardwareMonitor.getCurrentCpuUsage()}%";
+            label29.Text = $"{Globals.HardwareMonitor.getCurrentRamUsage()}%";
         }
        
         private void TIM_Autostart_Tick(object sender, EventArgs e)
