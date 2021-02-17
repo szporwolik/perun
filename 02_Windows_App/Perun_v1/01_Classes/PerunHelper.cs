@@ -48,7 +48,25 @@ internal class PerunHelper
                 LogDirection = "^";
                 break;
             default:
-                LogDirection = " ";
+                LogDirection = "-";
+                break;
+        }
+
+        // Insert information about which log type we are curently handling
+        string LogType;
+        switch (logLevel)
+        {
+            case 0:
+                LogType = "E";
+                break;
+            case 1:
+                LogType = "W";
+                break;
+            case 2:
+                LogType = "I";
+                break;
+            default:
+                LogType = "D";
                 break;
         }
 
@@ -67,7 +85,7 @@ internal class PerunHelper
             }
 
             // Add new entry
-            arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + LogDirection + " " + strEntryToAdd; // Add entry at the last position
+            arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + LogDirection + " " + LogType + " " + strEntryToAdd; // Add entry at the last position
 
             // Update control at my window
             Globals.AppUpdateGUI = true;

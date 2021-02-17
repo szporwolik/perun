@@ -9,7 +9,6 @@ class HardwareMonitorClass
 
     protected PerformanceCounter cpuCounter;
     protected PerformanceCounter ramCounter;
-    protected PerformanceCounter cputempCounter;
 
     public HardwareMonitorClass()
     {

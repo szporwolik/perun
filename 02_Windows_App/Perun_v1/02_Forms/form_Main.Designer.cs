@@ -100,7 +100,6 @@
             this.label27 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.tim_HW_status = new System.Windows.Forms.Timer(this.components);
-            this.performanceCounter1 = new System.Diagnostics.PerformanceCounter();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -114,7 +113,6 @@
             this.con_GroupBox_5.SuspendLayout();
             this.con_GroupBox_6.SuspendLayout();
             this.con_GroupBox_7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.performanceCounter1)).BeginInit();
             this.SuspendLayout();
             // 
             // con_List_Received
@@ -123,14 +121,14 @@
             this.con_List_Received.FormattingEnabled = true;
             this.con_List_Received.Items.AddRange(new object[] {
             "Not connected"});
-            this.con_List_Received.Location = new System.Drawing.Point(8, 57);
+            this.con_List_Received.Location = new System.Drawing.Point(8, 44);
             this.con_List_Received.Name = "con_List_Received";
-            this.con_List_Received.Size = new System.Drawing.Size(307, 108);
+            this.con_List_Received.Size = new System.Drawing.Size(307, 134);
             this.con_List_Received.TabIndex = 0;
             // 
             // con_Button_Listen_ON
             // 
-            this.con_Button_Listen_ON.Location = new System.Drawing.Point(342, 430);
+            this.con_Button_Listen_ON.Location = new System.Drawing.Point(342, 441);
             this.con_Button_Listen_ON.Name = "con_Button_Listen_ON";
             this.con_Button_Listen_ON.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_ON.TabIndex = 2;
@@ -141,7 +139,7 @@
             // con_Button_Listen_OFF
             // 
             this.con_Button_Listen_OFF.Enabled = false;
-            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(434, 430);
+            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(434, 441);
             this.con_Button_Listen_OFF.Name = "con_Button_Listen_OFF";
             this.con_Button_Listen_OFF.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_OFF.TabIndex = 3;
@@ -157,7 +155,7 @@
             this.con_GroupBox_1.Controls.Add(this.con_Button_Add_Marker);
             this.con_GroupBox_1.Location = new System.Drawing.Point(342, 248);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
-            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 179);
+            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 187);
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "Data log";
@@ -357,7 +355,7 @@
             // 
             // con_Button_Quit
             // 
-            this.con_Button_Quit.Location = new System.Drawing.Point(580, 430);
+            this.con_Button_Quit.Location = new System.Drawing.Point(580, 441);
             this.con_Button_Quit.Name = "con_Button_Quit";
             this.con_Button_Quit.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Quit.TabIndex = 7;
@@ -808,7 +806,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(675, 479);
+            this.ClientSize = new System.Drawing.Size(675, 485);
             this.Controls.Add(this.con_GroupBox_7);
             this.Controls.Add(this.con_GroupBox_6);
             this.Controls.Add(this.con_GroupBox_5);
@@ -932,7 +930,6 @@
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Timer tim_HW_status;
-        private System.Diagnostics.PerformanceCounter performanceCounter1;
     }
 }
 

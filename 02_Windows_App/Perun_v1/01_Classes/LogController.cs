@@ -5,6 +5,7 @@ using System.IO;
 class LogController
 {
     private static LogController _instance = new LogController();   // Singleton instance
+    public int level;   // Level of logging
 
     public static LogController instance
     {
@@ -14,40 +15,9 @@ class LogController
         }
     }
 
-    public int level
-    {
-        get;                    // Get debug level
-        set;                    // Set debug level
-    }
-
-    // Log error information
-    public void LogError(string strLog)
-    {
-        this.WriteLog(0, strLog);
-    }
-
-    // Log warning information
-    public void LogWarning(string strLog)
-    {
-        this.WriteLog(1, strLog);
-    }
-
-    // Log info information
-    public void LogInfo(string strLog)
-    {
-        this.WriteLog(2, strLog);
-    }
-
-    // Log debug information
-    public void LogDebug(string strLog)
-    {
-        this.WriteLog(3, strLog);
-    }
-
-    // TBD - done via https://stackoverflow.com/questions/20185015/how-to-write-log-file-in-c
     public void WriteLog(int logLevel, string strLog)
     {
-        if (logLevel > this.level) return;
+        if (logLevel > this.level) return;  // Check if we shall log it with the current log level, if not - exit
 
         StreamWriter LogStreamWriter;
         FileStream LogFileStream = null;
@@ -55,7 +25,7 @@ class LogController
         FileInfo LogFileInfo;
 
         string LogFilePath = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\Perun\\";
-        LogFilePath = LogFilePath + "Perun_Log_" + System.DateTime.Today.ToString("yyyyddMM") + "." + "txt";
+        LogFilePath = LogFilePath + "Perun_Log_" + Globals.AppInstanceID + "_" + System.DateTime.Today.ToString("yyyyddMM") + "." + "txt";
         LogFileInfo = new FileInfo(LogFilePath);
         LogDirectoryInfo = new DirectoryInfo(LogFileInfo.DirectoryName);
         if (!LogDirectoryInfo.Exists) LogDirectoryInfo.Create();
