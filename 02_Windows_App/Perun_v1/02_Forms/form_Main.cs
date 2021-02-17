@@ -409,6 +409,30 @@ namespace Perun_v1
         {
             // Sends app to system tray
             trayIconMain.Visible = true;
+
+            // For instances 1-5 we have prepared special icons
+            switch (Globals.AppInstanceID)
+            {
+                case 1:
+                    trayIconMain.Icon = Perun_v1.Properties.Resources.perun_logo_1;
+                    break;
+                case 2:
+                    trayIconMain.Icon = Perun_v1.Properties.Resources.perun_logo_2;
+                    break;
+                case 3:
+                    trayIconMain.Icon = Perun_v1.Properties.Resources.perun_logo_3;
+                    break;
+                case 4:
+                    trayIconMain.Icon = Perun_v1.Properties.Resources.perun_logo_4;
+                    break;
+                case 5:
+                    trayIconMain.Icon = Perun_v1.Properties.Resources.perun_logo_5;
+                    break;
+                default:
+                    break;
+            }
+            
+
             this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false; 
         }

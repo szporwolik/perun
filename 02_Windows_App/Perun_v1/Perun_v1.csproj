@@ -62,7 +62,8 @@
     </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>03_Resources\perun_logo.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>2ACE4C8C2C325A04CA5986B1CD76744B4B03755D</ManifestCertificateThumbprint>
@@ -206,7 +207,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="03_Resources\perun_logo.ico" />
+    <None Include="03_Resources\perun_logo.ico" />
+    <None Include="03_Resources\perun_logo_1.ico" />
     <None Include="03_Resources\perun_logo.png" />
     <None Include="Resources\perun_logo.png" />
     <None Include="Resources\status-connected-error.png" />
@@ -214,6 +216,17 @@
     <None Include="Resources\status-disconnected.png" />
     <None Include="Resources\status-connected.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="03_Resources\perun_logo_2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="03_Resources\perun_logo_3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="03_Resources\perun_logo_4.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="03_Resources\perun_logo_5.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

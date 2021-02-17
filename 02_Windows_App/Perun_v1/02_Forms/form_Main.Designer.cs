@@ -312,31 +312,31 @@
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_srs);
             this.con_GroupBox_3.Location = new System.Drawing.Point(12, 246);
             this.con_GroupBox_3.Name = "con_GroupBox_3";
-            this.con_GroupBox_3.Size = new System.Drawing.Size(324, 68);
+            this.con_GroupBox_3.Size = new System.Drawing.Size(324, 118);
             this.con_GroupBox_3.TabIndex = 6;
             this.con_GroupBox_3.TabStop = false;
             this.con_GroupBox_3.Text = "Integration settings";
             // 
             // con_txt_3rd_lotatc
             // 
-            this.con_txt_3rd_lotatc.Location = new System.Drawing.Point(123, 39);
+            this.con_txt_3rd_lotatc.Location = new System.Drawing.Point(6, 91);
             this.con_txt_3rd_lotatc.Name = "con_txt_3rd_lotatc";
-            this.con_txt_3rd_lotatc.Size = new System.Drawing.Size(190, 20);
+            this.con_txt_3rd_lotatc.Size = new System.Drawing.Size(307, 20);
             this.con_txt_3rd_lotatc.TabIndex = 4;
             this.con_txt_3rd_lotatc.MouseClick += new System.Windows.Forms.MouseEventHandler(this.con_txt_3rd_lotatc_Click);
             // 
             // con_txt_3rd_srs
             // 
-            this.con_txt_3rd_srs.Location = new System.Drawing.Point(123, 16);
+            this.con_txt_3rd_srs.Location = new System.Drawing.Point(6, 42);
             this.con_txt_3rd_srs.Name = "con_txt_3rd_srs";
-            this.con_txt_3rd_srs.Size = new System.Drawing.Size(190, 20);
+            this.con_txt_3rd_srs.Size = new System.Drawing.Size(307, 20);
             this.con_txt_3rd_srs.TabIndex = 3;
             this.con_txt_3rd_srs.MouseClick += new System.Windows.Forms.MouseEventHandler(this.con_txt_3rd_srs_Click);
             // 
             // con_check_3rd_lotatc
             // 
             this.con_check_3rd_lotatc.AutoSize = true;
-            this.con_check_3rd_lotatc.Location = new System.Drawing.Point(6, 42);
+            this.con_check_3rd_lotatc.Location = new System.Drawing.Point(6, 72);
             this.con_check_3rd_lotatc.Name = "con_check_3rd_lotatc";
             this.con_check_3rd_lotatc.Size = new System.Drawing.Size(100, 17);
             this.con_check_3rd_lotatc.TabIndex = 1;
@@ -461,7 +461,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(57, 431);
+            this.label13.Location = new System.Drawing.Point(64, 427);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(74, 25);
             this.label13.TabIndex = 19;
@@ -471,7 +471,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(59, 456);
+            this.label14.Location = new System.Drawing.Point(66, 452);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(88, 13);
             this.label14.TabIndex = 20;
@@ -481,7 +481,7 @@
             // 
             this.con_img_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.con_img_logo.Image = global::Perun_v1.Properties.Resources.perun_logo;
-            this.con_img_logo.Location = new System.Drawing.Point(6, 431);
+            this.con_img_logo.Location = new System.Drawing.Point(13, 427);
             this.con_img_logo.Name = "con_img_logo";
             this.con_img_logo.Size = new System.Drawing.Size(45, 41);
             this.con_img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -620,7 +620,7 @@
             // con_GroupBox_5
             // 
             this.con_GroupBox_5.Controls.Add(this.con_check_minimize_to_tray);
-            this.con_GroupBox_5.Location = new System.Drawing.Point(13, 320);
+            this.con_GroupBox_5.Location = new System.Drawing.Point(13, 370);
             this.con_GroupBox_5.Name = "con_GroupBox_5";
             this.con_GroupBox_5.Size = new System.Drawing.Size(323, 46);
             this.con_GroupBox_5.TabIndex = 26;
