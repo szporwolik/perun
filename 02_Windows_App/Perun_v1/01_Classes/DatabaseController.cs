@@ -38,16 +38,23 @@ public class DatabaseController
                 Console.WriteLine("Sending data to MySQL - Begin");
                 DatabaseConnection.Open();
                 DatabaseStatus = true;
-                MySqlCommand DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+                
                 
                 string LogInfo = "";
+                int LogDirection = 1;
+                MySqlCommand DatabaseCommand = null;
 
                 // Add parameters - prevent SQL injection
                 switch (Int32.Parse(TCPFrameType))
                 {
                     case -1:
                         // Keep alive message
+                        LogInfo = $"Reading MySQL config";
+                        LogDirection = 3;
+
                         SQLQueryTxt = "SELECT `pe_Config_payload` FROM `pe_Config` WHERE `pe_Config_id` = 1;";
+
+                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
                         break;
 
                     case 1:
@@ -59,6 +66,9 @@ public class DatabaseController
 
                         SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
                         SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_perunversion_winapp` = '" + TCPFrame.payload.v_win + "', `pe_OnlineStatus_perunversion_dcshook` ='" + TCPFrame.payload.v_dcs_hook + "' WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "' ;";
+
+                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+
                         break;
 
                     case 2:
@@ -79,6 +89,8 @@ public class DatabaseController
                         SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
                         SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_theatre` = '" + TCPFrame.payload.mission.theatre + "', `pe_OnlineStatus_name` = '" + TCPFrame.payload.mission.name + "' , `pe_OnlineStatus_pause` = '" + TCPFrame.payload.mission.pause + "', `pe_OnlineStatus_multiplayer` = '" + TCPFrame.payload.mission.multiplayer + "', `pe_OnlineStatus_realtime` = '" + TCPFrame.payload.mission.realtime + "', `pe_OnlineStatus_modeltime` = '" + TCPFrame.payload.mission.modeltime + "', `pe_OnlineStatus_players` =  " + player_count + " WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "';";
 
+                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+
                         // Save for GUI
                         Globals.CurrentMission.Theatre = TCPFrame.payload.mission.theatre;  // Mission theatre
                         Globals.CurrentMission.Mission = TCPFrame.payload.mission.name;     // Mission name
@@ -98,6 +110,8 @@ public class DatabaseController
                         SQLQueryTxt += "UPDATE `pe_DataMissionHashes` SET `pe_DataMissionHashes_datetime` = " + TCPFrameTimestamp + " WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + " ;";
                         SQLQueryTxt += "INSERT INTO `pe_LogChat` (`pe_LogChat_id`,`pe_LogChat_datetime`, `pe_LogChat_playerid`, `pe_LogChat_msg`, `pe_LogChat_all`,`pe_LogChat_missionhash_id`) VALUES (NULL,'" + TCPFrame.payload.datetime + "', (SELECT `pe_DataPlayers_id` from `pe_DataPlayers` WHERE `pe_DataPlayers_ucid` = '" + TCPFrame.payload.ucid + "'), @PAR_payload_msg, '" + TCPFrame.payload.all + "',(SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.missionhash + "'));";
 
+                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+
                         DatabaseCommand.Parameters.AddWithValue("@PAR_payload_player", TCPFrame.payload.player);
                         DatabaseCommand.Parameters.AddWithValue("@PAR_payload_msg", TCPFrame.payload.msg);
 
@@ -110,6 +124,8 @@ public class DatabaseController
                         SQLQueryTxt = "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`,`pe_DataMissionHashes_instance`) SELECT '" + TCPFrame.payload.log_missionhash + "','" + TCPFrameInstance + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataMissionHashes` where `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.log_missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + ");";
                         SQLQueryTxt += "UPDATE `pe_DataMissionHashes` SET `pe_DataMissionHashes_datetime` = " + TCPFrameTimestamp + " WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.log_missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + ";";
                         SQLQueryTxt += "INSERT INTO `pe_LogEvent` (`pe_LogEvent_arg1`,`pe_LogEvent_arg2`,`pe_LogEvent_id`, `pe_LogEvent_datetime`, `pe_LogEvent_type`, `pe_LogEvent_content`,`pe_LogEvent_missionhash_id`) VALUES ('" + TCPFrame.payload.log_arg_1 + "','" + TCPFrame.payload.log_arg_2 + "', NULL, '" + TCPFrame.payload.log_datetime + "', '" + TCPFrame.payload.log_type + "', @PAR_log_content, (SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.log_missionhash + "'));";
+
+                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
 
                         DatabaseCommand.Parameters.AddWithValue("@PAR_log_content", TCPFrame.payload.log_content);
 
@@ -126,6 +142,9 @@ public class DatabaseController
                         SQLQueryTxt += "INSERT INTO `pe_DataTypes` (`pe_DataTypes_name`) SELECT '" + TCPFrame.payload.stat_data_type + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataTypes` where `pe_DataTypes_name` = '" + TCPFrame.payload.stat_data_type + "');";
                         SQLQueryTxt += "INSERT INTO `pe_LogStats` (`pe_LogStats_playerid`,`pe_LogStats_missionhash_id`,`pe_LogStats_typeid`) SELECT (SELECT `pe_DataPlayers_id` from `pe_DataPlayers` WHERE `pe_DataPlayers_ucid` = '" + TCPFrame.payload.stat_ucid + "'), (SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.stat_missionhash + "'), (SELECT pe_DataTypes_id FROM `pe_DataTypes` where `pe_DataTypes_name` = '" + TCPFrame.payload.stat_data_type + "') FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_LogStats` WHERE `pe_LogStats_missionhash_id`=(SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.stat_missionhash + "') AND `pe_LogStats_playerid` =  (SELECT `pe_DataPlayers_id` from `pe_DataPlayers` WHERE `pe_DataPlayers_ucid` = '" + TCPFrame.payload.stat_ucid + "') AND `pe_LogStats_typeid`= (SELECT pe_DataTypes_id FROM `pe_DataTypes` where `pe_DataTypes_name` = '" + TCPFrame.payload.stat_data_type + "'));";
                         SQLQueryTxt += "UPDATE `pe_LogStats` SET `ps_time`=" + TCPFrame.payload.stat_data_perun.ps_time + ",`pe_LogStats_seat`=" + TCPFrame.payload.stat_data_subslot + ",`pe_LogStats_masterslot`=" + TCPFrame.payload.stat_data_masterslot + ",`ps_kills_fortification`=" + TCPFrame.payload.stat_data_perun.ps_kills_fortification + ",`ps_kills_artillery`=" + TCPFrame.payload.stat_data_perun.ps_kills_artillery + ",`ps_other_landings`=" + TCPFrame.payload.stat_data_perun.ps_other_landings + ",`ps_other_takeoffs`=" + TCPFrame.payload.stat_data_perun.ps_other_takeoffs + ",`ps_pvp`=" + TCPFrame.payload.stat_data_perun.ps_pvp + ",`ps_deaths`=" + TCPFrame.payload.stat_data_perun.ps_deaths + ",`ps_ejections`=" + TCPFrame.payload.stat_data_perun.ps_ejections + ",`ps_crashes`=" + TCPFrame.payload.stat_data_perun.ps_crashes + ",`ps_teamkills`=" + TCPFrame.payload.stat_data_perun.ps_teamkills + ",`ps_kills_planes`=" + TCPFrame.payload.stat_data_perun.ps_kills_planes + ",`ps_kills_helicopters`=" + TCPFrame.payload.stat_data_perun.ps_kills_helicopters + ",`ps_kills_air_defense`=" + TCPFrame.payload.stat_data_perun.ps_kills_air_defense + ",`ps_kills_armor`=" + TCPFrame.payload.stat_data_perun.ps_kills_armor + ",`ps_kills_unarmed`=" + TCPFrame.payload.stat_data_perun.ps_kills_unarmed + ",`ps_kills_infantry`=" + TCPFrame.payload.stat_data_perun.ps_kills_infantry + ",`ps_kills_ships`=" + TCPFrame.payload.stat_data_perun.ps_kills_ships + ",`ps_kills_other`=" + TCPFrame.payload.stat_data_perun.ps_kills_other + ",`ps_airfield_takeoffs`=" + TCPFrame.payload.stat_data_perun.ps_airfield_takeoffs + ",`ps_airfield_landings`=" + TCPFrame.payload.stat_data_perun.ps_airfield_landings + ",`ps_ship_takeoffs`=" + TCPFrame.payload.stat_data_perun.ps_ship_takeoffs + ",`ps_ship_landings`=" + TCPFrame.payload.stat_data_perun.ps_ship_landings + ",`ps_farp_takeoffs`=" + TCPFrame.payload.stat_data_perun.ps_farp_takeoffs + ",`ps_farp_landings`=" + TCPFrame.payload.stat_data_perun.ps_farp_landings + ", `pe_LogStats_datetime`='" + TCPFrame.payload.stat_datetime + "',`pe_LogStats_playerid` =  (SELECT `pe_DataPlayers_id` from `pe_DataPlayers` WHERE `pe_DataPlayers_ucid` = '" + TCPFrame.payload.stat_ucid + "'),`pe_LogStats_missionhash_id`=(SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.stat_missionhash + "') WHERE `pe_LogStats_missionhash_id`=(SELECT `pe_DataMissionHashes_id` FROM `pe_DataMissionHashes` WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.stat_missionhash + "') AND `pe_LogStats_playerid` =  (SELECT `pe_DataPlayers_id` from `pe_DataPlayers` WHERE `pe_DataPlayers_ucid` = '" + TCPFrame.payload.stat_ucid + "') AND `pe_LogStats_typeid`=(SELECT pe_DataTypes_id FROM `pe_DataTypes` where `pe_DataTypes_name` = '" + TCPFrame.payload.stat_data_type + "');";
+                        
+                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+
                         break;
 
                     case 53:
@@ -136,6 +155,8 @@ public class DatabaseController
                         SQLQueryTxt += "UPDATE `pe_DataPlayers` SET  pe_DataPlayers_lastip='" + TCPFrame.payload.login_ipaddr + "', pe_DataPlayers_lastname=@PAR_login_name,pe_DataPlayers_updated='" + TCPFrame.payload.login_datetime + "' WHERE `pe_DataPlayers_ucid`= '" + TCPFrame.payload.login_ucid + "';";
                         SQLQueryTxt += "INSERT INTO `pe_LogLogins` (`pe_LogLogins_datetime`, `pe_LogLogins_playerid`, `pe_LogLogins_name`, `pe_LogLogins_ip`,`pe_LogLogins_instance`) VALUES ('" + TCPFrame.payload.login_datetime + "', (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + TCPFrame.payload.login_ucid + "'), @PAR_login_name, '" + TCPFrame.payload.login_ipaddr + "','" + TCPFrameInstance + "');";
 
+                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+                        
                         DatabaseCommand.Parameters.AddWithValue("@PAR_login_name", TCPFrame.payload.login_name);
 
                         break;
@@ -147,7 +168,7 @@ public class DatabaseController
                         switch (Int32.Parse(TCPFrameType))
                         {
                             case 3:
-                                LogInfo = $"Slots data received";
+                                LogInfo = "Slots data received";
                                 break;
                             case 100:
                                 LogInfo = "DCS SRS data send";
@@ -164,6 +185,9 @@ public class DatabaseController
                         SQLQueryTxt += "UPDATE `pe_DataRaw` SET `pe_dataraw_payload` = @PAR_TCPFramePayload, `pe_dataraw_updated`=" + TCPFrameTimestamp + " WHERE `pe_dataraw_type`=" + TCPFrameType + " AND `pe_dataraw_instance` = " + TCPFrameInstance + ";";
 
                         TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
+
+                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+
                         DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
 
                         break;
@@ -171,14 +195,14 @@ public class DatabaseController
 
                 // End of add parameters
                 MySqlDataReader DatabaseReader = DatabaseCommand.ExecuteReader();
-                PerunHelper.LogDebug(ref Globals.AppLogHistory, LogInfo, 1, 0, TCPFrameType);
+                PerunHelper.LogDebug(ref Globals.AppLogHistory, LogInfo, LogDirection, 0, TCPFrameType);
 
                 // Handle reading from database
                 if (DatabaseReader.HasRows)
                 {
                     while (DatabaseReader.Read())
                     {
-                        PerunHelper.LogDebug(ref Globals.AppLogHistory, $"Received MySQL response, row: {DatabaseReader.ToString()}", 1, 0, TCPFrameType);
+                        PerunHelper.LogDebug(ref Globals.AppLogHistory, $"Received MySQL response, fields: {DatabaseReader.FieldCount}", 2, 0, TCPFrameType);
                         if (TCPFrameType == "-1")
                         {
                             Globals.VersionDatabase = DatabaseReader.GetString(0);
