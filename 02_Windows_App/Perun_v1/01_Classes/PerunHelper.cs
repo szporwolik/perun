@@ -92,7 +92,7 @@ internal class PerunHelper
             Globals.AppUpdateGUI = true;
         }
         // Add the entry to log file
-        LogController.instance.WriteLog(logLevel, DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss.fff") + " | Instance: " + Globals.AppInstanceID + " | " + LogMarker + " | " + LogDirection + " | " + strType + " | " + strEntryToAdd);
+        LogController.instance.WriteLog(logLevel, DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss.fff") + " | " + Globals.HardwareMonitor.LastCurrentCpuUsage + " | " + Globals.HardwareMonitor.LastCurrentRamUsage + " | " + Globals.AppInstanceID + " | " + LogMarker + " | " + LogDirection + " | " + strType + " | " + strEntryToAdd);
     }
 
     // Gets build version
