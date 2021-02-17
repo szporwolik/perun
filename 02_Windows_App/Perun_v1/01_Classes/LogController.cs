@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 
-// Singleton class - log controller
 class LogController
 {
+    // Singleton class - log controller
     private static LogController _instance = new LogController();   // Singleton instance
     public int level;   // Level of logging
 
@@ -17,8 +17,10 @@ class LogController
 
     public void WriteLog(int logLevel, string strLog)
     {
+        // Write log entry to file
         if (logLevel > this.level) return;  // Check if we shall log it with the current log level, if not - exit
 
+        // Declare variables
         StreamWriter LogStreamWriter;
         FileStream LogFileStream = null;
         DirectoryInfo LogDirectoryInfo = null;
@@ -41,7 +43,7 @@ class LogController
             }
             catch
             {
-                // Do nothing 
+                // Do nothing - TBD error handling
             }
         }
         try
@@ -52,7 +54,7 @@ class LogController
         }
         catch
         {
-            // Do nothing
+            // Do nothing - TBD error handling
         }
 
         // TBD: log rotation

@@ -6,62 +6,50 @@ using System.Management;
 
 class HardwareMonitorClass
 {
+    // Class for HW monitoring
+    protected PerformanceCounter PerformanceCounterCPU;
+    protected PerformanceCounter PerformanceCounterRAM;
 
-    protected PerformanceCounter cpuCounter;
-    protected PerformanceCounter ramCounter;
-
+    public string LastCurrentCpuUsage = "-1";  // Last measured CPU usage
+    public string LastCurrentRamUsage = "-1";  // Last measured RAM usage
     public HardwareMonitorClass()
     {
         // Prepare CPU counter
-        cpuCounter = new PerformanceCounter();
-        cpuCounter.CategoryName = "Processor";
-        cpuCounter.CounterName = "% Processor Time";
-        cpuCounter.InstanceName = "_Total";
+        PerformanceCounterCPU = new PerformanceCounter();
+        PerformanceCounterCPU.CategoryName = "Processor";
+        PerformanceCounterCPU.CounterName = "% Processor Time";
+        PerformanceCounterCPU.InstanceName = "_Total";
 
         // Prepare RAM counter
-        ramCounter = new PerformanceCounter();
-        ramCounter.CategoryName = "Memory";
-        ramCounter.CounterName = "% Committed Bytes In Use";
-
+        PerformanceCounterRAM = new PerformanceCounter();
+        PerformanceCounterRAM.CategoryName = "Memory";
+        PerformanceCounterRAM.CounterName = "% Committed Bytes In Use";
     }
     // Get CPU usage
     public string getCurrentCpuUsage()
     {
-        return cpuCounter.NextValue().ToString("0.00");
+        LastCurrentCpuUsage = PerformanceCounterCPU.NextValue().ToString("0.00");
+        return LastCurrentCpuUsage;
     }
 
     // Get available RAM memory
-    public string getAvailableRAM()
+    public string getCurrentRamUsage()
     {
-        return ramCounter.NextValue().ToString("0.00");
+        LastCurrentRamUsage = PerformanceCounterRAM.NextValue().ToString("0.00");
+        return LastCurrentRamUsage;
     }
-
 }
 class CurrentMissionClass
 {
-
+    // Class holding current mission/DCS server status
     public string Theatre = "";         // Mission theathre
     public string Mission = "";         // Mission name
 
     public string Pause = "";           // Mission pause
     public int PlayerCount = 0;         // Actual player time
 
-    public string ModelTime = "";
-    public string RealTime = "";
-
-    public string ToInfoString()
-    {
-        // Return mission information as string
-        if (this.Mission != "")
-        {
-            // Return mission information as string
-            return "Mission: " + this.Mission + "(" + this.Theatre + ") Pause:" + this.Pause + " Players: " + this.PlayerCount;
-        } else
-        {
-            // Mission information is not available
-            return "Mission: Unknown";
-        }
-    }
+    public string ModelTime = "";       // Mission time
+    public string RealTime = "";        // Server time
 }
 
 internal class Globals
@@ -88,8 +76,8 @@ internal class Globals
     public static string VersionDatabase = "";                      // Version - Database
     public static string VersionPerun = "DEBUG";                    // Version - Perun
 
-    public static CurrentMissionClass CurrentMission = new CurrentMissionClass();   // Actual mission information
+    public static CurrentMissionClass CurrentMission = new CurrentMissionClass();   // Actual mission information single ton
 
-    public static HardwareMonitorClass HardwareMonitor = new HardwareMonitorClass();
+    public static HardwareMonitorClass HardwareMonitor = new HardwareMonitorClass();    // Hardware monitor singleton
 }
 

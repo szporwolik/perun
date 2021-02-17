@@ -11,7 +11,7 @@ namespace Perun_v1
     public partial class form_Main : Form
     {
         // Variable definitions
-        public string[] DatabaseSendBuffer = new string[50];                     // MySQL send buffer
+        public string[] DatabaseSendBuffer = new string[50];                        // MySQL send buffer
         public bool AppCanClose = false;                                            // Helper to handle system tray - true needed to quit the app
 
         public DatabaseController DatabaseConnection = new DatabaseController();    // Main MySQL controller
@@ -739,7 +739,7 @@ namespace Perun_v1
         {
             //Handle getting of system status
             label28.Text = Globals.HardwareMonitor.getCurrentCpuUsage() + "%";
-            label29.Text = Globals.HardwareMonitor.getAvailableRAM() + "%";
+            label29.Text = Globals.HardwareMonitor.getCurrentRamUsage() + "%";
         }
        
         private void TIM_Autostart_Tick(object sender, EventArgs e)

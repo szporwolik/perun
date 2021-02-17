@@ -35,6 +35,7 @@ internal class PerunHelper
         // Declare values
         string LogDirection;
         string LogMarker;
+
         // Set direction marker
         switch (intDirection)
         {
@@ -76,7 +77,7 @@ internal class PerunHelper
         // Set frame type 
         strType = strType.PadLeft(3, ' ');
 
-        if (!bSkipGui)
+        if (!bSkipGui) // Shall we skip GUI?
         {
             // Rotate log history
             for (int i = 0; i < arrLogHistory.Length - 1; i++)
@@ -85,13 +86,13 @@ internal class PerunHelper
             }
 
             // Add new entry
-            arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss") + " " + LogDirection + " " + LogType + " " + strEntryToAdd; // Add entry at the last position
+            arrLogHistory[arrLogHistory.Length - 1] = DateTime.Now.ToString("HH:mm:ss.fff") + " " + LogDirection + " " + LogType + " " + strEntryToAdd; // Add entry at the last position
 
             // Update control at my window
             Globals.AppUpdateGUI = true;
         }
         // Add the entry to log file
-        LogController.instance.WriteLog(logLevel, DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: " + Globals.AppInstanceID + " | " + LogMarker + " | " + LogDirection + " | " + strType + " | " + strEntryToAdd);
+        LogController.instance.WriteLog(logLevel, DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss.fff") + " | Instance: " + Globals.AppInstanceID + " | " + LogMarker + " | " + LogDirection + " | " + strType + " | " + strEntryToAdd);
     }
 
     // Gets build version
@@ -141,7 +142,7 @@ internal class PerunHelper
     }
 
     public static string ConvertSecoundsToString (Double NumberOfSecounds){
-        // TBD
+        // TBD - convert number of secounds to HHhMMm format
         return NumberOfSecounds.ToString();
     }
 }
