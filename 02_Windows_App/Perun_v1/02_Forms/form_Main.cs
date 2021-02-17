@@ -209,7 +209,13 @@ namespace Perun_v1
         private void form_Main_SetControlsInit()
         {
             // Init values for the controls
-            label16.Text = "";
+
+            // Mission information
+            label16.Text = "[unknown]";
+            label17.Text = "[unknown]";
+            label18.Text = "[unknown]";
+            label19.Text = "?";
+            label21.Text = "[unknown]";
         }
         // ################################ User input ################################
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
@@ -453,7 +459,25 @@ namespace Perun_v1
             }
 
             // Update mission status
-            label16.Text = Globals.CurrentMission.ToInfoString();
+            if (Globals.CurrentMission.Mission != "")
+            {
+                
+                label17.Text = Globals.CurrentMission.Mission;
+                label18.Text = Globals.CurrentMission.Theatre;
+                label19.Text = Globals.CurrentMission.PlayerCount.ToString();
+
+                label21.Text = Globals.CurrentMission.ModelTime;
+                label16.Text = Globals.CurrentMission.RealTime;
+
+                if (Globals.CurrentMission.Pause == "True")
+                {
+                    label21.Text = label21.Text + " (paused)";
+                }
+            }
+            else
+            {
+                this.form_Main_SetControlsInit();
+            }
 
             // Update status icons at main form - MySQL
             if ((DatabaseConnection.DatabaseStatus != Globals.StatusDatabase) || Globals.AppForceIconReload)

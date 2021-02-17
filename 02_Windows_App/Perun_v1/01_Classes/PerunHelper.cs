@@ -53,10 +53,10 @@ internal class PerunHelper
         }
 
         // Set marker for user flags (markers)
-        LogMarker = (intMarker>0) ? "X" : " ";
+        LogMarker = (intMarker > 0) ? "X" : " ";
 
         // Set frame type 
-        strType=strType.PadLeft(3, ' ');
+        strType = strType.PadLeft(3, ' ');
 
         if (!bSkipGui)
         {
@@ -73,7 +73,7 @@ internal class PerunHelper
             Globals.AppUpdateGUI = true;
         }
         // Add the entry to log file
-        LogController.instance.WriteLog(logLevel, DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.AppInstanceID + " | " + LogMarker + " | "+ LogDirection + " | "+ strType + " | " + strEntryToAdd);
+        LogController.instance.WriteLog(logLevel, DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: " + Globals.AppInstanceID + " | " + LogMarker + " | " + LogDirection + " | " + strType + " | " + strEntryToAdd);
     }
 
     // Gets build version
@@ -120,5 +120,10 @@ internal class PerunHelper
 #else
         return 1;
 #endif
+    }
+
+    public static string ConvertSecoundsToString (Double NumberOfSecounds){
+        // TBD
+        return NumberOfSecounds.ToString();
     }
 }

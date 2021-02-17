@@ -11,6 +11,9 @@ class CurrentMissionClass
     public string Pause = "";           // Mission pause
     public int PlayerCount = 0;         // Actual player time
 
+    public string ModelTime = "";
+    public string RealTime = "";
+
     public string ToInfoString()
     {
         // Return mission information as string

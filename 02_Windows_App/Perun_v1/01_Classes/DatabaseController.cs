@@ -122,6 +122,9 @@ public class DatabaseController
                 Globals.CurrentMission.Theatre = TCPFrame.payload.mission.theatre;  // Mission theatre
                 Globals.CurrentMission.Mission = TCPFrame.payload.mission.name;     // Mission name
                 Globals.CurrentMission.Pause = TCPFrame.payload.mission.pause;      // Mission pause
+
+                Globals.CurrentMission.ModelTime = TCPFrame.payload.mission.modeltime;      // Mission time
+                Globals.CurrentMission.RealTime = TCPFrame.payload.mission.realtime;        // Since start of server
                 break;
 
             default:
