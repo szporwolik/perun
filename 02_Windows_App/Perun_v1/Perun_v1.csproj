@@ -171,7 +171,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="00_Config\packages.config" />
-    <None Include="00_Config\Perun_v1_TemporaryKey.pfx" />
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
@@ -210,11 +209,6 @@
     <None Include="03_Resources\perun_logo.ico" />
     <None Include="03_Resources\perun_logo_1.ico" />
     <None Include="03_Resources\perun_logo.png" />
-    <None Include="Resources\perun_logo.png" />
-    <None Include="Resources\status-connected-error.png" />
-    <None Include="Resources\status-disconnected-error.png" />
-    <None Include="Resources\status-disconnected.png" />
-    <None Include="Resources\status-connected.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="03_Resources\perun_logo_2.ico" />
@@ -227,6 +221,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="03_Resources\perun_logo_5.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="03_Resources\status-connected-error.png" />
+    <Content Include="03_Resources\status-connected.png" />
+    <Content Include="03_Resources\status-disconnected-error.png" />
+    <Content Include="03_Resources\status-disconnected.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
