@@ -1,39 +1,44 @@
 ﻿using System;
 using System.IO;
 
+// Singleton class - log controller
 class LogController
 {
-    private static LogController _instance = new LogController();
+    private static LogController _instance = new LogController();   // Singleton instance
 
     public static LogController instance
     {
         get
         {
-            return _instance;
+            return _instance;   // Return current instance
         }
     }
 
     public int level
     {
-        get;
-        set;
+        get;                    // Get debug level
+        set;                    // Set debug level
     }
 
+    // Log error information
     public void LogError(string strLog)
     {
         this.WriteLog(0, strLog);
     }
 
+    // Log warning information
     public void LogWarning(string strLog)
     {
         this.WriteLog(1, strLog);
     }
 
+    // Log info information
     public void LogInfo(string strLog)
     {
         this.WriteLog(2, strLog);
     }
 
+    // Log debug information
     public void LogDebug(string strLog)
     {
         this.WriteLog(3, strLog);
@@ -79,5 +84,7 @@ class LogController
         {
             // Do nothing
         }
+
+        // TBD: log rotation
     }
 }

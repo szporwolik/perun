@@ -5,26 +5,31 @@ using System.Text.RegularExpressions;
 
 internal class PerunHelper
 {
+    // Add error infomation
     public static void LogError(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
         AddLog(0, ref arrLogHistory, strEntryToAdd, intDirection, intMarker, strType, bSkipGui);
     }
 
+    // Add warning information
     public static void LogWarning(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
         AddLog(1, ref arrLogHistory, strEntryToAdd, intDirection, intMarker, strType, bSkipGui);
     }
 
+    // Add info information
     public static void LogInfo(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
         AddLog(2, ref arrLogHistory, strEntryToAdd, intDirection, intMarker, strType, bSkipGui);
     }
 
+    // Add debug information
     public static void LogDebug(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
         AddLog(3, ref arrLogHistory, strEntryToAdd, intDirection, intMarker, strType, bSkipGui);
     }
 
+    // Add log
     private static void AddLog(int logLevel, ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
         // Declare values
@@ -71,15 +76,16 @@ internal class PerunHelper
         LogController.instance.WriteLog(logLevel, DateTime.Now.ToString("yyyy-MM-dd ") + " " + DateTime.Now.ToString("HH:mm:ss") + " | Instance: "+ Globals.AppInstanceID + " | " + LogMarker + " | "+ LogDirection + " | "+ strType + " | " + strEntryToAdd);
     }
 
+    // Gets build version
     public static string GetAppVersion(string strBeginning)
     {
-        // Gets build version
         Globals.VersionPerun = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         return strBeginning + "v" + Globals.VersionPerun;
     }
 
     public static int CheckVersions()
     {
+        // Checks if all versions (mysql, winapp, lua) are the same  - ommit if run as debug build
 #if !DEBUG
         // Checks the versions of APP, DCS Hook and MySQL database
         Match match = Regex.Match(Globals.VersionPerun, @"^\d+.\d+.\d+", RegexOptions.Compiled | RegexOptions.IgnoreCase);

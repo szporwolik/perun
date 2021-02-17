@@ -5,18 +5,22 @@
 class CurrentMissionClass
 {
 
-    public string Theatre = "";
-    public string Mission = "";
-    public string Pause = "";
-    public int PlayerCount = 0;
+    public string Theatre = "";         // Mission theathre
+    public string Mission = "";         // Mission name
+
+    public string Pause = "";           // Mission pause
+    public int PlayerCount = 0;         // Actual player time
 
     public string ToInfoString()
     {
+        // Return mission information as string
         if (this.Mission != "")
         {
+            // Return mission information as string
             return "Mission: " + this.Mission + "(" + this.Theatre + ") Pause:" + this.Pause + " Players: " + this.PlayerCount;
         } else
         {
+            // Mission information is not available
             return "Mission: Unknown";
         }
     }
@@ -35,6 +39,7 @@ internal class Globals
     public static bool StatusLotATC = false;                        // Historic lotatc connection status
     public static bool StatusHistoryConnection = false;             // Historic tcp connection status
     public static bool StatusConnection = false;                    // Flag if is TCP connectionstill alive
+
     public static int ErrorsDatabase = 0;                           // MySQL - Error counter
     public static int ErrorsGame = 0;                               // TCP connection - Error counter
     public static int ErrorsHistoryGame = 0;                        // TCP connection - historic value of Error counter
@@ -44,6 +49,7 @@ internal class Globals
     public static string VersionDCSHook = "";                       // Version - DCS hook
     public static string VersionDatabase = "";                      // Version - Database
     public static string VersionPerun = "DEBUG";                    // Version - Perun
-    public static CurrentMissionClass CurrentMission = new CurrentMissionClass(); // Mission - name
+
+    public static CurrentMissionClass CurrentMission = new CurrentMissionClass();   // Actual mission information
 }
 

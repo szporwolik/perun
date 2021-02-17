@@ -143,19 +143,23 @@ public class DatabaseController
                 // Add parameters - prevent SQL injection
                 if (TCPFrameType == "50")
                 {
+                    // Chat entry
                     DatabaseCommand.Parameters.AddWithValue("@PAR_payload_player", TCPFrame.payload.player);
                     DatabaseCommand.Parameters.AddWithValue("@PAR_payload_msg", TCPFrame.payload.msg);
                 }
                 else if (TCPFrameType == "51")
                 {
+                    // Event entry
                     DatabaseCommand.Parameters.AddWithValue("@PAR_log_content", TCPFrame.payload.log_content);
                 }
                 else if (TCPFrameType == "53")
                 {
+                    // Stats entry
                     DatabaseCommand.Parameters.AddWithValue("@PAR_login_name", TCPFrame.payload.login_name);
                 }
                 else
                 {
+                    // Others
                     TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
                     DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
                 }
@@ -179,6 +183,7 @@ public class DatabaseController
 
                 DatabaseReader.Close();
                 
+                // Add information to log
                 switch (Int32.Parse(TCPFrameType))
                 {
                     case 1:
@@ -230,13 +235,13 @@ public class DatabaseController
                 // MySQL exception found
                 switch (m_ex.Number)
                 {
-                    case 1042: // Unable to connect to any of the specified MySQL hosts (Check Server,Port)
-                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - unable to connect, error: " + m_ex.Message,1,1, TCPFrameType);
+                    case 0: // Access denied (Check DB name,username,password)
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - access denied, error: " + m_ex.Message, 1, 1, TCPFrameType);
                         DatabaseStatus = false;
                         ReturnValue = 0;
                         break;
-                    case 0: // Access denied (Check DB name,username,password)
-                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - access denied, error: " + m_ex.Message,1,1, TCPFrameType);
+                    case 1042: // Unable to connect to any of the specified MySQL hosts (Check Server,Port)
+                        PerunHelper.LogError(ref Globals.AppLogHistory, "ERROR MySQL - unable to connect, error: " + m_ex.Message,1,1, TCPFrameType);
                         DatabaseStatus = false;
                         ReturnValue = 0;
                         break;
