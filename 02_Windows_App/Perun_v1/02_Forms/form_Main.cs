@@ -380,7 +380,7 @@ namespace Perun_v1
             // Sends app to system tray
             trayIconMain.Visible = true;
             this.WindowState = FormWindowState.Minimized;
-            this.ShowInTaskbar = false;
+            this.ShowInTaskbar = false; 
         }
 
         private void form_Main_BringFromTray()
