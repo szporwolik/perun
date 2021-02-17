@@ -379,7 +379,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(172, 444);
+            this.label5.Location = new System.Drawing.Point(223, 444);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 12);
             this.label5.TabIndex = 9;
@@ -461,7 +461,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(69, 386);
+            this.label13.Location = new System.Drawing.Point(57, 431);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(74, 25);
             this.label13.TabIndex = 19;
@@ -471,7 +471,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(71, 411);
+            this.label14.Location = new System.Drawing.Point(59, 456);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(88, 13);
             this.label14.TabIndex = 20;
@@ -481,7 +481,7 @@
             // 
             this.con_img_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.con_img_logo.Image = global::Perun_v1.Properties.Resources.perun_logo;
-            this.con_img_logo.Location = new System.Drawing.Point(18, 386);
+            this.con_img_logo.Location = new System.Drawing.Point(6, 431);
             this.con_img_logo.Name = "con_img_logo";
             this.con_img_logo.Size = new System.Drawing.Size(45, 41);
             this.con_img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
