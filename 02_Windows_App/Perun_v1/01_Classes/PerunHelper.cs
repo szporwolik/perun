@@ -96,10 +96,13 @@ internal class PerunHelper
     }
 
     // Gets build version
-    public static string GetAppVersion(string strBeginning)
+    public static string GetAppVersion(string strBeginning, string strEnding = "")
     {
         Globals.VersionPerun = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        return strBeginning + "v" + Globals.VersionPerun;
+#if DEBUG
+        Globals.VersionPerun = Globals.VersionPerun + "(d)";
+#endif
+        return strBeginning + "v" + Globals.VersionPerun + strEnding;
     }
 
     public static int CheckVersions()

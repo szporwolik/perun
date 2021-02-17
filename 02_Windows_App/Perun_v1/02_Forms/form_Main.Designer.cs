@@ -828,7 +828,7 @@
             this.MaximizeBox = false;
             this.Name = "form_Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Perun for DCS";
+            this.Text = "Perun for DCS World";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.form_Main_FormClosing);
             this.Load += new System.EventHandler(this.form_Main_Load);
             this.Resize += new System.EventHandler(this.form_Main_Resize);

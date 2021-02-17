@@ -60,6 +60,8 @@ internal class Globals
     public static int AppInstanceID = 0;                            // Kepp the instance ID
     public static bool AppForceIconReload = true;                   // Force main window icons reload
 
+    public static string[] DatabaseSendBuffer = new string[50];            // MySQL send buffer
+
     public static bool StatusDatabase = false;                      // Historic db connection status
     public static bool StatusSRS = false;                           // Historic srs connection status
     public static bool StatusLotATC = false;                        // Historic lotatc connection status
@@ -78,6 +80,9 @@ internal class Globals
 
     public static CurrentMissionClass CurrentMission = new CurrentMissionClass();   // Actual mission information single ton
 
-    public static HardwareMonitorClass HardwareMonitor = new HardwareMonitorClass();    // Hardware monitor singleton
+    public static HardwareMonitorClass HardwareMonitor = new HardwareMonitorClass();   // Hardware monitor singleton
+
+    public static DatabaseController DatabaseConnection = new DatabaseController();    // Main MySQL controller
+    public static TCPController TCPServer = new TCPController();                       // Main TCP controller
 }
 
