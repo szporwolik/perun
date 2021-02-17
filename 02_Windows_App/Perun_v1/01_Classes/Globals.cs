@@ -8,12 +8,13 @@ class CurrentMissionClass
     public string Theatre = "";
     public string Mission = "";
     public string Pause = "";
+    public int PlayerCount = 0;
 
     public string ToInfoString()
     {
         if (this.Mission != "")
         {
-            return "Mission: " + this.Mission + "(" + this.Theatre + ") Pause:" + this.Pause;
+            return "Mission: " + this.Mission + "(" + this.Theatre + ") Pause:" + this.Pause + " Players: " + this.PlayerCount;
         } else
         {
             return "Mission: Unknown";
