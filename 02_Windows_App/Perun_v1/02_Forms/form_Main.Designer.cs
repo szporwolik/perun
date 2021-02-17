@@ -35,7 +35,7 @@
             this.con_Button_Listen_OFF = new System.Windows.Forms.Button();
             this.con_GroupBox_1 = new System.Windows.Forms.GroupBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.cboLogLevel = new System.Windows.Forms.ComboBox();
+            this.con_com_loglevel = new System.Windows.Forms.ComboBox();
             this.con_Button_Add_Marker = new System.Windows.Forms.Button();
             this.tim_GUI = new System.Windows.Forms.Timer(this.components);
             this.con_GroupBox_2 = new System.Windows.Forms.GroupBox();
@@ -71,7 +71,7 @@
             this.label14 = new System.Windows.Forms.Label();
             this.con_img_logo = new System.Windows.Forms.PictureBox();
             this.TIM_Autostart = new System.Windows.Forms.Timer(this.components);
-            this.chkCloseToTray = new System.Windows.Forms.CheckBox();
+            this.con_check_minimize_to_tray = new System.Windows.Forms.CheckBox();
             this.con_GroupBox_4 = new System.Windows.Forms.GroupBox();
             this.con_Button_Reset_Flags = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
@@ -131,7 +131,7 @@
             // con_GroupBox_1
             // 
             this.con_GroupBox_1.Controls.Add(this.label15);
-            this.con_GroupBox_1.Controls.Add(this.cboLogLevel);
+            this.con_GroupBox_1.Controls.Add(this.con_com_loglevel);
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
             this.con_GroupBox_1.Controls.Add(this.con_Button_Add_Marker);
             this.con_GroupBox_1.Location = new System.Drawing.Point(344, 147);
@@ -152,21 +152,21 @@
             this.label15.TabIndex = 22;
             this.label15.Text = "Log level";
             // 
-            // cboLogLevel
+            // con_com_loglevel
             // 
-            this.cboLogLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboLogLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F);
-            this.cboLogLevel.FormattingEnabled = true;
-            this.cboLogLevel.Items.AddRange(new object[] {
+            this.con_com_loglevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.con_com_loglevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F);
+            this.con_com_loglevel.FormattingEnabled = true;
+            this.con_com_loglevel.Items.AddRange(new object[] {
             "Error",
             "Warning",
             "Info",
             "Debug"});
-            this.cboLogLevel.Location = new System.Drawing.Point(65, 18);
-            this.cboLogLevel.Name = "cboLogLevel";
-            this.cboLogLevel.Size = new System.Drawing.Size(102, 20);
-            this.cboLogLevel.TabIndex = 23;
-            this.cboLogLevel.SelectedIndexChanged += new System.EventHandler(this.cboLogLevel_SelectedIndexChanged);
+            this.con_com_loglevel.Location = new System.Drawing.Point(65, 18);
+            this.con_com_loglevel.Name = "con_com_loglevel";
+            this.con_com_loglevel.Size = new System.Drawing.Size(102, 20);
+            this.con_com_loglevel.TabIndex = 23;
+            this.con_com_loglevel.SelectedIndexChanged += new System.EventHandler(this.con_com_loglevell_SelectedIndexChanged);
             // 
             // con_Button_Add_Marker
             // 
@@ -474,19 +474,19 @@
             this.TIM_Autostart.Interval = 500;
             this.TIM_Autostart.Tick += new System.EventHandler(this.TIM_Autostart_Tick);
             // 
-            // chkCloseToTray
+            // con_check_minimize_to_tray
             // 
-            this.chkCloseToTray.AutoSize = true;
-            this.chkCloseToTray.Checked = true;
-            this.chkCloseToTray.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCloseToTray.Location = new System.Drawing.Point(6, 19);
-            this.chkCloseToTray.Name = "chkCloseToTray";
-            this.chkCloseToTray.Size = new System.Drawing.Size(98, 17);
-            this.chkCloseToTray.TabIndex = 24;
-            this.chkCloseToTray.Text = "Minimize to tray";
-            this.chkCloseToTray.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.chkCloseToTray.UseVisualStyleBackColor = true;
-            this.chkCloseToTray.Validated += new System.EventHandler(this.chkCloseToTray_Validated);
+            this.con_check_minimize_to_tray.AutoSize = true;
+            this.con_check_minimize_to_tray.Checked = true;
+            this.con_check_minimize_to_tray.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.con_check_minimize_to_tray.Location = new System.Drawing.Point(6, 19);
+            this.con_check_minimize_to_tray.Name = "con_check_minimize_to_tray";
+            this.con_check_minimize_to_tray.Size = new System.Drawing.Size(98, 17);
+            this.con_check_minimize_to_tray.TabIndex = 24;
+            this.con_check_minimize_to_tray.Text = "Minimize to tray";
+            this.con_check_minimize_to_tray.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.con_check_minimize_to_tray.UseVisualStyleBackColor = true;
+            this.con_check_minimize_to_tray.Validated += new System.EventHandler(this.con_check_minimize_to_tray_Validated);
             // 
             // con_GroupBox_4
             // 
@@ -600,7 +600,7 @@
             // 
             // con_GroupBox_5
             // 
-            this.con_GroupBox_5.Controls.Add(this.chkCloseToTray);
+            this.con_GroupBox_5.Controls.Add(this.con_check_minimize_to_tray);
             this.con_GroupBox_5.Location = new System.Drawing.Point(14, 362);
             this.con_GroupBox_5.Name = "con_GroupBox_5";
             this.con_GroupBox_5.Size = new System.Drawing.Size(323, 46);
@@ -699,8 +699,8 @@
         private System.Windows.Forms.Button con_Button_Add_Marker;
         private System.Windows.Forms.Timer TIM_Autostart;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.ComboBox cboLogLevel;
-        private System.Windows.Forms.CheckBox chkCloseToTray;
+        private System.Windows.Forms.ComboBox con_com_loglevel;
+        private System.Windows.Forms.CheckBox con_check_minimize_to_tray;
         private System.Windows.Forms.GroupBox con_GroupBox_4;
         private System.Windows.Forms.Button con_Button_Reset_Flags;
         private System.Windows.Forms.Label label12;

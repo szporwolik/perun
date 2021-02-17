@@ -132,8 +132,8 @@ namespace Perun_v1
             con_check_3rd_srs.Checked = Properties.Settings.Default.OTHER_SRS_USE;
             con_txt_dcs_server_port.Text = Properties.Settings.Default.DCS_Server_Port.ToString();
             con_txt_dcs_instance.Text = Properties.Settings.Default.DCS_Instance.ToString();
-            cboLogLevel.SelectedIndex = Properties.Settings.Default.LOG_LEVEL;
-            chkCloseToTray.Checked = Properties.Settings.Default.CLOSE_TO_TRAY;
+            con_com_loglevel.SelectedIndex = Properties.Settings.Default.LOG_LEVEL;
+            con_check_minimize_to_tray.Checked = Properties.Settings.Default.CLOSE_TO_TRAY;
         }
 
         private void form_Main_SaveSettings()
@@ -152,8 +152,8 @@ namespace Perun_v1
             Properties.Settings.Default.OTHER_SRS_USE = con_check_3rd_srs.Checked;
             Properties.Settings.Default.DCS_Server_Port = Int32.Parse(con_txt_dcs_server_port.Text);
             Properties.Settings.Default.DCS_Instance = Int32.Parse(con_txt_dcs_instance.Text);
-            Properties.Settings.Default.LOG_LEVEL = cboLogLevel.SelectedIndex;
-            Properties.Settings.Default.CLOSE_TO_TRAY = chkCloseToTray.Checked;
+            Properties.Settings.Default.LOG_LEVEL = con_com_loglevel.SelectedIndex;
+            Properties.Settings.Default.CLOSE_TO_TRAY = con_check_minimize_to_tray.Checked;
 
             Properties.Settings.Default.Save();
         }
@@ -177,7 +177,7 @@ namespace Perun_v1
             con_check_3rd_srs.Enabled = false;
             con_txt_dcs_server_port.Enabled = false;
             con_txt_dcs_instance.Enabled = false;
-            cboLogLevel.Enabled = true;
+            con_com_loglevel.Enabled = true;
         }
 
         private void form_Main_SetControlsToDisconnected()
@@ -199,7 +199,7 @@ namespace Perun_v1
             con_check_3rd_srs.Enabled = true;
             con_txt_dcs_server_port.Enabled = true;
             con_txt_dcs_instance.Enabled = true;
-            cboLogLevel.Enabled = true;
+            con_com_loglevel.Enabled = true;
 
         }
 
@@ -337,6 +337,17 @@ namespace Perun_v1
             }
         }
 
+        private void con_com_loglevell_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Changed log level state
+            LogController.instance.level = con_com_loglevel.SelectedIndex;
+        }
+
+        private void con_check_minimize_to_tray_Validated(object sender, EventArgs e)
+        {
+            // Changed close to try state
+            Properties.Settings.Default.CLOSE_TO_TRAY = con_check_minimize_to_tray.Checked;
+        }
         // ################################ Form state ################################
         private void con_Button_Quit_Click(object sender, EventArgs e)
         {
@@ -690,14 +701,5 @@ namespace Perun_v1
             con_Button_Listen_ON_Click(sender,e); // Simulate button click
         }
 
-        private void cboLogLevel_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            LogController.instance.level = cboLogLevel.SelectedIndex;
-        }
-
-        private void chkCloseToTray_Validated(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.CLOSE_TO_TRAY = chkCloseToTray.Checked;
-        }
     }
 }
