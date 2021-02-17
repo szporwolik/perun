@@ -1,6 +1,7 @@
 ﻿// This class gathers all global variable
 
 // Class to hold current game state/mission information
+
 class CurrentMissionClass
 {
 
@@ -10,7 +11,13 @@ class CurrentMissionClass
 
     public string ToInfoString()
     {
-        return this.Mission + " (" + this.Theatre + ") Pause:" + this.Pause;
+        if (this.Mission != "")
+        {
+            return "Mission: " + this.Mission + "(" + this.Theatre + ") Pause:" + this.Pause;
+        } else
+        {
+            return "Mission: Unknown";
+        }
     }
 }
 

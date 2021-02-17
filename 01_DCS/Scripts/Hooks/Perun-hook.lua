@@ -118,6 +118,71 @@ function stripChars(str)
     _tableAccents["ł"] = "l"
     _tableAccents["Ł"] = "L"
 
+	-- Cyrillic script (Russian)
+    _tableAccents["а"] = "a"
+    _tableAccents["А"] = "A"
+    _tableAccents["б"] = "b"
+    _tableAccents["Б"] = "B"
+    _tableAccents["в"] = "v"
+    _tableAccents["В"] = "V"
+    _tableAccents["г"] = "g"
+    _tableAccents["Г"] = "G"
+    _tableAccents["д"] = "d"
+    _tableAccents["Д"] = "D"
+    _tableAccents["е"] = "ye"
+    _tableAccents["Е"] = "YE"
+    _tableAccents["ё"] = "yo"
+    _tableAccents["Ё"] = "YO"
+    _tableAccents["ж"] = "zh"
+    _tableAccents["Ж"] = "Zh"
+    _tableAccents["з"] = "z"
+    _tableAccents["З"] = "Z"
+    _tableAccents["и"] = "ee"
+    _tableAccents["И"] = "EE"
+    _tableAccents["й"] = "i"
+    _tableAccents["Й"] = "I"
+    _tableAccents["к"] = "k"
+    _tableAccents["К"] = "K"
+    _tableAccents["л"] = "l"
+    _tableAccents["Л"] = "L"
+    _tableAccents["м"] = "m"
+    _tableAccents["М"] = "M"
+    -- _tableAccents["Н"] = "M" - disabled due to conflict with english
+    _tableAccents["п"] = "p"
+    _tableAccents["П"] = "P"
+    -- _tableAccents["р"] = "r" - disabled due to conflict with english
+    -- _tableAccents["Р"] = "R" - disabled due to conflict with english
+    -- _tableAccents["с"] = "s" - disabled due to conflict with english
+    -- _tableAccents["С"] = "S" - disabled due to conflict with english
+    _tableAccents["т"] = "t"
+    _tableAccents["Т"] = "T"
+    _tableAccents["у"] = "u"
+    _tableAccents["У"] = "U"
+    _tableAccents["ф"] = "f"
+    _tableAccents["Ф"] = "F"
+    -- _tableAccents["х"] = "h" - disabled due to conflict with english
+    -- _tableAccents["Х"] = "H" - disabled due to conflict with english
+    _tableAccents["ц"] = "ts"
+    _tableAccents["Ц"] = "TS"
+    _tableAccents["ч"] = "ch"
+    _tableAccents["Ч"] = "CH"
+    _tableAccents["ш"] = "sh"
+    _tableAccents["Ш"] = "SH"
+    _tableAccents["щ"] = "sh"
+    _tableAccents["Щ"] = "SH"
+    _tableAccents["ъ"] = ""
+    _tableAccents["Ъ"] = ""
+    _tableAccents["ы"] = "i"
+    _tableAccents["Ы"] = "I"
+    _tableAccents["ь"] = ""
+    _tableAccents["Ь"] = ""
+    _tableAccents["э"] = "e"
+    _tableAccents["Э"] = "E"	
+    _tableAccents["ю"] = "yu"
+    _tableAccents["Ю"] = "YU"
+    _tableAccents["я"] = "ya"
+    _tableAccents["Я"] = "YA"	
+
     -- TBD additonal characters for other languages
 
 	-- Check string and replace special chars via replacement table

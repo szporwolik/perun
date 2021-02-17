@@ -523,9 +523,9 @@
             // 
             this.con_Button_Reset_Flags.Enabled = false;
             this.con_Button_Reset_Flags.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(255, 28);
+            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(254, 25);
             this.con_Button_Reset_Flags.Name = "con_Button_Reset_Flags";
-            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(61, 36);
+            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(61, 40);
             this.con_Button_Reset_Flags.TabIndex = 26;
             this.con_Button_Reset_Flags.Text = "Reset error flags";
             this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
