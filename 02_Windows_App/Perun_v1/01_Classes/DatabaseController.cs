@@ -5,9 +5,9 @@ using System;
 
 public class DatabaseController
 {
-    public string DatabaseConnectionString;              // MySQL connection string
-    public MySqlConnection DatabaseConnection;
-    public bool DatabaseStatus;
+    public string DatabaseConnectionString;                 // MySQL connection string
+    public MySqlConnection DatabaseConnection;              // MySQL connection
+    public bool DatabaseStatus;                             // MySQL connections status
 
     public int SendToMySql(string RawTCPFrame, bool CheckConnection = false)
     {
@@ -16,26 +16,29 @@ public class DatabaseController
         {
             RawTCPFrame = "{\"type\": \"-1\"}";
         }
-        dynamic TCPFrame = JsonConvert.DeserializeObject(RawTCPFrame); // Deserialize raw data
-        string TCPFrameType = TCPFrame.type;
-        string TCPFrameTimestamp = TCPFrame.timestamp;
-        string TCPFrameInstance = TCPFrame.instance;
-        string TCPFramePayload;
-        string SQLQueryTxt;
-        int ReturnValue = 1;
+        dynamic TCPFrame = JsonConvert.DeserializeObject(RawTCPFrame);  // Deserialize raw data
+
+        string TCPFrameType = TCPFrame.type;                            // Frame type
+        string TCPFrameTimestamp = TCPFrame.timestamp;                  // Frame timestamp
+        string TCPFrameInstance = TCPFrame.instance;                    // Frame instance
+        string TCPFramePayload;                                         // Frame payload
+
+        string SQLQueryTxt;                                             // MySQL Query string
+
+        int ReturnValue = 1;                                            // Default retirn value
 
         // Some frames may come without timestamp, use database currrent timestampe then
         if (TCPFrameTimestamp != null)
         {
-            TCPFrameTimestamp = "'" + TCPFrameTimestamp + "'";
+            TCPFrameTimestamp = "'" + TCPFrameTimestamp + "'";  // Use frame timestamp
         }
         else
         {
-            TCPFrameTimestamp = "CURRENT_TIMESTAMP()";
+            TCPFrameTimestamp = "CURRENT_TIMESTAMP()";          // Get timestamp from MySQL
         }
 
         // Modify specific types
-        if (TCPFrameType == "1")
+        if (TCPFrameType == "1")    
         {
             TCPFrame.payload["v_win"] = "v" + Globals.VersionPerun; // Inject app version information
 
@@ -74,7 +77,6 @@ public class DatabaseController
         else if (TCPFrameType == "53")
         {
             // User logged in to DCS server
-
             SQLQueryTxt = "INSERT INTO `pe_DataPlayers` (`pe_DataPlayers_ucid`) SELECT '" + TCPFrame.payload.login_ucid + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataPlayers` where pe_DataPlayers_ucid='" + TCPFrame.payload.login_ucid + "');";
             SQLQueryTxt += "UPDATE `pe_DataPlayers` SET  pe_DataPlayers_lastip='" + TCPFrame.payload.login_ipaddr + "', pe_DataPlayers_lastname=@PAR_login_name,pe_DataPlayers_updated='" + TCPFrame.payload.login_datetime + "' WHERE `pe_DataPlayers_ucid`= '" + TCPFrame.payload.login_ucid + "';";
             SQLQueryTxt += "INSERT INTO `pe_LogLogins` (`pe_LogLogins_datetime`, `pe_LogLogins_playerid`, `pe_LogLogins_name`, `pe_LogLogins_ip`,`pe_LogLogins_instance`) VALUES ('" + TCPFrame.payload.login_datetime + "', (SELECT pe_DataPlayers_id from pe_DataPlayers WHERE pe_DataPlayers_ucid = '" + TCPFrame.payload.login_ucid + "'), @PAR_login_name, '" + TCPFrame.payload.login_ipaddr + "','" + TCPFrameInstance + "');";
@@ -87,8 +89,6 @@ public class DatabaseController
         else
         {
             // General definition used for 1-10 type packets
-      
-
             SQLQueryTxt = "INSERT INTO `pe_DataRaw` (`pe_dataraw_type`,`pe_dataraw_instance`) SELECT '" + TCPFrameType + "','" + TCPFrameInstance + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataRaw` WHERE `pe_dataraw_type` = '" + TCPFrameType + "' AND `pe_dataraw_instance` = " + TCPFrameInstance + ");";
             SQLQueryTxt += "UPDATE `pe_DataRaw` SET `pe_dataraw_payload` = @PAR_TCPFramePayload, `pe_dataraw_updated`=" + TCPFrameTimestamp + " WHERE `pe_dataraw_type`=" + TCPFrameType + " AND `pe_dataraw_instance` = " + TCPFrameInstance + ";";
         }
@@ -100,7 +100,6 @@ public class DatabaseController
                 // General status information
                 SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
                 SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_perunversion_winapp` = '" + TCPFrame.payload.v_win + "', `pe_OnlineStatus_perunversion_dcshook` ='" + TCPFrame.payload.v_dcs_hook  + "' WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "' ;";
-                
                 break;
 
             case 2:
@@ -123,7 +122,6 @@ public class DatabaseController
                 Globals.CurrentMission.Theatre = TCPFrame.payload.mission.theatre;  // Mission theatre
                 Globals.CurrentMission.Mission = TCPFrame.payload.mission.name;     // Mission name
                 Globals.CurrentMission.Pause = TCPFrame.payload.mission.pause;      // Mission pause
-
                 break;
 
             default:
@@ -162,8 +160,7 @@ public class DatabaseController
                     DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
                 }
                 // End of add parameters
-
-                    MySqlDataReader DatabaseReader = DatabaseCommand.ExecuteReader();
+                MySqlDataReader DatabaseReader = DatabaseCommand.ExecuteReader();
 
                 if (DatabaseReader.HasRows)
                 {
