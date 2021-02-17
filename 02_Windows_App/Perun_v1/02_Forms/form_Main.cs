@@ -504,6 +504,12 @@ namespace Perun_v1
                 // Do nothing , control does not require update
             }
 
+            // Enable see log button
+            if(Globals.LastLogLocation != "")
+            {
+                con_Button_See_log.Enabled = true;
+            }
+
             // Update mission status
             if (Globals.CurrentMission.Mission != "")
             {
@@ -763,5 +769,12 @@ namespace Perun_v1
             con_Button_Listen_ON_Click(sender, e); // Simulate button click
         }
 
+        private void con_Button_See_log_Click(object sender, EventArgs e)
+        {
+            if (Globals.LastLogLocation != "")
+            {
+                Process.Start(Globals.LastLogLocation);
+            }
+        }
     }
 }

@@ -100,6 +100,7 @@
             this.label27 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.tim_HW_status = new System.Windows.Forms.Timer(this.components);
+            this.con_Button_See_log = new System.Windows.Forms.Button();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -149,6 +150,7 @@
             // 
             // con_GroupBox_1
             // 
+            this.con_GroupBox_1.Controls.Add(this.con_Button_See_log);
             this.con_GroupBox_1.Controls.Add(this.label15);
             this.con_GroupBox_1.Controls.Add(this.con_com_loglevel);
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
@@ -802,6 +804,18 @@
             this.tim_HW_status.Interval = 1000;
             this.tim_HW_status.Tick += new System.EventHandler(this.tim_HW_status_Tick);
             // 
+            // con_Button_See_log
+            // 
+            this.con_Button_See_log.Enabled = false;
+            this.con_Button_See_log.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_Button_See_log.Location = new System.Drawing.Point(170, 12);
+            this.con_Button_See_log.Name = "con_Button_See_log";
+            this.con_Button_See_log.Size = new System.Drawing.Size(56, 20);
+            this.con_Button_See_log.TabIndex = 24;
+            this.con_Button_See_log.Text = "See log";
+            this.con_Button_See_log.UseVisualStyleBackColor = true;
+            this.con_Button_See_log.Click += new System.EventHandler(this.con_Button_See_log_Click);
+            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -930,6 +944,7 @@
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Timer tim_HW_status;
+        private System.Windows.Forms.Button con_Button_See_log;
     }
 }
 

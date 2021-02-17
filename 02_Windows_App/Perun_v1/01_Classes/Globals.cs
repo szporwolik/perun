@@ -78,6 +78,8 @@ internal class Globals
     public static string VersionDatabase = "";                      // Version - Database
     public static string VersionPerun = "DEBUG";                    // Version - Perun
 
+    public static string LastLogLocation = "";                    // Last used log location
+
     public static CurrentMissionClass CurrentMission = new CurrentMissionClass();   // Actual mission information single ton
 
     public static HardwareMonitorClass HardwareMonitor = new HardwareMonitorClass();   // Hardware monitor singleton

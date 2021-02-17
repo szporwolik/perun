@@ -51,6 +51,7 @@ class LogController
             LogStreamWriter = new StreamWriter(LogFileStream);
             LogStreamWriter.WriteLine(strLog);
             LogStreamWriter.Close();
+            Globals.LastLogLocation = LogFilePath;
         }
         catch
         {
