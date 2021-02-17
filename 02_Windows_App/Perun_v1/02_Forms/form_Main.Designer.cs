@@ -648,6 +648,7 @@
             this.Text = "Perun for DCS";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.form_Main_FormClosing);
             this.Load += new System.EventHandler(this.form_Main_Load);
+            this.Resize += new System.EventHandler(this.form_Main_Resize);
             this.con_GroupBox_1.ResumeLayout(false);
             this.con_GroupBox_1.PerformLayout();
             this.con_GroupBox_2.ResumeLayout(false);

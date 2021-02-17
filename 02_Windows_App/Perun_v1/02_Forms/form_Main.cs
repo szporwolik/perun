@@ -356,6 +356,7 @@ namespace Perun_v1
             // Changed close to try state
             Properties.Settings.Default.CLOSE_TO_TRAY = con_check_minimize_to_tray.Checked;
         }
+
         // ################################ Form state ################################
         private void con_Button_Quit_Click(object sender, EventArgs e)
         {
@@ -407,13 +408,7 @@ namespace Perun_v1
             if (e.CloseReason == CloseReason.UserClosing && !AppCanClose)
             {
                 e.Cancel = true;
-                if (Properties.Settings.Default.CLOSE_TO_TRAY)
-                {
-                    form_Main_SendToTray(); // Send app to system tray
-                } else
-                {
-                    con_Button_Quit_Click(sender, e);
-                }
+                con_Button_Quit_Click(sender, e);
             }
         }
 
@@ -423,6 +418,17 @@ namespace Perun_v1
             form_Main_BringFromTray(); // Bring app from system tray
         }
 
+        private void form_Main_Resize(object sender, EventArgs e)
+        {
+            // Form was minimised to try
+            if (WindowState == FormWindowState.Minimized)
+            {
+                if (con_check_minimize_to_tray.Checked)
+                {
+                    form_Main_SendToTray();
+                }
+            }
+        }
         // ################################ Timers ################################
         private void Tim_GUI_Tick(object sender, EventArgs e)
         {
@@ -605,7 +611,7 @@ namespace Perun_v1
                             }
                         }
 
-                        ExtSRSJson = JsonConvert.SerializeObject(raw_lotatc); 
+                        ExtSRSJson = JsonConvert.SerializeObject(raw_lotatc);
                         ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + ExtSRSJson + "'}";
 
                         ExtSRSUseDefault = false;
@@ -709,12 +715,13 @@ namespace Perun_v1
         {
             // Handle autostart parameter from command line
             TIM_Autostart.Enabled = false; // Disable timer
-            con_Button_Listen_ON_Click(sender,e); // Simulate button click
+            con_Button_Listen_ON_Click(sender, e); // Simulate button click
         }
 
         private void label16_Click(object sender, EventArgs e)
         {
 
         }
+
     }
 }
