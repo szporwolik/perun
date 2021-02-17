@@ -102,6 +102,13 @@ namespace Perun_v1
             con_img_dcs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
             con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
             con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
+
+            // Display information that we are runing debug build
+#if !DEBUG
+
+#else
+            label13.Text = label13.Text + " (Debug)";
+#endif
         }
 
         public form_Main()

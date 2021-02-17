@@ -67,29 +67,33 @@
             this.con_txt_dcs_instance = new System.Windows.Forms.MaskedTextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.con_txt_dcs_server_port = new System.Windows.Forms.MaskedTextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.con_Button_Reset_Flags = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.con_img_logo = new System.Windows.Forms.PictureBox();
+            this.TIM_Autostart = new System.Windows.Forms.Timer(this.components);
+            this.chkCloseToTray = new System.Windows.Forms.CheckBox();
+            this.con_GroupBox_4 = new System.Windows.Forms.GroupBox();
+            this.con_Button_Reset_Flags = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.con_img_lotATC = new System.Windows.Forms.PictureBox();
             this.con_img_srs = new System.Windows.Forms.PictureBox();
             this.con_img_dcs = new System.Windows.Forms.PictureBox();
             this.con_img_db = new System.Windows.Forms.PictureBox();
-            this.TIM_Autostart = new System.Windows.Forms.Timer(this.components);
-            this.chkCloseToTray = new System.Windows.Forms.CheckBox();
+            this.con_GroupBox_5 = new System.Windows.Forms.GroupBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).BeginInit();
+            this.con_GroupBox_4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_lotATC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).BeginInit();
+            this.con_GroupBox_5.SuspendLayout();
             this.SuspendLayout();
             // 
             // con_List_Received
@@ -100,12 +104,12 @@
             "Not connected"});
             this.con_List_Received.Location = new System.Drawing.Point(8, 44);
             this.con_List_Received.Name = "con_List_Received";
-            this.con_List_Received.Size = new System.Drawing.Size(307, 134);
+            this.con_List_Received.Size = new System.Drawing.Size(307, 160);
             this.con_List_Received.TabIndex = 0;
             // 
             // con_Button_Listen_ON
             // 
-            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 602);
+            this.con_Button_Listen_ON.Location = new System.Drawing.Point(344, 369);
             this.con_Button_Listen_ON.Name = "con_Button_Listen_ON";
             this.con_Button_Listen_ON.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_ON.TabIndex = 2;
@@ -116,7 +120,7 @@
             // con_Button_Listen_OFF
             // 
             this.con_Button_Listen_OFF.Enabled = false;
-            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 602);
+            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(436, 369);
             this.con_Button_Listen_OFF.Name = "con_Button_Listen_OFF";
             this.con_Button_Listen_OFF.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_OFF.TabIndex = 3;
@@ -130,9 +134,9 @@
             this.con_GroupBox_1.Controls.Add(this.cboLogLevel);
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
             this.con_GroupBox_1.Controls.Add(this.con_Button_Add_Marker);
-            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 412);
+            this.con_GroupBox_1.Location = new System.Drawing.Point(344, 147);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
-            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 184);
+            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 209);
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "Data log";
@@ -332,7 +336,7 @@
             // 
             // con_Button_Quit
             // 
-            this.con_Button_Quit.Location = new System.Drawing.Point(251, 602);
+            this.con_Button_Quit.Location = new System.Drawing.Point(582, 369);
             this.con_Button_Quit.Name = "con_Button_Quit";
             this.con_Button_Quit.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Quit.TabIndex = 7;
@@ -344,7 +348,7 @@
             // 
             this.con_lab_github.AutoSize = true;
             this.con_lab_github.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_lab_github.Location = new System.Drawing.Point(183, 39);
+            this.con_lab_github.Location = new System.Drawing.Point(513, 32);
             this.con_lab_github.Name = "con_lab_github";
             this.con_lab_github.Size = new System.Drawing.Size(155, 12);
             this.con_lab_github.TabIndex = 8;
@@ -356,7 +360,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(183, 27);
+            this.label5.Location = new System.Drawing.Point(513, 20);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 12);
             this.label5.TabIndex = 9;
@@ -434,62 +438,6 @@
             this.con_txt_dcs_server_port.Size = new System.Drawing.Size(207, 20);
             this.con_txt_dcs_server_port.TabIndex = 3;
             // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(20, 393);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(61, 13);
-            this.label9.TabIndex = 1;
-            this.label9.Text = "Database";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(88, 393);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(39, 13);
-            this.label10.TabIndex = 14;
-            this.label10.Text = "Game";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(149, 393);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(32, 13);
-            this.label11.TabIndex = 15;
-            this.label11.Text = "SRS";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(198, 393);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(49, 13);
-            this.label12.TabIndex = 16;
-            this.label12.Text = "LotATC";
-            // 
-            // con_Button_Reset_Flags
-            // 
-            this.con_Button_Reset_Flags.Enabled = false;
-            this.con_Button_Reset_Flags.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(266, 362);
-            this.con_Button_Reset_Flags.Name = "con_Button_Reset_Flags";
-            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(61, 36);
-            this.con_Button_Reset_Flags.TabIndex = 17;
-            this.con_Button_Reset_Flags.Text = "Reset error flags";
-            this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
-            this.con_Button_Reset_Flags.Click += new System.EventHandler(this.con_Button_Reset_Flags_Click);
-            // 
             // label13
             // 
             this.label13.AutoSize = true;
@@ -521,43 +469,6 @@
             this.con_img_logo.TabIndex = 18;
             this.con_img_logo.TabStop = false;
             // 
-            // con_img_lotATC
-            // 
-            this.con_img_lotATC.Location = new System.Drawing.Point(207, 362);
-            this.con_img_lotATC.Name = "con_img_lotATC";
-            this.con_img_lotATC.Size = new System.Drawing.Size(29, 28);
-            this.con_img_lotATC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.con_img_lotATC.TabIndex = 13;
-            this.con_img_lotATC.TabStop = false;
-            // 
-            // con_img_srs
-            // 
-            this.con_img_srs.Location = new System.Drawing.Point(150, 362);
-            this.con_img_srs.Name = "con_img_srs";
-            this.con_img_srs.Size = new System.Drawing.Size(29, 28);
-            this.con_img_srs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.con_img_srs.TabIndex = 12;
-            this.con_img_srs.TabStop = false;
-            // 
-            // con_img_dcs
-            // 
-            this.con_img_dcs.Location = new System.Drawing.Point(93, 362);
-            this.con_img_dcs.Name = "con_img_dcs";
-            this.con_img_dcs.Size = new System.Drawing.Size(29, 28);
-            this.con_img_dcs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.con_img_dcs.TabIndex = 11;
-            this.con_img_dcs.TabStop = false;
-            // 
-            // con_img_db
-            // 
-            this.con_img_db.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.con_img_db.Location = new System.Drawing.Point(36, 362);
-            this.con_img_db.Name = "con_img_db";
-            this.con_img_db.Size = new System.Drawing.Size(29, 28);
-            this.con_img_db.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.con_img_db.TabIndex = 10;
-            this.con_img_db.TabStop = false;
-            // 
             // TIM_Autostart
             // 
             this.TIM_Autostart.Interval = 500;
@@ -566,35 +477,147 @@
             // chkCloseToTray
             // 
             this.chkCloseToTray.AutoSize = true;
-            this.chkCloseToTray.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkCloseToTray.Checked = true;
             this.chkCloseToTray.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkCloseToTray.Location = new System.Drawing.Point(236, 7);
+            this.chkCloseToTray.Location = new System.Drawing.Point(6, 19);
             this.chkCloseToTray.Name = "chkCloseToTray";
             this.chkCloseToTray.Size = new System.Drawing.Size(98, 17);
             this.chkCloseToTray.TabIndex = 24;
             this.chkCloseToTray.Text = "Minimize to tray";
+            this.chkCloseToTray.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.chkCloseToTray.UseVisualStyleBackColor = true;
             this.chkCloseToTray.Validated += new System.EventHandler(this.chkCloseToTray_Validated);
+            // 
+            // con_GroupBox_4
+            // 
+            this.con_GroupBox_4.Controls.Add(this.con_Button_Reset_Flags);
+            this.con_GroupBox_4.Controls.Add(this.label12);
+            this.con_GroupBox_4.Controls.Add(this.label11);
+            this.con_GroupBox_4.Controls.Add(this.label10);
+            this.con_GroupBox_4.Controls.Add(this.label9);
+            this.con_GroupBox_4.Controls.Add(this.con_img_lotATC);
+            this.con_GroupBox_4.Controls.Add(this.con_img_srs);
+            this.con_GroupBox_4.Controls.Add(this.con_img_dcs);
+            this.con_GroupBox_4.Controls.Add(this.con_img_db);
+            this.con_GroupBox_4.Location = new System.Drawing.Point(344, 54);
+            this.con_GroupBox_4.Name = "con_GroupBox_4";
+            this.con_GroupBox_4.Size = new System.Drawing.Size(324, 87);
+            this.con_GroupBox_4.TabIndex = 25;
+            this.con_GroupBox_4.TabStop = false;
+            this.con_GroupBox_4.Text = "Status";
+            // 
+            // con_Button_Reset_Flags
+            // 
+            this.con_Button_Reset_Flags.Enabled = false;
+            this.con_Button_Reset_Flags.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(255, 28);
+            this.con_Button_Reset_Flags.Name = "con_Button_Reset_Flags";
+            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(61, 36);
+            this.con_Button_Reset_Flags.TabIndex = 26;
+            this.con_Button_Reset_Flags.Text = "Reset error flags";
+            this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(187, 59);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(49, 13);
+            this.label12.TabIndex = 25;
+            this.label12.Text = "LotATC";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(138, 59);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(32, 13);
+            this.label11.TabIndex = 24;
+            this.label11.Text = "SRS";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(77, 59);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(39, 13);
+            this.label10.TabIndex = 23;
+            this.label10.Text = "Game";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(9, 59);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(61, 13);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "Database";
+            // 
+            // con_img_lotATC
+            // 
+            this.con_img_lotATC.Location = new System.Drawing.Point(196, 28);
+            this.con_img_lotATC.Name = "con_img_lotATC";
+            this.con_img_lotATC.Size = new System.Drawing.Size(29, 28);
+            this.con_img_lotATC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.con_img_lotATC.TabIndex = 22;
+            this.con_img_lotATC.TabStop = false;
+            // 
+            // con_img_srs
+            // 
+            this.con_img_srs.Location = new System.Drawing.Point(139, 28);
+            this.con_img_srs.Name = "con_img_srs";
+            this.con_img_srs.Size = new System.Drawing.Size(29, 28);
+            this.con_img_srs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.con_img_srs.TabIndex = 21;
+            this.con_img_srs.TabStop = false;
+            // 
+            // con_img_dcs
+            // 
+            this.con_img_dcs.Location = new System.Drawing.Point(82, 28);
+            this.con_img_dcs.Name = "con_img_dcs";
+            this.con_img_dcs.Size = new System.Drawing.Size(29, 28);
+            this.con_img_dcs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.con_img_dcs.TabIndex = 20;
+            this.con_img_dcs.TabStop = false;
+            // 
+            // con_img_db
+            // 
+            this.con_img_db.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.con_img_db.Location = new System.Drawing.Point(25, 28);
+            this.con_img_db.Name = "con_img_db";
+            this.con_img_db.Size = new System.Drawing.Size(29, 28);
+            this.con_img_db.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.con_img_db.TabIndex = 19;
+            this.con_img_db.TabStop = false;
+            // 
+            // con_GroupBox_5
+            // 
+            this.con_GroupBox_5.Controls.Add(this.chkCloseToTray);
+            this.con_GroupBox_5.Location = new System.Drawing.Point(14, 362);
+            this.con_GroupBox_5.Name = "con_GroupBox_5";
+            this.con_GroupBox_5.Size = new System.Drawing.Size(323, 46);
+            this.con_GroupBox_5.TabIndex = 26;
+            this.con_GroupBox_5.TabStop = false;
+            this.con_GroupBox_5.Text = "Others";
             // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(346, 652);
-            this.Controls.Add(this.chkCloseToTray);
-            this.Controls.Add(this.con_Button_Reset_Flags);
+            this.ClientSize = new System.Drawing.Size(675, 414);
+            this.Controls.Add(this.con_GroupBox_5);
+            this.Controls.Add(this.con_GroupBox_4);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.con_img_logo);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.con_img_lotATC);
-            this.Controls.Add(this.con_img_srs);
-            this.Controls.Add(this.con_img_dcs);
-            this.Controls.Add(this.con_img_db);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.con_GroupBox_3);
             this.Controls.Add(this.label5);
@@ -621,10 +644,14 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).EndInit();
+            this.con_GroupBox_4.ResumeLayout(false);
+            this.con_GroupBox_4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_lotATC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).EndInit();
+            this.con_GroupBox_5.ResumeLayout(false);
+            this.con_GroupBox_5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -666,15 +693,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.MaskedTextBox con_txt_dcs_instance;
-        private System.Windows.Forms.PictureBox con_img_db;
-        private System.Windows.Forms.PictureBox con_img_dcs;
-        private System.Windows.Forms.PictureBox con_img_srs;
-        private System.Windows.Forms.PictureBox con_img_lotATC;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Button con_Button_Reset_Flags;
         private System.Windows.Forms.PictureBox con_img_logo;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
@@ -683,6 +701,17 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ComboBox cboLogLevel;
         private System.Windows.Forms.CheckBox chkCloseToTray;
+        private System.Windows.Forms.GroupBox con_GroupBox_4;
+        private System.Windows.Forms.Button con_Button_Reset_Flags;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.PictureBox con_img_lotATC;
+        private System.Windows.Forms.PictureBox con_img_srs;
+        private System.Windows.Forms.PictureBox con_img_dcs;
+        private System.Windows.Forms.PictureBox con_img_db;
+        private System.Windows.Forms.GroupBox con_GroupBox_5;
     }
 }
 
