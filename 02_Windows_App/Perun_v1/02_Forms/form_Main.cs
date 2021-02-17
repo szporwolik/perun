@@ -103,6 +103,8 @@ namespace Perun_v1
             con_img_lotATC.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
             con_img_srs.Image = (Image)Properties.Resources.ResourceManager.GetObject("status_disconnected");
 
+            this.form_Main_SetControlsInit();
+
             // Display information that we are runing debug build
 #if !DEBUG
 
@@ -201,8 +203,14 @@ namespace Perun_v1
             con_txt_dcs_instance.Enabled = true;
             con_com_loglevel.Enabled = true;
 
+            this.form_Main_SetControlsInit();
         }
 
+        private void form_Main_SetControlsInit()
+        {
+            // Init values for the controls
+            label16.Text = "";
+        }
         // ################################ User input ################################
         private void con_Button_Listen_ON_Click(object sender, EventArgs e)
         {
@@ -437,6 +445,9 @@ namespace Perun_v1
             {
                 // Do nothing , control does not require update
             }
+
+            // Update mission status
+            label16.Text = Globals.CurrentMission.ToInfoString();
 
             // Update status icons at main form - MySQL
             if ((DatabaseConnection.DatabaseStatus != Globals.StatusDatabase) || Globals.AppForceIconReload)
@@ -701,5 +712,9 @@ namespace Perun_v1
             con_Button_Listen_ON_Click(sender,e); // Simulate button click
         }
 
+        private void label16_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

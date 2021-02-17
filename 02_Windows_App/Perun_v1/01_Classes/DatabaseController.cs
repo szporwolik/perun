@@ -118,6 +118,11 @@ public class DatabaseController
                 SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
                 SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_theatre` = '" + TCPFrame.payload.mission.theatre + "', `pe_OnlineStatus_name` = '" + TCPFrame.payload.mission.name + "' , `pe_OnlineStatus_pause` = '" + TCPFrame.payload.mission.pause + "', `pe_OnlineStatus_multiplayer` = '" + TCPFrame.payload.mission.multiplayer + "', `pe_OnlineStatus_realtime` = '" + TCPFrame.payload.mission.realtime + "', `pe_OnlineStatus_modeltime` = '" + TCPFrame.payload.mission.modeltime + "', `pe_OnlineStatus_players` =  " + player_count + " WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "';";
 
+                // Save for GUI
+                Globals.CurrentMission.Theatre = TCPFrame.payload.mission.theatre;
+                Globals.CurrentMission.Mission = TCPFrame.payload.mission.name;
+                Globals.CurrentMission.Pause = TCPFrame.payload.mission.pause;
+
                 break;
 
             default:

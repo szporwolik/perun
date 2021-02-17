@@ -73,6 +73,7 @@
             this.TIM_Autostart = new System.Windows.Forms.Timer(this.components);
             this.con_check_minimize_to_tray = new System.Windows.Forms.CheckBox();
             this.con_GroupBox_4 = new System.Windows.Forms.GroupBox();
+            this.label16 = new System.Windows.Forms.Label();
             this.con_Button_Reset_Flags = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -104,7 +105,7 @@
             "Not connected"});
             this.con_List_Received.Location = new System.Drawing.Point(8, 44);
             this.con_List_Received.Name = "con_List_Received";
-            this.con_List_Received.Size = new System.Drawing.Size(307, 160);
+            this.con_List_Received.Size = new System.Drawing.Size(307, 121);
             this.con_List_Received.TabIndex = 0;
             // 
             // con_Button_Listen_ON
@@ -134,9 +135,9 @@
             this.con_GroupBox_1.Controls.Add(this.con_com_loglevel);
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
             this.con_GroupBox_1.Controls.Add(this.con_Button_Add_Marker);
-            this.con_GroupBox_1.Location = new System.Drawing.Point(344, 147);
+            this.con_GroupBox_1.Location = new System.Drawing.Point(344, 177);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
-            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 209);
+            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 179);
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "Data log";
@@ -146,7 +147,7 @@
             this.label15.AutoSize = true;
             this.label15.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(9, 21);
+            this.label15.Location = new System.Drawing.Point(6, 18);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(50, 13);
             this.label15.TabIndex = 22;
@@ -162,7 +163,7 @@
             "Warning",
             "Info",
             "Debug"});
-            this.con_com_loglevel.Location = new System.Drawing.Point(65, 18);
+            this.con_com_loglevel.Location = new System.Drawing.Point(62, 12);
             this.con_com_loglevel.Name = "con_com_loglevel";
             this.con_com_loglevel.Size = new System.Drawing.Size(102, 20);
             this.con_com_loglevel.TabIndex = 23;
@@ -172,7 +173,7 @@
             // 
             this.con_Button_Add_Marker.Enabled = false;
             this.con_Button_Add_Marker.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_Button_Add_Marker.Location = new System.Drawing.Point(229, 17);
+            this.con_Button_Add_Marker.Location = new System.Drawing.Point(232, 12);
             this.con_Button_Add_Marker.Name = "con_Button_Add_Marker";
             this.con_Button_Add_Marker.Size = new System.Drawing.Size(86, 20);
             this.con_Button_Add_Marker.TabIndex = 21;
@@ -490,6 +491,7 @@
             // 
             // con_GroupBox_4
             // 
+            this.con_GroupBox_4.Controls.Add(this.label16);
             this.con_GroupBox_4.Controls.Add(this.con_Button_Reset_Flags);
             this.con_GroupBox_4.Controls.Add(this.label12);
             this.con_GroupBox_4.Controls.Add(this.label11);
@@ -501,10 +503,21 @@
             this.con_GroupBox_4.Controls.Add(this.con_img_db);
             this.con_GroupBox_4.Location = new System.Drawing.Point(344, 54);
             this.con_GroupBox_4.Name = "con_GroupBox_4";
-            this.con_GroupBox_4.Size = new System.Drawing.Size(324, 87);
+            this.con_GroupBox_4.Size = new System.Drawing.Size(324, 117);
             this.con_GroupBox_4.TabIndex = 25;
             this.con_GroupBox_4.TabStop = false;
             this.con_GroupBox_4.Text = "Status";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(6, 78);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(76, 13);
+            this.label16.TabIndex = 27;
+            this.label16.Text = "[mission name]";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label16.Click += new System.EventHandler(this.label16_Click);
             // 
             // con_Button_Reset_Flags
             // 
@@ -712,6 +725,7 @@
         private System.Windows.Forms.PictureBox con_img_dcs;
         private System.Windows.Forms.PictureBox con_img_db;
         private System.Windows.Forms.GroupBox con_GroupBox_5;
+        private System.Windows.Forms.Label label16;
     }
 }
 
