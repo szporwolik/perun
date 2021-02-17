@@ -94,6 +94,7 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
+            this.con_GroupBox_7 = new System.Windows.Forms.GroupBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -121,7 +122,7 @@
             // 
             // con_Button_Listen_ON
             // 
-            this.con_Button_Listen_ON.Location = new System.Drawing.Point(344, 482);
+            this.con_Button_Listen_ON.Location = new System.Drawing.Point(342, 430);
             this.con_Button_Listen_ON.Name = "con_Button_Listen_ON";
             this.con_Button_Listen_ON.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_ON.TabIndex = 2;
@@ -132,7 +133,7 @@
             // con_Button_Listen_OFF
             // 
             this.con_Button_Listen_OFF.Enabled = false;
-            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(436, 482);
+            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(434, 430);
             this.con_Button_Listen_OFF.Name = "con_Button_Listen_OFF";
             this.con_Button_Listen_OFF.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_OFF.TabIndex = 3;
@@ -146,7 +147,7 @@
             this.con_GroupBox_1.Controls.Add(this.con_com_loglevel);
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
             this.con_GroupBox_1.Controls.Add(this.con_Button_Add_Marker);
-            this.con_GroupBox_1.Location = new System.Drawing.Point(344, 290);
+            this.con_GroupBox_1.Location = new System.Drawing.Point(342, 248);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
             this.con_GroupBox_1.Size = new System.Drawing.Size(324, 179);
             this.con_GroupBox_1.TabIndex = 4;
@@ -209,7 +210,7 @@
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_database);
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_server);
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_password);
-            this.con_GroupBox_2.Location = new System.Drawing.Point(14, 54);
+            this.con_GroupBox_2.Location = new System.Drawing.Point(12, 12);
             this.con_GroupBox_2.Name = "con_GroupBox_2";
             this.con_GroupBox_2.Size = new System.Drawing.Size(324, 154);
             this.con_GroupBox_2.TabIndex = 5;
@@ -303,7 +304,7 @@
             this.con_GroupBox_3.Controls.Add(this.con_txt_3rd_srs);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_lotatc);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_srs);
-            this.con_GroupBox_3.Location = new System.Drawing.Point(14, 288);
+            this.con_GroupBox_3.Location = new System.Drawing.Point(12, 246);
             this.con_GroupBox_3.Name = "con_GroupBox_3";
             this.con_GroupBox_3.Size = new System.Drawing.Size(324, 68);
             this.con_GroupBox_3.TabIndex = 6;
@@ -348,7 +349,7 @@
             // 
             // con_Button_Quit
             // 
-            this.con_Button_Quit.Location = new System.Drawing.Point(582, 482);
+            this.con_Button_Quit.Location = new System.Drawing.Point(580, 430);
             this.con_Button_Quit.Name = "con_Button_Quit";
             this.con_Button_Quit.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Quit.TabIndex = 7;
@@ -360,7 +361,7 @@
             // 
             this.con_lab_github.AutoSize = true;
             this.con_lab_github.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_lab_github.Location = new System.Drawing.Point(513, 32);
+            this.con_lab_github.Location = new System.Drawing.Point(172, 456);
             this.con_lab_github.Name = "con_lab_github";
             this.con_lab_github.Size = new System.Drawing.Size(155, 12);
             this.con_lab_github.TabIndex = 8;
@@ -372,7 +373,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(513, 20);
+            this.label5.Location = new System.Drawing.Point(172, 444);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 12);
             this.label5.TabIndex = 9;
@@ -411,7 +412,7 @@
             this.groupBox1.Controls.Add(this.con_txt_dcs_instance);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.con_txt_dcs_server_port);
-            this.groupBox1.Location = new System.Drawing.Point(14, 214);
+            this.groupBox1.Location = new System.Drawing.Point(12, 172);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(324, 68);
             this.groupBox1.TabIndex = 7;
@@ -454,7 +455,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(63, 7);
+            this.label13.Location = new System.Drawing.Point(130, 388);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(74, 25);
             this.label13.TabIndex = 19;
@@ -464,7 +465,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(65, 32);
+            this.label14.Location = new System.Drawing.Point(132, 413);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(88, 13);
             this.label14.TabIndex = 20;
@@ -474,7 +475,7 @@
             // 
             this.con_img_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.con_img_logo.Image = global::Perun_v1.Properties.Resources.perun_logo;
-            this.con_img_logo.Location = new System.Drawing.Point(12, 7);
+            this.con_img_logo.Location = new System.Drawing.Point(79, 388);
             this.con_img_logo.Name = "con_img_logo";
             this.con_img_logo.Size = new System.Drawing.Size(45, 41);
             this.con_img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -511,7 +512,7 @@
             this.con_GroupBox_4.Controls.Add(this.con_img_srs);
             this.con_GroupBox_4.Controls.Add(this.con_img_dcs);
             this.con_GroupBox_4.Controls.Add(this.con_img_db);
-            this.con_GroupBox_4.Location = new System.Drawing.Point(344, 54);
+            this.con_GroupBox_4.Location = new System.Drawing.Point(342, 12);
             this.con_GroupBox_4.Name = "con_GroupBox_4";
             this.con_GroupBox_4.Size = new System.Drawing.Size(324, 87);
             this.con_GroupBox_4.TabIndex = 25;
@@ -613,7 +614,7 @@
             // con_GroupBox_5
             // 
             this.con_GroupBox_5.Controls.Add(this.con_check_minimize_to_tray);
-            this.con_GroupBox_5.Location = new System.Drawing.Point(14, 362);
+            this.con_GroupBox_5.Location = new System.Drawing.Point(13, 320);
             this.con_GroupBox_5.Name = "con_GroupBox_5";
             this.con_GroupBox_5.Size = new System.Drawing.Size(323, 46);
             this.con_GroupBox_5.TabIndex = 26;
@@ -632,7 +633,7 @@
             this.con_GroupBox_6.Controls.Add(this.label19);
             this.con_GroupBox_6.Controls.Add(this.label18);
             this.con_GroupBox_6.Controls.Add(this.label17);
-            this.con_GroupBox_6.Location = new System.Drawing.Point(345, 147);
+            this.con_GroupBox_6.Location = new System.Drawing.Point(343, 105);
             this.con_GroupBox_6.Name = "con_GroupBox_6";
             this.con_GroupBox_6.Size = new System.Drawing.Size(323, 76);
             this.con_GroupBox_6.TabIndex = 28;
@@ -738,11 +739,21 @@
             this.label17.TabIndex = 0;
             this.label17.Text = "[mission name]";
             // 
+            // con_GroupBox_7
+            // 
+            this.con_GroupBox_7.Location = new System.Drawing.Point(343, 187);
+            this.con_GroupBox_7.Name = "con_GroupBox_7";
+            this.con_GroupBox_7.Size = new System.Drawing.Size(323, 55);
+            this.con_GroupBox_7.TabIndex = 29;
+            this.con_GroupBox_7.TabStop = false;
+            this.con_GroupBox_7.Text = "System status";
+            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(675, 533);
+            this.ClientSize = new System.Drawing.Size(675, 479);
+            this.Controls.Add(this.con_GroupBox_7);
             this.Controls.Add(this.con_GroupBox_6);
             this.Controls.Add(this.con_GroupBox_5);
             this.Controls.Add(this.con_GroupBox_4);
@@ -857,6 +868,7 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.GroupBox con_GroupBox_7;
     }
 }
 
