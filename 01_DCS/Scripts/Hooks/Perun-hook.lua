@@ -35,12 +35,15 @@ Perun.lastSentStatus = 0
 Perun.lastSentMission = 0
 Perun.lastSentKeepAlive = 0
 Perun.lastConnectionError = 0
+Perun.lastFrameStart = 0;
 Perun.lastTimer = 0
 Perun.lastReconnect = (-1) * Perun.ReconnectTimeout
 Perun.SendRetries = 2
 Perun.RefreshKeepAlive = 3
+Perun.FrameTime = 0;
 Perun.socket  = require("socket")
-Perun.IsServer = DCS.isServer( )								
+Perun.IsServer = DCS.isServer( )
+								
 Perun.ConnectionError = "[Perun] ERROR: Connection broken - contact server admin!"
 
 -- ################################ Helper function definitions ################################
@@ -411,7 +414,9 @@ Perun.SendToPerun = function(data_id, data_package)
     _TempData["payload"]=data_package
     _TempData["timestamp"]=os.date('%Y-%m-%d %H:%M:%S')
 	_TempData["instance"]=Perun.Instance
-	
+	_TempData['dcs_frame_time']=Perun.FrameTime * 1000000
+	_TempData['dcs_current_frame_delay']=(DCS.getRealTime() - Perun.lastFrameStart) * 1000000
+
 	-- Build TCP frame
     local _TCPFrame="<SOT>" .. stripChars(net.lua2json(_TempData)) .. "<EOT>"
 
@@ -420,20 +425,22 @@ Perun.SendToPerun = function(data_id, data_package)
 	local _intTries =0
 	local _err=nil
 	local _dropped =  true
-
+	local _delay = 0
 	-- Try to send a few times (defind in settings section)
 	local _now = DCS.getRealTime()
 	while _intStatus == nil and _intTries < Perun.SendRetries do
 		_intStatus, _err = Perun.TCP:send(_TCPFrame) 
 		if _err then
 			-- Failure, packet was not send
-			Perun.AddLog("Packed not send : " .. data_id .. " , error: " .. _err .. ", tries: " .. _intTries,2)
+			_delay = (DCS.getRealTime() - Perun.lastFrameStart) * 1000000
+			Perun.AddLog("Packed not send : " .. data_id .. " , error: " .. _err .. ", tries: " .. _intTries .. ", delay: " ..  _delay,2)
 			if _now > Perun.lastReconnect + Perun.ReconnectTimeout then
 				Perun.ConnectToPerun()
 			end
 		else
 			-- Succes, packet was send
-			Perun.AddLog("Packet send : " .. data_id .. " , tries:" .. _intTries,2)
+			_delay = (DCS.getRealTime() - Perun.lastFrameStart) * 1000000
+			Perun.AddLog("Packet send : " .. data_id .. " , tries:" .. _intTries .. ", delay: " .. _delay,2)
 			_dropped = false
 		end
 		_intTries=_intTries+1
@@ -804,6 +811,7 @@ end
 Perun.onSimulationFrame = function()
 	-- Repeat for each simulator frame
     local _now = DCS.getRealTime()
+	Perun.lastFrameStart = _now
 
     -- First run
 	if Perun.lastSentMission == 0 and Perun.lastSentStatus == 0 then
@@ -829,6 +837,8 @@ Perun.onSimulationFrame = function()
 	-- Send keepalive
 	if _now > Perun.lastSentKeepAlive + Perun.RefreshKeepAlive then 
 		Perun.lastSentKeepAlive = _now
+
+		-- Lets send aprox. frame time in us
 		Perun.SendToPerun(0,nil) 
 	end
 	
@@ -842,7 +852,9 @@ Perun.onSimulationFrame = function()
 			end
 		end
 	end
-	
+
+	-- Calculate approx. frame time
+	Perun.FrameTime = DCS.getRealTime() - _now
 end
 
 Perun.onPlayerStart = function (id)
