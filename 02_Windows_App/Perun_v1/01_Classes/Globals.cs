@@ -1,7 +1,43 @@
-﻿// This class gathers all global variable
+﻿using System;
+using System.Diagnostics;
+using System.Management;
 
-// Class to hold current game state/mission information
+// Class to hold all global information
 
+class HardwareMonitorClass
+{
+
+    protected PerformanceCounter cpuCounter;
+    protected PerformanceCounter ramCounter;
+    protected PerformanceCounter cputempCounter;
+
+    public HardwareMonitorClass()
+    {
+        // Prepare CPU counter
+        cpuCounter = new PerformanceCounter();
+        cpuCounter.CategoryName = "Processor";
+        cpuCounter.CounterName = "% Processor Time";
+        cpuCounter.InstanceName = "_Total";
+
+        // Prepare RAM counter
+        ramCounter = new PerformanceCounter();
+        ramCounter.CategoryName = "Memory";
+        ramCounter.CounterName = "% Committed Bytes In Use";
+
+    }
+    // Get CPU usage
+    public string getCurrentCpuUsage()
+    {
+        return cpuCounter.NextValue().ToString("0.00");
+    }
+
+    // Get available RAM memory
+    public string getAvailableRAM()
+    {
+        return ramCounter.NextValue().ToString("0.00");
+    }
+
+}
 class CurrentMissionClass
 {
 
@@ -54,5 +90,7 @@ internal class Globals
     public static string VersionPerun = "DEBUG";                    // Version - Perun
 
     public static CurrentMissionClass CurrentMission = new CurrentMissionClass();   // Actual mission information
+
+    public static HardwareMonitorClass HardwareMonitor = new HardwareMonitorClass();
 }
 

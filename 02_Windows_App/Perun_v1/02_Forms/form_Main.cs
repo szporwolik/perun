@@ -363,6 +363,38 @@ namespace Perun_v1
             Properties.Settings.Default.CLOSE_TO_TRAY = con_check_minimize_to_tray.Checked;
         }
 
+        private void con_Button_Reset_Flags_Click(object sender, EventArgs e)
+        {
+            // Reset error flags
+            DialogResult dialogResult = MessageBox.Show("Are you sure to reset error flags?", "Question", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+            if (dialogResult == DialogResult.Yes)
+            {
+                // Reset errors counter
+                Globals.ErrorsDatabase = 0;                            // MySQL - Error counter
+                Globals.ErrorsGame = 0;                             // TCP connection - Error counter
+                Globals.ErrorsHistoryGame = 0;                      // TCP connection - historic value of Error counter
+                Globals.ErrorsSRS = 0;                              // DCS SRS - error counter
+                Globals.ErrorsLotATC = 0;                           // LotATC - error counter
+
+                // Force icons reload
+                Globals.AppForceIconReload = true;
+
+                // Add information
+                PerunHelper.LogInfo(ref Globals.AppLogHistory, "Resetted error counter", 0, 1);
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                // Do nothing
+            }
+
+        }
+
+        private void con_Button_Add_Marker_Click(object sender, EventArgs e)
+        {
+            // Added user marker
+            PerunHelper.LogInfo(ref Globals.AppLogHistory, "User Marker", 0, 1);
+        }
+
         // ################################ Form state ################################
         private void con_Button_Quit_Click(object sender, EventArgs e)
         {
@@ -703,48 +735,18 @@ namespace Perun_v1
 
         }
 
-        private void con_Button_Reset_Flags_Click(object sender, EventArgs e)
+        private void tim_HW_status_Tick(object sender, EventArgs e)
         {
-            // Reset error flags
-            DialogResult dialogResult = MessageBox.Show("Are you sure to reset error flags?", "Question", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
-            if (dialogResult == DialogResult.Yes)
-            {
-                // Reset errors counter
-                Globals.ErrorsDatabase = 0;                            // MySQL - Error counter
-                Globals.ErrorsGame = 0;                             // TCP connection - Error counter
-                Globals.ErrorsHistoryGame = 0;                      // TCP connection - historic value of Error counter
-                Globals.ErrorsSRS = 0;                              // DCS SRS - error counter
-                Globals.ErrorsLotATC = 0;                           // LotATC - error counter
-
-                // Force icons reload
-                Globals.AppForceIconReload = true;
-
-                // Add information
-                PerunHelper.LogInfo(ref Globals.AppLogHistory, "Resetted error counter", 0, 1);
-            }
-            else if (dialogResult == DialogResult.No)
-            {
-                // Do nothing
-            }
-
+            //Handle getting of system status
+            label28.Text = Globals.HardwareMonitor.getCurrentCpuUsage() + "%";
+            label29.Text = Globals.HardwareMonitor.getAvailableRAM() + "%";
         }
-
-        private void con_Button_Add_Marker_Click(object sender, EventArgs e)
-        {
-            // Added user marker
-            PerunHelper.LogInfo(ref Globals.AppLogHistory, "User Marker", 0, 1);
-        }
-
+       
         private void TIM_Autostart_Tick(object sender, EventArgs e)
         {
             // Handle autostart parameter from command line
             TIM_Autostart.Enabled = false; // Disable timer
             con_Button_Listen_ON_Click(sender, e); // Simulate button click
-        }
-
-        private void label16_Click(object sender, EventArgs e)
-        {
-
         }
 
     }

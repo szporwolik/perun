@@ -95,6 +95,12 @@
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.con_GroupBox_7 = new System.Windows.Forms.GroupBox();
+            this.label29 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.label27 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.tim_HW_status = new System.Windows.Forms.Timer(this.components);
+            this.performanceCounter1 = new System.Diagnostics.PerformanceCounter();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -107,6 +113,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).BeginInit();
             this.con_GroupBox_5.SuspendLayout();
             this.con_GroupBox_6.SuspendLayout();
+            this.con_GroupBox_7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.performanceCounter1)).BeginInit();
             this.SuspendLayout();
             // 
             // con_List_Received
@@ -455,7 +463,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(130, 388);
+            this.label13.Location = new System.Drawing.Point(69, 386);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(74, 25);
             this.label13.TabIndex = 19;
@@ -465,7 +473,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(132, 413);
+            this.label14.Location = new System.Drawing.Point(71, 411);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(88, 13);
             this.label14.TabIndex = 20;
@@ -475,7 +483,7 @@
             // 
             this.con_img_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.con_img_logo.Image = global::Perun_v1.Properties.Resources.perun_logo;
-            this.con_img_logo.Location = new System.Drawing.Point(79, 388);
+            this.con_img_logo.Location = new System.Drawing.Point(18, 386);
             this.con_img_logo.Name = "con_img_logo";
             this.con_img_logo.Size = new System.Drawing.Size(45, 41);
             this.con_img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -741,12 +749,60 @@
             // 
             // con_GroupBox_7
             // 
+            this.con_GroupBox_7.Controls.Add(this.label29);
+            this.con_GroupBox_7.Controls.Add(this.label28);
+            this.con_GroupBox_7.Controls.Add(this.label27);
+            this.con_GroupBox_7.Controls.Add(this.label20);
             this.con_GroupBox_7.Location = new System.Drawing.Point(343, 187);
             this.con_GroupBox_7.Name = "con_GroupBox_7";
             this.con_GroupBox_7.Size = new System.Drawing.Size(323, 55);
             this.con_GroupBox_7.TabIndex = 29;
             this.con_GroupBox_7.TabStop = false;
             this.con_GroupBox_7.Text = "System status";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(82, 30);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(37, 13);
+            this.label29.TabIndex = 34;
+            this.label29.Text = "[RAM]";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(82, 16);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(35, 13);
+            this.label28.TabIndex = 34;
+            this.label28.Text = "[CPU]";
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(51, 30);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(34, 13);
+            this.label27.TabIndex = 34;
+            this.label27.Text = "RAM:";
+            this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(53, 16);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(32, 13);
+            this.label20.TabIndex = 34;
+            this.label20.Text = "CPU:";
+            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // tim_HW_status
+            // 
+            this.tim_HW_status.Enabled = true;
+            this.tim_HW_status.Interval = 1000;
+            this.tim_HW_status.Tick += new System.EventHandler(this.tim_HW_status_Tick);
             // 
             // form_Main
             // 
@@ -797,6 +853,8 @@
             this.con_GroupBox_5.PerformLayout();
             this.con_GroupBox_6.ResumeLayout(false);
             this.con_GroupBox_6.PerformLayout();
+            this.con_GroupBox_7.ResumeLayout(false);
+            this.con_GroupBox_7.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -869,6 +927,12 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.GroupBox con_GroupBox_7;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Timer tim_HW_status;
+        private System.Diagnostics.PerformanceCounter performanceCounter1;
     }
 }
 
