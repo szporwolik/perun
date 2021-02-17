@@ -127,6 +127,7 @@ namespace Perun_v1
             con_txt_dcs_instance.Text = Properties.Settings.Default.DCS_Instance.ToString();
             con_com_loglevel.SelectedIndex = Properties.Settings.Default.OTHER_Log_Level;
             con_check_minimize_to_tray.Checked = Properties.Settings.Default.OTHER_Minimize_to_Tray;
+            con_check_delete_logs.Checked = Properties.Settings.Default.OTHER_Log_Rotate;
         }
 
         private void form_Main_SaveSettings()
@@ -147,6 +148,7 @@ namespace Perun_v1
             Properties.Settings.Default.DCS_Instance = Int32.Parse(con_txt_dcs_instance.Text);
             Properties.Settings.Default.OTHER_Log_Level = con_com_loglevel.SelectedIndex;
             Properties.Settings.Default.OTHER_Minimize_to_Tray = con_check_minimize_to_tray.Checked;
+            Properties.Settings.Default.OTHER_Log_Rotate = con_check_delete_logs.Checked;
 
             Properties.Settings.Default.Save();
         }
@@ -353,6 +355,12 @@ namespace Perun_v1
         {
             // Changed close to try state
             Properties.Settings.Default.OTHER_Minimize_to_Tray = con_check_minimize_to_tray.Checked;
+        }
+
+        private void con_check_delete_logs_Validated(object sender, EventArgs e)
+        {
+            // Changed rotate logs state
+            Properties.Settings.Default.OTHER_Log_Rotate = con_check_delete_logs.Checked;
         }
 
         private void con_Button_Reset_Flags_Click(object sender, EventArgs e)
@@ -572,6 +580,10 @@ namespace Perun_v1
                 Globals.StatusHistoryConnection = Globals.StatusConnection;
                 Globals.ErrorsHistoryGame = Globals.ErrorsGame;
             }
+
+            // Check if we shall rate logs
+            Globals.RotateLogs = con_check_minimize_to_tray.Checked;
+
             // Update status icons at main form - SRS
             if ((ExtSRSStatus != Globals.StatusSRS) || Globals.AppForceIconReload)
             {
@@ -776,5 +788,7 @@ namespace Perun_v1
                 Process.Start(Globals.LastLogLocation);
             }
         }
+
+       
     }
 }

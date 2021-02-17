@@ -101,6 +101,7 @@
             this.label20 = new System.Windows.Forms.Label();
             this.tim_HW_status = new System.Windows.Forms.Timer(this.components);
             this.con_Button_See_log = new System.Windows.Forms.Button();
+            this.con_check_delete_logs = new System.Windows.Forms.CheckBox();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -621,6 +622,7 @@
             // 
             // con_GroupBox_5
             // 
+            this.con_GroupBox_5.Controls.Add(this.con_check_delete_logs);
             this.con_GroupBox_5.Controls.Add(this.con_check_minimize_to_tray);
             this.con_GroupBox_5.Location = new System.Drawing.Point(13, 370);
             this.con_GroupBox_5.Name = "con_GroupBox_5";
@@ -816,6 +818,20 @@
             this.con_Button_See_log.UseVisualStyleBackColor = true;
             this.con_Button_See_log.Click += new System.EventHandler(this.con_Button_See_log_Click);
             // 
+            // con_check_delete_logs
+            // 
+            this.con_check_delete_logs.AutoSize = true;
+            this.con_check_delete_logs.Checked = true;
+            this.con_check_delete_logs.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.con_check_delete_logs.Location = new System.Drawing.Point(105, 19);
+            this.con_check_delete_logs.Name = "con_check_delete_logs";
+            this.con_check_delete_logs.Size = new System.Drawing.Size(138, 17);
+            this.con_check_delete_logs.TabIndex = 25;
+            this.con_check_delete_logs.Text = "Rotate logs after 7 days";
+            this.con_check_delete_logs.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.con_check_delete_logs.UseVisualStyleBackColor = true;
+            this.con_check_delete_logs.Validated += new System.EventHandler(this.con_check_delete_logs_Validated);
+            // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -945,6 +961,7 @@
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Timer tim_HW_status;
         private System.Windows.Forms.Button con_Button_See_log;
+        private System.Windows.Forms.CheckBox con_check_delete_logs;
     }
 }
 

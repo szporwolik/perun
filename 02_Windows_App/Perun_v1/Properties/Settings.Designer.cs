@@ -178,5 +178,17 @@ namespace Perun_v1.Properties {
                 this["OTHER_Minimize_to_Tray"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool OTHER_Log_Rotate {
+            get {
+                return ((bool)(this["OTHER_Log_Rotate"]));
+            }
+            set {
+                this["OTHER_Log_Rotate"] = value;
+            }
+        }
     }
 }

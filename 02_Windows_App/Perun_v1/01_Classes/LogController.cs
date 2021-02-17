@@ -59,14 +59,17 @@ class LogController
         }
 
         // Delete old files - log rotation
-        DirectoryInfo di = new DirectoryInfo(LogFileDir);
-        FileInfo[] files = di.GetFiles("*.log");
-
-        foreach (FileInfo fi in files)
+        if (Globals.RotateLogs)
         {
-            if (fi.LastAccessTime < DateTime.Now.AddDays(-7))
+            DirectoryInfo di = new DirectoryInfo(LogFileDir);
+            FileInfo[] files = di.GetFiles("*.log");
+
+            foreach (FileInfo fi in files)
             {
-                fi.Delete();
+                if (fi.LastAccessTime < DateTime.Now.AddDays(-7))
+                {
+                    fi.Delete();
+                }
             }
         }
     }
