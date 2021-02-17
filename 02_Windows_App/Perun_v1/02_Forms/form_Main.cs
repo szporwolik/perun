@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -534,6 +535,7 @@ namespace Perun_v1
             // Take care of 3rd party stuff
             string ExtSRSJson = "";
             string ExtLotATCJson = "";
+            string ClientName = "";
 
             bool ExtSRSUseDefault = true;
             bool ExtLotATCUseDefault = true;
@@ -564,9 +566,17 @@ namespace Perun_v1
                                     }
                                 }
                             }
+                            if (raw_lotatc.Clients[i].Name != null)
+                            {
+                                ClientName = raw_lotatc.Clients[i].Name;
+                                Regex rgx = new Regex("[^a-zA-Z0-9 -]");
+                                ClientName = rgx.Replace(ClientName, "");
+
+                                raw_lotatc.Clients[i].Name = ClientName;
+                            }
                         }
 
-                        ExtSRSJson = JsonConvert.SerializeObject(raw_lotatc);
+                        ExtSRSJson = JsonConvert.SerializeObject(raw_lotatc); 
                         ExtSRSJson = "{'type':'100','instance':'" + Int32.Parse(con_txt_dcs_instance.Text) + "','payload':'" + ExtSRSJson + "'}";
 
                         ExtSRSUseDefault = false;
