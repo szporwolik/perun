@@ -81,6 +81,12 @@ internal class Globals
     public static string LastLogLocation = "";                      // Last used log location
     public static bool RotateLogs = false;                          // Rotate logs true/false
 
+    public static float LastFrameTime = 0f;                         // Last recorded frame time
+    public static float LastFrameDelay = 0f;                        // Last recorded frame time
+
+    public static string[] arrGUILogHistory;                        // Log history for GUI
+    public static string[] arrMySQLSendBuffer;                      // MySQL send buffer
+
     public static CurrentMissionClass CurrentMission = new CurrentMissionClass();   // Actual mission information single ton
 
     public static HardwareMonitorClass HardwareMonitor = new HardwareMonitorClass();   // Hardware monitor singleton

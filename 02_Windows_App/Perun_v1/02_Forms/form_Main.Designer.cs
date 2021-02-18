@@ -34,6 +34,7 @@
             this.con_Button_Listen_ON = new System.Windows.Forms.Button();
             this.con_Button_Listen_OFF = new System.Windows.Forms.Button();
             this.con_GroupBox_1 = new System.Windows.Forms.GroupBox();
+            this.con_Button_See_log = new System.Windows.Forms.Button();
             this.label15 = new System.Windows.Forms.Label();
             this.con_com_loglevel = new System.Windows.Forms.ComboBox();
             this.con_Button_Add_Marker = new System.Windows.Forms.Button();
@@ -83,6 +84,7 @@
             this.con_img_dcs = new System.Windows.Forms.PictureBox();
             this.con_img_db = new System.Windows.Forms.PictureBox();
             this.con_GroupBox_5 = new System.Windows.Forms.GroupBox();
+            this.con_check_delete_logs = new System.Windows.Forms.CheckBox();
             this.con_GroupBox_6 = new System.Windows.Forms.GroupBox();
             this.label26 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
@@ -100,8 +102,10 @@
             this.label27 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.tim_HW_status = new System.Windows.Forms.Timer(this.components);
-            this.con_Button_See_log = new System.Windows.Forms.Button();
-            this.con_check_delete_logs = new System.Windows.Forms.CheckBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label33 = new System.Windows.Forms.Label();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -162,6 +166,18 @@
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "Data log";
+            // 
+            // con_Button_See_log
+            // 
+            this.con_Button_See_log.Enabled = false;
+            this.con_Button_See_log.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_Button_See_log.Location = new System.Drawing.Point(170, 12);
+            this.con_Button_See_log.Name = "con_Button_See_log";
+            this.con_Button_See_log.Size = new System.Drawing.Size(56, 20);
+            this.con_Button_See_log.TabIndex = 24;
+            this.con_Button_See_log.Text = "See log";
+            this.con_Button_See_log.UseVisualStyleBackColor = true;
+            this.con_Button_See_log.Click += new System.EventHandler(this.con_Button_See_log_Click);
             // 
             // label15
             // 
@@ -631,6 +647,20 @@
             this.con_GroupBox_5.TabStop = false;
             this.con_GroupBox_5.Text = "Other settings";
             // 
+            // con_check_delete_logs
+            // 
+            this.con_check_delete_logs.AutoSize = true;
+            this.con_check_delete_logs.Checked = true;
+            this.con_check_delete_logs.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.con_check_delete_logs.Location = new System.Drawing.Point(105, 19);
+            this.con_check_delete_logs.Name = "con_check_delete_logs";
+            this.con_check_delete_logs.Size = new System.Drawing.Size(138, 17);
+            this.con_check_delete_logs.TabIndex = 25;
+            this.con_check_delete_logs.Text = "Rotate logs after 7 days";
+            this.con_check_delete_logs.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.con_check_delete_logs.UseVisualStyleBackColor = true;
+            this.con_check_delete_logs.Validated += new System.EventHandler(this.con_check_delete_logs_Validated);
+            // 
             // con_GroupBox_6
             // 
             this.con_GroupBox_6.Controls.Add(this.label26);
@@ -751,6 +781,10 @@
             // 
             // con_GroupBox_7
             // 
+            this.con_GroupBox_7.Controls.Add(this.label33);
+            this.con_GroupBox_7.Controls.Add(this.label32);
+            this.con_GroupBox_7.Controls.Add(this.label31);
+            this.con_GroupBox_7.Controls.Add(this.label30);
             this.con_GroupBox_7.Controls.Add(this.label29);
             this.con_GroupBox_7.Controls.Add(this.label28);
             this.con_GroupBox_7.Controls.Add(this.label27);
@@ -765,7 +799,7 @@
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(82, 30);
+            this.label29.Location = new System.Drawing.Point(40, 34);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(37, 13);
             this.label29.TabIndex = 34;
@@ -774,7 +808,7 @@
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(82, 16);
+            this.label28.Location = new System.Drawing.Point(40, 16);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(35, 13);
             this.label28.TabIndex = 34;
@@ -783,7 +817,7 @@
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(51, 30);
+            this.label27.Location = new System.Drawing.Point(10, 34);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(34, 13);
             this.label27.TabIndex = 34;
@@ -793,7 +827,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(53, 16);
+            this.label20.Location = new System.Drawing.Point(10, 16);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(32, 13);
             this.label20.TabIndex = 34;
@@ -806,31 +840,43 @@
             this.tim_HW_status.Interval = 1000;
             this.tim_HW_status.Tick += new System.EventHandler(this.tim_HW_status_Tick);
             // 
-            // con_Button_See_log
+            // label30
             // 
-            this.con_Button_See_log.Enabled = false;
-            this.con_Button_See_log.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_Button_See_log.Location = new System.Drawing.Point(170, 12);
-            this.con_Button_See_log.Name = "con_Button_See_log";
-            this.con_Button_See_log.Size = new System.Drawing.Size(56, 20);
-            this.con_Button_See_log.TabIndex = 24;
-            this.con_Button_See_log.Text = "See log";
-            this.con_Button_See_log.UseVisualStyleBackColor = true;
-            this.con_Button_See_log.Click += new System.EventHandler(this.con_Button_See_log_Click);
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(92, 16);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(81, 13);
+            this.label30.TabIndex = 34;
+            this.label30.Text = "Last frame time:";
+            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // con_check_delete_logs
+            // label31
             // 
-            this.con_check_delete_logs.AutoSize = true;
-            this.con_check_delete_logs.Checked = true;
-            this.con_check_delete_logs.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.con_check_delete_logs.Location = new System.Drawing.Point(105, 19);
-            this.con_check_delete_logs.Name = "con_check_delete_logs";
-            this.con_check_delete_logs.Size = new System.Drawing.Size(138, 17);
-            this.con_check_delete_logs.TabIndex = 25;
-            this.con_check_delete_logs.Text = "Rotate logs after 7 days";
-            this.con_check_delete_logs.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.con_check_delete_logs.UseVisualStyleBackColor = true;
-            this.con_check_delete_logs.Validated += new System.EventHandler(this.con_check_delete_logs_Validated);
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(174, 16);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(61, 13);
+            this.label31.TabIndex = 34;
+            this.label31.Text = "[frame time]";
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(86, 34);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(87, 13);
+            this.label32.TabIndex = 35;
+            this.label32.Text = "Last frame delay:";
+            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(174, 34);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(67, 13);
+            this.label33.TabIndex = 36;
+            this.label33.Text = "[frame delay]";
             // 
             // form_Main
             // 
@@ -962,6 +1008,10 @@
         private System.Windows.Forms.Timer tim_HW_status;
         private System.Windows.Forms.Button con_Button_See_log;
         private System.Windows.Forms.CheckBox con_check_delete_logs;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.Label label32;
     }
 }
 

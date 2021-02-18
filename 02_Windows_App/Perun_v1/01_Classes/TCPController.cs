@@ -12,16 +12,15 @@ public class TCPController
     // Main class for TCP listener
     public int intListenPort;           // Port to connect to
     public bool bCloseConnection;       // Helper to exit main loop without killing thread
-    public string[] arrGUILogHistory;   // Log history for GUI
-    public string[] arrMySQLSendBuffer; // MySQL send buffer
+    
     public Thread thrTCPListener;       // Seperate thread for TCP
 
     public void Create(int par_intListenPort, ref string[] par_arrLogHistory, ref string[] par_arrSendBuffer)
     {
         // Create class and map creation arguments to class
         intListenPort = par_intListenPort;
-        arrGUILogHistory = par_arrLogHistory;
-        arrMySQLSendBuffer = par_arrSendBuffer;
+        Globals.arrGUILogHistory = par_arrLogHistory;
+        Globals.arrMySQLSendBuffer = par_arrSendBuffer;
         bCloseConnection = false;
     }
 
@@ -31,9 +30,9 @@ public class TCPController
         bCloseConnection = true;
 
         // Clear send buffer
-        for (int i = 0; i < arrMySQLSendBuffer.Length - 1; i++)
+        for (int i = 0; i < Globals.arrMySQLSendBuffer.Length - 1; i++)
         {
-            arrMySQLSendBuffer[i] = null;   // Empty send buffer
+            Globals.arrMySQLSendBuffer[i] = null;   // Empty send buffer
         }
     }
 
@@ -126,25 +125,30 @@ public class TCPController
                                         if (Int32.Parse(strRawTCPFrameType) != 0)
                                         {
                                             // Add to mySQL send buffer (find first empty slot)
-                                            PerunHelper.LogDebug(ref arrGUILogHistory, "Packet received" , 2,0, strRawTCPFrameType);
+                                            PerunHelper.LogDebug(ref Globals.arrGUILogHistory, "Packet received" , 2,0, strRawTCPFrameType);
                                             bool AddedDataToBuffer = false;
-                                            for (int i = 0; i < arrMySQLSendBuffer.Length - 1; i++)
+                                            for (int i = 0; i < Globals.arrMySQLSendBuffer.Length - 1; i++)
                                             {
-                                                if (arrMySQLSendBuffer[i] == null)
+                                                if (Globals.arrMySQLSendBuffer[i] == null)
                                                 {
-                                                    arrMySQLSendBuffer[i] = strReceivedData;
+                                                    Globals.arrMySQLSendBuffer[i] = strReceivedData;
                                                     AddedDataToBuffer = true;
                                                     break;
                                                 }
                                             }
                                             if (!AddedDataToBuffer)
                                             {
-                                                PerunHelper.LogError(ref arrGUILogHistory, "ERROR TCP package was dropped", 1, 1, strRawTCPFrameType);
+                                                PerunHelper.LogError(ref Globals.arrGUILogHistory, "ERROR TCP package was dropped", 1, 1, strRawTCPFrameType);
                                             }
                                         } else
                                         {
                                             // Keep alive
-                                            PerunHelper.LogDebug(ref arrGUILogHistory, "Keep-alive received", 2,0,"0");
+                                            PerunHelper.LogDebug(ref Globals.arrGUILogHistory, "Keep-alive received", 2,0,"0");
+                                        }
+
+                                        if (dynamicRawTCPFrame.dcs_frame_time != null && dynamicRawTCPFrame.dcs_current_frame_delay != null)
+                                        {
+                                            PerunHelper.SetFrameRates((float)dynamicRawTCPFrame.dcs_frame_time, (float)dynamicRawTCPFrame.dcs_current_frame_delay);
                                         }
                                     }
                                     else
@@ -156,7 +160,7 @@ public class TCPController
                                 {
                                     Globals.ErrorsGame++;
                                     Console.WriteLine(e.ToString());
-                                    PerunHelper.LogError(ref arrGUILogHistory, $"ERROR TCP while message parsing , error: {e.Message}",2,1,"?");
+                                    PerunHelper.LogError(ref Globals.arrGUILogHistory, $"ERROR TCP while message parsing , error: {e.Message}",2,1,"?");
                                     bTCPConnectionOnline = false;
                                 }
 
@@ -168,7 +172,7 @@ public class TCPController
                                 catch (SocketException e)
                                 {
                                     Console.WriteLine(e.ToString());
-                                    PerunHelper.LogError(ref arrGUILogHistory, $"ERROR TCP cannot check connection, error: {e.Message}",2,1,"?");
+                                    PerunHelper.LogError(ref Globals.arrGUILogHistory, $"ERROR TCP cannot check connection, error: {e.Message}",2,1,"?");
                                 }
 
                             }
@@ -182,7 +186,7 @@ public class TCPController
             {
                 Globals.ErrorsGame++;
                 Console.WriteLine(e.ToString());
-                PerunHelper.LogError(ref arrGUILogHistory, $"ERROR TCP - connection closed or port in use, error: {e.Message}",1,1,"?");
+                PerunHelper.LogError(ref Globals.arrGUILogHistory, $"ERROR TCP - connection closed or port in use, error: {e.Message}",1,1,"?");
                 bTCPConnectionOnline = false;
             }
 

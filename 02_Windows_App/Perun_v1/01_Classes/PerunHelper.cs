@@ -5,6 +5,12 @@ using System.Text.RegularExpressions;
 
 internal class PerunHelper
 {
+    public static void SetFrameRates(float frame_rate, float last_delay)
+    {
+        Globals.LastFrameTime = frame_rate;
+        Globals.LastFrameDelay = last_delay;
+    }
+    
     // Add error infomation
     public static void LogError(ref string[] arrLogHistory, string strEntryToAdd, int intDirection = 0, int intMarker = 0, string strType = " ", bool bSkipGui = false)
     {
@@ -92,7 +98,7 @@ internal class PerunHelper
             Globals.AppUpdateGUI = true;
         }
         // Add the entry to log file
-        LogController.instance.WriteLog(logLevel, $"{DateTime.Now.ToString("yyyy-MM-dd ")} {DateTime.Now.ToString("HH:mm:ss.fff")} | {Globals.HardwareMonitor.LastCurrentCpuUsage} | {Globals.HardwareMonitor.LastCurrentRamUsage} | {Globals.AppInstanceID} | {LogMarker} | {LogDirection} | {strType} | {strEntryToAdd}");
+        LogController.instance.WriteLog(logLevel, $"{DateTime.Now.ToString("yyyy-MM-dd ")} {DateTime.Now.ToString("HH:mm:ss.fff")} | {Globals.HardwareMonitor.LastCurrentCpuUsage} | {Globals.HardwareMonitor.LastCurrentRamUsage} | {Globals.LastFrameTime.ToString("0.00")} | {Globals.LastFrameDelay.ToString("0.00")} | {Globals.AppInstanceID} | {LogMarker} | {LogDirection} | {strType} | {strEntryToAdd}");
     }
 
     // Gets build version

@@ -581,6 +581,10 @@ namespace Perun_v1
                 Globals.ErrorsHistoryGame = Globals.ErrorsGame;
             }
 
+            // Frame times
+            label31.Text = $"{Globals.LastFrameTime.ToString("0.00")}µs";
+            label33.Text = $"{Globals.LastFrameDelay.ToString("0.00")}µs";
+
             // Check if we shall rate logs
             Globals.RotateLogs = con_check_minimize_to_tray.Checked;
 

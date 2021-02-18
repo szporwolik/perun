@@ -44,7 +44,17 @@ public class DatabaseController
                 int LogDirection = 1;
                 MySqlCommand DatabaseCommand = null;
 
-                // Add parameters - prevent SQL injection
+                // For frames 1 to 10 we will put those into data raw tables
+                if (Int32.Parse(TCPFrameType) >= 1 && Int32.Parse(TCPFrameType) <= 10)
+                {
+                    SQLQueryTxt = "INSERT INTO `pe_DataRaw` (`pe_dataraw_type`,`pe_dataraw_instance`) SELECT '" + TCPFrameType + "','" + TCPFrameInstance + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataRaw` WHERE `pe_dataraw_type` = '" + TCPFrameType + "' AND `pe_dataraw_instance` = " + TCPFrameInstance + ");";
+                    SQLQueryTxt += "UPDATE `pe_DataRaw` SET `pe_dataraw_payload` = @PAR_TCPFramePayload, `pe_dataraw_updated`=" + TCPFrameTimestamp + " WHERE `pe_dataraw_type`=" + TCPFrameType + " AND `pe_dataraw_instance` = " + TCPFrameInstance + ";";
+                } 
+                else
+                {
+                    SQLQueryTxt = "";
+                }
+
                 switch (Int32.Parse(TCPFrameType))
                 {
                     case -1:
@@ -58,7 +68,7 @@ public class DatabaseController
                         break;
 
                     case 1:
-                        // General status information
+                        // General status information (diagnostic information)
                         LogInfo = $"Players data received";
 
                         TCPFrame.payload["v_win"] = "v" + Globals.VersionPerun; // Inject app version information (for database)
@@ -68,11 +78,13 @@ public class DatabaseController
                         SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_perunversion_winapp` = '" + TCPFrame.payload.v_win + "', `pe_OnlineStatus_perunversion_dcshook` ='" + TCPFrame.payload.v_dcs_hook + "' WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "' ;";
 
                         DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+                        TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
+                        DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
 
                         break;
 
                     case 2:
-                        // Mission Data
+                        // Status Data (basic mission etc)
                         LogInfo = $"Mission data received";
 
                         SQLQueryTxt += "DELETE FROM pe_OnlinePlayers WHERE pe_OnlinePlayers_instance = " + Int32.Parse(TCPFrameInstance) + ";";
@@ -90,6 +102,8 @@ public class DatabaseController
                         SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_theatre` = '" + TCPFrame.payload.mission.theatre + "', `pe_OnlineStatus_name` = '" + TCPFrame.payload.mission.name + "' , `pe_OnlineStatus_pause` = '" + TCPFrame.payload.mission.pause + "', `pe_OnlineStatus_multiplayer` = '" + TCPFrame.payload.mission.multiplayer + "', `pe_OnlineStatus_realtime` = '" + TCPFrame.payload.mission.realtime + "', `pe_OnlineStatus_modeltime` = '" + TCPFrame.payload.mission.modeltime + "', `pe_OnlineStatus_players` =  " + player_count + " WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "';";
 
                         DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+                        TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
+                        DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
 
                         // Save for GUI
                         Globals.CurrentMission.Theatre = TCPFrame.payload.mission.theatre;  // Mission theatre
@@ -99,7 +113,15 @@ public class DatabaseController
                         Globals.CurrentMission.ModelTime = TCPFrame.payload.mission.modeltime;      // Mission time
                         Globals.CurrentMission.RealTime = TCPFrame.payload.mission.realtime;        // Since start of server
                         break;
+                    case 3:
+                        // Slots Data (basic mission etc)
+                        LogInfo = $"Slots data received";
 
+                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
+                        TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
+                        DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
+
+                        break;
                     case 50:
                         // Chat entry
                         LogInfo = $"Player \"{TCPFrame.payload.player}\" -> chat message saved";
@@ -167,9 +189,6 @@ public class DatabaseController
                         // Switch to insert correct log information
                         switch (Int32.Parse(TCPFrameType))
                         {
-                            case 3:
-                                LogInfo = "Slots data received";
-                                break;
                             case 100:
                                 LogInfo = "DCS SRS data send";
                                 break;
@@ -184,10 +203,9 @@ public class DatabaseController
                         SQLQueryTxt = "INSERT INTO `pe_DataRaw` (`pe_dataraw_type`,`pe_dataraw_instance`) SELECT '" + TCPFrameType + "','" + TCPFrameInstance + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataRaw` WHERE `pe_dataraw_type` = '" + TCPFrameType + "' AND `pe_dataraw_instance` = " + TCPFrameInstance + ");";
                         SQLQueryTxt += "UPDATE `pe_DataRaw` SET `pe_dataraw_payload` = @PAR_TCPFramePayload, `pe_dataraw_updated`=" + TCPFrameTimestamp + " WHERE `pe_dataraw_type`=" + TCPFrameType + " AND `pe_dataraw_instance` = " + TCPFrameInstance + ";";
 
-                        TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
-
                         DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
 
+                        TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
                         DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
 
                         break;
