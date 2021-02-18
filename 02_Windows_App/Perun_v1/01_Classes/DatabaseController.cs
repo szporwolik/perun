@@ -69,35 +69,22 @@ public class DatabaseController
 
                     case 1:
                         // General status information (diagnostic information)
-                        LogInfo = $"Players data received";
+                        LogInfo = $"Status data updated";
 
-                        TCPFrame.payload["v_win"] = "v" + Globals.VersionPerun; // Inject app version information (for database)
+                        TCPFrame.payload.server["v_win"] = "v" + Globals.VersionPerun; // Inject app version information (for database)
                         Globals.VersionDCSHook = TCPFrame.payload.v_dcs_hook; // Pull DCS hook version (for app)
 
                         SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
-                        SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_perunversion_winapp` = '" + TCPFrame.payload.v_win + "', `pe_OnlineStatus_perunversion_dcshook` ='" + TCPFrame.payload.v_dcs_hook + "' WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "' ;";
-
-                        DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
-                        TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
-                        DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
-
-                        break;
-
-                    case 2:
-                        // Status Data (basic mission etc)
-                        LogInfo = $"Mission data received";
-
+                        SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_perunversion_winapp` = '" + TCPFrame.payload.server.v_win + "', `pe_OnlineStatus_perunversion_dcshook` ='" + TCPFrame.payload.server.v_dcs_hook + "' WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "' ;";
                         SQLQueryTxt += "DELETE FROM pe_OnlinePlayers WHERE pe_OnlinePlayers_instance = " + Int32.Parse(TCPFrameInstance) + ";";
 
                         int player_count = 0;
-                        foreach (var record_player in TCPFrame.payload.players)
+                        foreach (var record_player in TCPFrame.payload.clients)
                         {
                             SQLQueryTxt += "INSERT INTO `pe_OnlinePlayers` (`pe_OnlinePlayers_id`, `pe_OnlinePlayers_instance`, `pe_OnlinePlayers_ping`, `pe_OnlinePlayers_side`, `pe_OnlinePlayers_slot`, `pe_OnlinePlayers_ucid`) VALUES (" + record_player.id + ", '" + Int32.Parse(TCPFrameInstance) + "', '" + record_player.ping + "', '" + record_player.side + "', '" + record_player.slot + "', '" + record_player.ucid + "');";
                             player_count++;
                             Globals.CurrentMission.PlayerCount = player_count; // Save information for GUI - player count
                         }
-
-                        //SQLQueryTxt += "DELETE FROM pe_OnlineStatus WHERE pe_OnlineStatus_instance = " + Int32.Parse(TCPFrameInstance) + ";";
                         SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
                         SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_theatre` = '" + TCPFrame.payload.mission.theatre + "', `pe_OnlineStatus_name` = '" + TCPFrame.payload.mission.name + "' , `pe_OnlineStatus_pause` = '" + TCPFrame.payload.mission.pause + "', `pe_OnlineStatus_multiplayer` = '" + TCPFrame.payload.mission.multiplayer + "', `pe_OnlineStatus_realtime` = '" + TCPFrame.payload.mission.realtime + "', `pe_OnlineStatus_modeltime` = '" + TCPFrame.payload.mission.modeltime + "', `pe_OnlineStatus_players` =  " + player_count + " WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "';";
 
@@ -113,9 +100,10 @@ public class DatabaseController
                         Globals.CurrentMission.ModelTime = TCPFrame.payload.mission.modeltime;      // Mission time
                         Globals.CurrentMission.RealTime = TCPFrame.payload.mission.realtime;        // Since start of server
                         break;
-                    case 3:
+
+                    case 2:
                         // Slots Data (basic mission etc)
-                        LogInfo = $"Slots data received";
+                        LogInfo = $"Slots data updated";
 
                         DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
                         TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
@@ -141,7 +129,7 @@ public class DatabaseController
 
                     case 51:
                         // Add entry to event log
-                        LogInfo = $"Game event \"{TCPFrame.payload.log_content}\" -> send";
+                        LogInfo = $"Game event \"{TCPFrame.payload.log_content}\" -> saved";
 
                         SQLQueryTxt = "INSERT INTO `pe_DataMissionHashes` (`pe_DataMissionHashes_hash`,`pe_DataMissionHashes_instance`) SELECT '" + TCPFrame.payload.log_missionhash + "','" + TCPFrameInstance + "' FROM DUAL WHERE NOT EXISTS (SELECT * FROM `pe_DataMissionHashes` where `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.log_missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + ");";
                         SQLQueryTxt += "UPDATE `pe_DataMissionHashes` SET `pe_DataMissionHashes_datetime` = " + TCPFrameTimestamp + " WHERE `pe_DataMissionHashes_hash` = '" + TCPFrame.payload.log_missionhash + "' AND `pe_DataMissionHashes_instance`=" + TCPFrameInstance + ";";
@@ -189,14 +177,17 @@ public class DatabaseController
                         // Switch to insert correct log information
                         switch (Int32.Parse(TCPFrameType))
                         {
+                            case 3:
+                                LogInfo = "Mission data updated";
+                                break;
                             case 100:
-                                LogInfo = "DCS SRS data send";
+                                LogInfo = "DCS SRS data updated";
                                 break;
                             case 101:
-                                LogInfo = "LotATC data send";
+                                LogInfo = "LotATC data updated";
                                 break;
                             default:
-                                LogInfo = "Unknown data send";
+                                LogInfo = "Unknown data updated";
                                 break;
                         }
 
