@@ -92,7 +92,7 @@ internal class PerunHelper
             }
 
             // Add new entry
-            arrLogHistory[arrLogHistory.Length - 1] = $"{DateTime.Now.ToString("HH:mm:ss.fff")} {LogDirection} {LogType} {strEntryToAdd}"; // Add entry at the last position
+            arrLogHistory[arrLogHistory.Length - 1] = $"{DateTime.Now.ToString("HH:mm:ss")} {LogType} {Globals.LastFrameDelay.ToString("0.00")}µs {strEntryToAdd}"; // Add entry at the last position
 
             // Update control at my window
             Globals.AppUpdateGUI = true;
