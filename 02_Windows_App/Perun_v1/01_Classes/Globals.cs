@@ -48,8 +48,8 @@ class CurrentMissionClass
     public string Pause = "";           // Mission pause
     public int PlayerCount = 0;         // Actual player time
 
-    public string ModelTime = "";       // Mission time
-    public string RealTime = "";        // Server time
+    public float ModelTime = 0;       // Mission time
+    public float RealTime = 0;        // Server time
 }
 
 internal class Globals

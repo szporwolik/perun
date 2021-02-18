@@ -187,7 +187,12 @@ public class TCPController
                 Globals.ErrorsGame++;
                 Console.WriteLine(e.ToString());
                 PerunHelper.LogError(ref Globals.arrGUILogHistory, $"ERROR TCP - connection closed or port in use, error: {e.Message}",1,1,"?");
-                bTCPConnectionOnline = false;
+                
+                // Reset last frame times on broken connection
+                Globals.LastFrameTime = 0f;                         
+                Globals.LastFrameDelay = 0f;                       
+
+            bTCPConnectionOnline = false;
             }
 
             // Clean up and prepare for next connection

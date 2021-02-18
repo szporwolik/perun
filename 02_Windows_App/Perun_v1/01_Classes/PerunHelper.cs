@@ -5,6 +5,14 @@ using System.Text.RegularExpressions;
 
 internal class PerunHelper
 {
+    public static string SecondsToString(float Seconds)
+    {
+        int Hours =  (int) Seconds / 3600; 
+        int Minutes = ((int)Seconds % 3600)/60 ;
+        string ToReturn = $"{Hours.ToString("00")}h {Minutes.ToString("00")}m";
+        return ToReturn;
+    }
+    
     public static void SetFrameRates(float frame_rate, float last_delay)
     {
         Globals.LastFrameTime = frame_rate;

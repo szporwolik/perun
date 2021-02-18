@@ -526,8 +526,8 @@ namespace Perun_v1
                 label18.Text = Globals.CurrentMission.Theatre;
                 label19.Text = Globals.CurrentMission.PlayerCount.ToString();
 
-                label21.Text = Globals.CurrentMission.ModelTime;
-                label16.Text = Globals.CurrentMission.RealTime;
+                label21.Text = PerunHelper.SecondsToString(Globals.CurrentMission.ModelTime);
+                label16.Text = PerunHelper.SecondsToString(Globals.CurrentMission.RealTime);
 
                 if (Globals.CurrentMission.Pause == "True")
                 {
