@@ -11,7 +11,6 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 -- Load config file
 local PerunConfig = require "perun_config"
 Perun.RefreshStatus = PerunConfig.RefreshStatus
-Perun.RefreshMission = PerunConfig.RefreshMission
 Perun.TCPTargetPort = PerunConfig.TCPTargetPort
 Perun.TCPPerunHost = PerunConfig.TCPPerunHost
 Perun.Instance = PerunConfig.Instance
@@ -26,7 +25,6 @@ Perun.Version = "v0.12.0"
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
-Perun.ServerData = {}
 Perun.StatData = {}
 Perun.StatDataLastType = {}
 Perun.PlayersTableCache = {}
@@ -42,6 +40,7 @@ Perun.lastReconnect = (-1) * Perun.ReconnectTimeout
 Perun.SendRetries = 2
 Perun.RefreshKeepAlive = 3
 Perun.FrameTime = 0;
+
 Perun.socket  = require("socket")
 Perun.IsServer = DCS.isServer( )
 
@@ -246,6 +245,8 @@ Perun.ConnectToPerun = function ()
 	else
 		-- Connected
 		Perun.AddLog("Success - connected to TCP server",2)
+
+		Perun.lastSentMission = 0 -- TBD - reset so mission information will be send after connection is back
 	end
 	Perun.lastReconnect = DCS.getRealTime()
 end
@@ -281,14 +282,15 @@ Perun.SendToPerun = function(data_id, data_package)
 		if _err then
 			-- Failure, packet was not send
 			_delay = (DCS.getRealTime() - _now) * 1000000
-			Perun.AddLog("Packed not send : " .. data_id .. " , error: " .. _err .. ", tries: " .. _intTries .. ", delay: " ..  _delay .. "us" .. ", lua2json: " .. _delay_lua2json .. "us",2)
+			Perun.AddLog("Packed not send : " .. data_id .. " , error: " .. _err .. ", tries: " .. _intTries .. ", tcp delay: " ..  _delay .. "us" .. ", lua2json delay: " .. _delay_lua2json .. "us",2)
 			if _now > Perun.lastReconnect + Perun.ReconnectTimeout then
 				Perun.ConnectToPerun()
 			end
 		else
 			-- Succes, packet was send
 			_delay = (DCS.getRealTime() - _now) * 1000000
-			Perun.AddLog("Packet send : " .. data_id .. " , tries:" .. _intTries .. ", delay: " .. _delay .. "us" .. ", lua2json: " .. _delay_lua2json .. "us",2)
+			Perun.AddLog("Packet send : " .. data_id .. " , tries:" .. _intTries .. ", tcp delay: " .. _delay .. "us" .. ", lua2json delay: " .. _delay_lua2json .. "us",2)
+			Perun.lastSentKeepAlive = _now	-- reset keep alive counter, reduce traffic
 			_dropped = false
 		end
 		_intTries=_intTries+1
@@ -297,7 +299,8 @@ Perun.SendToPerun = function(data_id, data_package)
 	if _dropped == true then
 		-- Add information to log file and send chat message to all that Perun connection is broken
 		_delay = (DCS.getRealTime() - _now) * 1000000
-		Perun.AddLog("ERROR - packed dropped : " .. data_id .. ", delay: " .. _delay .. "us" .. ", lua2json: " .. _delay_lua2json .. "us",1)
+		
+		Perun.AddLog("ERROR - packed dropped : " .. data_id .. ", tcp delay: " .. _delay .. "us" .. ", lua2json delay: " .. _delay_lua2json .. "us",1)
 		if _now > Perun.lastConnectionError + Perun.ReconnectTimeout then
 			-- Informs all players that there is Peron error; below hack for DCS net.send_chat not working
 			local _all_players = net.get_player_list()
@@ -549,87 +552,96 @@ Perun.LogStatsGet = function(playerID)
 end
 
 Perun.UpdateStatus = function()
- -- Main function for status updates
-    -- Diagnostic data
+ 	-- Main function for status updates
+	 local _now = DCS.getRealTime()
+
+	-- Diagnostic data
 		-- Update version data
-		local _now = DCS.getRealTime()
-		Perun.ServerData['v_dcs_hook']=Perun.Version
+		local _ServerData={}
+		_ServerData['v_dcs_hook']=Perun.Version
 
 		-- Update clients data - count connected players
 		_playerlist=net.get_player_list()
-		_count = 0
-		for _ in pairs(_playerlist) do _count = _count + 1 end
-		Perun.ServerData['c_players']=_count
+		_ServerData['c_players']=#_playerlist 
 
-		-- Send
-		
-		local _delay = (DCS.getRealTime() - _now) * 1000000
-		Perun.AddLog("Updated server data; sending (" .. _delay .. "us)",2)
-		Perun.SendToPerun(1,Perun.ServerData)
+		Perun.StatusData["server"] = _ServerData
 
-    -- Status data - update all subsections
-		-- 1 - Mission data
-		_now = DCS.getRealTime()
-		local _TempData={}
+	-- Mission data
+		local _MissionData={}
+		_MissionData['name']=DCS.getMissionName()
+		_MissionData['modeltime']=DCS.getModelTime()
+		_MissionData['realtime']=DCS.getRealTime()
+		_MissionData['pause']=DCS.getPause()
+		_MissionData['multiplayer']=DCS.isMultiplayer()
+		_MissionData['theatre'] = Perun.MissionData['mission']['theatre']
 
-		_TempData['name']=DCS.getMissionName()
-		_TempData['modeltime']=DCS.getModelTime()
-		_TempData['realtime']=DCS.getRealTime()
-		_TempData['pause']=DCS.getPause()
-		_TempData['multiplayer']=DCS.isMultiplayer()
-		_TempData['theatre'] = Perun.MissionData['mission']['theatre']
-		Perun.StatusData["mission"] = _TempData
+		Perun.StatusData["mission"] = _MissionData
 
-		-- 2 - Players data
-		_PlayersTable={}
+	-- Players data
+		local _PlayersTable={}
 		for _k, _i in ipairs(_playerlist) do
 			_PlayersTable[_k]=net.get_player_info(_i)
+			_PlayersTable[_k]['pilotid'] = nil;
+			_PlayersTable[_k]['started'] = nil;
+			_PlayersTable[_k]['lang'] = nil;
+			_PlayersTable[_k]['ipaddr'] = nil;
 		end
-		Perun.StatusData["players"] = _PlayersTable
+		Perun.StatusData["clients"] = _PlayersTable
 
-		-- Send
+	-- Send
 		_delay = (DCS.getRealTime() - _now) * 1000000
 		Perun.AddLog("Updated status data; sending (" .. _delay .. "us)",2)
-		Perun.SendToPerun(2,Perun.StatusData)
+		Perun.SendToPerun(1,Perun.StatusData)
 end
 
 Perun.UpdateSlots = function()
 	-- Update and send slots data
 	local _now = DCS.getRealTime()
 
-	Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
-	Perun.SlotsData['slots']={}
+	-- Check if we need to pull the data or we can use the stored one
+	if Perun.SlotsData['coalitions'] == nil then
+		Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
+		Perun.SlotsData['slots']={}
 
-	-- Build up slot table
-	for _j, _i in pairs(Perun.SlotsData['coalitions']) do
-		Perun.SlotsData['slots'][_j]=DCS.getAvailableSlots(_j)
-		
-		for _sj, _si in pairs(Perun.SlotsData['slots'][_j]) do
-			Perun.SlotsData['slots'][_j][_sj]['countryName']= nil
-			Perun.SlotsData['slots'][_j][_sj]['onboard_num']= nil
-			Perun.SlotsData['slots'][_j][_sj]['groupSize']= nil
-			Perun.SlotsData['slots'][_j][_sj]['groupName']= nil
-			Perun.SlotsData['slots'][_j][_sj]['callsign']= nil
-			Perun.SlotsData['slots'][_j][_sj]['task']= nil
-			Perun.SlotsData['slots'][_j][_sj]['airdromeId']= nil
-			Perun.SlotsData['slots'][_j][_sj]['helipadName']= nil
+		-- Build up slot table
+		for _j, _i in pairs(Perun.SlotsData['coalitions']) do
+			Perun.SlotsData['slots'][_j]=DCS.getAvailableSlots(_j)
+			
+			for _sj, _si in pairs(Perun.SlotsData['slots'][_j]) do
+				Perun.SlotsData['slots'][_j][_sj]['countryName']= nil
+				Perun.SlotsData['slots'][_j][_sj]['onboard_num']= nil
+				Perun.SlotsData['slots'][_j][_sj]['groupSize']= nil
+				Perun.SlotsData['slots'][_j][_sj]['groupName']= nil
+				Perun.SlotsData['slots'][_j][_sj]['callsign']= nil
+				Perun.SlotsData['slots'][_j][_sj]['task']= nil
+				Perun.SlotsData['slots'][_j][_sj]['airdromeId']= nil
+				Perun.SlotsData['slots'][_j][_sj]['helipadName']= nil
+				Perun.SlotsData['slots'][_j][_sj]['multicrew_place']= nil
+				Perun.SlotsData['slots'][_j][_sj]['role']= nil
+				Perun.SlotsData['slots'][_j][_sj]['helipadUnitType']= nil
+				Perun.SlotsData['slots'][_j][_sj]['action']= nil
+			end
 		end
 	end
 
 	local _delay = (DCS.getRealTime() - _now) * 1000000
 	Perun.AddLog("Updated slots data; sending (" .. _delay .. "us)",2)
-	Perun.SendToPerun(3,Perun.SlotsData)
+	Perun.SendToPerun(2,Perun.SlotsData)
 end
 
 Perun.UpdateMission = function()
     -- Main function for mission information updates
 	local _now = DCS.getRealTime()
 
-	-- Get mission information
-    Perun.MissionData=DCS.getCurrentMission()
+	-- Check if we need to get mission data
+	if Perun.MissionData['mission'] == nil then
+		-- Get mission information
+		Perun.MissionData=DCS.getCurrentMission()
+	end
 
 	local _delay = (DCS.getRealTime() - _now) * 1000000
-	Perun.AddLog("Mission data updated; saved (" .. _delay .. "us)",2)
+	Perun.AddLog("Updated mission data; sending (" .. _delay .. "us)",2)
+	Perun.SendToPerun(3,Perun.MissionData)
 end
 
 --- ################################ Event callbacks ################################
@@ -641,21 +653,26 @@ Perun.onSimulationStart = function()
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
 	Perun.PlayersTableCache = {}
+	Perun.SlotsData = {}
+	Perun.MissionData = {}
+	Perun.lastSentMission = 0 -- reset so mission information will be send
 end
 
 Perun.onSimulationStop = function()
 	-- Simulation was stopped
     Perun.LogEvent("SimStop","Mission " .. Perun.MissionHash .. " finished",nil,nil);
+	Perun.LogAllStats()
 	Perun.MissionHash=Perun.GenerateMissionHash();
 	Perun.StatData = {}
+	Perun.MissionData = {}
 	Perun.StatDataLastType = {}
-	Perun.LogAllStats()
 	Perun.PlayersTableCache = {}
+	Perun.SlotsData = {}
 end
 
 Perun.onPlayerDisconnect = function(id, err_code)
 	-- Player disconnected
-	Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.(?)",nil,nil);
+	Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.",nil,nil);
 	
 	return 
 end
@@ -671,28 +688,22 @@ Perun.onSimulationFrame = function()
     local _now = DCS.getRealTime()
 	Perun.lastFrameStart = _now
 
-    -- First run
-	if Perun.lastSentMission == 0 and Perun.lastSentStatus == 0 then
+    -- Send mission update - First run or update required (set on connection errors)
+	if Perun.lastSentMission == 0 then
 		Perun.lastSentMission = _now
+
 		Perun.UpdateMission()
 		Perun.UpdateSlots()
     end
 
-    -- Send mission update
-    if _now > Perun.lastSentMission + Perun.RefreshMission then
-        Perun.lastSentMission = _now
-
-        Perun.UpdateMission()
-    end
-
-    -- Send status update
+    -- Send status update - update required
     if _now > Perun.lastSentStatus + Perun.RefreshStatus then
         Perun.lastSentStatus = _now
 
         Perun.UpdateStatus() 
     end
 	
-	-- Send keepalive
+	-- Send keepalive - update required
 	if _now > Perun.lastSentKeepAlive + Perun.RefreshKeepAlive then 
 		Perun.lastSentKeepAlive = _now
 
