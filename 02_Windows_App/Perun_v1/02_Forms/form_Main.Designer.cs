@@ -97,15 +97,15 @@
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.con_GroupBox_7 = new System.Windows.Forms.GroupBox();
+            this.label33 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.label30 = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.tim_HW_status = new System.Windows.Forms.Timer(this.components);
-            this.label30 = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.label32 = new System.Windows.Forms.Label();
-            this.label33 = new System.Windows.Forms.Label();
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
@@ -554,6 +554,7 @@
             this.con_Button_Reset_Flags.TabIndex = 26;
             this.con_Button_Reset_Flags.Text = "Reset error flags";
             this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
+            this.con_Button_Reset_Flags.Click += new System.EventHandler(this.con_Button_Reset_Flags_Click);
             // 
             // label12
             // 
@@ -796,6 +797,44 @@
             this.con_GroupBox_7.TabStop = false;
             this.con_GroupBox_7.Text = "System status";
             // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(174, 34);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(67, 13);
+            this.label33.TabIndex = 36;
+            this.label33.Text = "[frame delay]";
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(86, 34);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(87, 13);
+            this.label32.TabIndex = 35;
+            this.label32.Text = "Last frame delay:";
+            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(174, 16);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(61, 13);
+            this.label31.TabIndex = 34;
+            this.label31.Text = "[frame time]";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(92, 16);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(81, 13);
+            this.label30.TabIndex = 34;
+            this.label30.Text = "Last frame time:";
+            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // label29
             // 
             this.label29.AutoSize = true;
@@ -839,44 +878,6 @@
             this.tim_HW_status.Enabled = true;
             this.tim_HW_status.Interval = 1000;
             this.tim_HW_status.Tick += new System.EventHandler(this.tim_HW_status_Tick);
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(92, 16);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(81, 13);
-            this.label30.TabIndex = 34;
-            this.label30.Text = "Last frame time:";
-            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(174, 16);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(61, 13);
-            this.label31.TabIndex = 34;
-            this.label31.Text = "[frame time]";
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(86, 34);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(87, 13);
-            this.label32.TabIndex = 35;
-            this.label32.Text = "Last frame delay:";
-            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(174, 34);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(67, 13);
-            this.label33.TabIndex = 36;
-            this.label33.Text = "[frame delay]";
             // 
             // form_Main
             // 

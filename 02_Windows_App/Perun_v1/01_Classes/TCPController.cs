@@ -71,11 +71,11 @@ public class TCPController
                         Console.WriteLine("TCP: Connected");
                         bTCPConnectionOnline = true;
                         tcpClient = tcpServer.AcceptTcpClient();  //if a connection exists, the server will accept it
+
                         nsReadStream = tcpClient.GetStream(); //networkstream is used to send/receive messages
                         nsReadStream.ReadTimeout = 10000;
                         tcpClient.ReceiveTimeout = 10000;
                        
-
                         while (tcpClient.Connected && !bCloseConnection && bTCPConnectionOnline)  //while the client is connected, we look for incoming messages
                         {
                             StringBuilder CompleteMessage = new StringBuilder();
@@ -93,7 +93,7 @@ public class TCPController
                                 {
                                     Console.WriteLine("TCP: Read");
                                     numberOfBytesRead = nsReadStream.Read(ReadBuffer, 0, ReadBuffer.Length);
-                                    CompleteMessage.AppendFormat("{0}", Encoding.ASCII.GetString(ReadBuffer, 0, numberOfBytesRead));
+                                    CompleteMessage.AppendFormat("{0}", Encoding.UTF8.GetString(ReadBuffer, 0, numberOfBytesRead));
                                     if (numberOfBytesRead == 0)
                                     {
                                         break;

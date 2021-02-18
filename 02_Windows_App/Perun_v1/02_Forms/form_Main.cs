@@ -793,6 +793,5 @@ namespace Perun_v1
             }
         }
 
-       
     }
 }
