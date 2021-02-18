@@ -704,7 +704,8 @@ namespace Perun_v1
                         }
 
                         ExtSRSJson = JsonConvert.SerializeObject(raw_dcssrs);
-                        ExtSRSJson = $"{{'type':'100','instance':'{Int32.Parse(con_txt_dcs_instance.Text)}','payload':'{ExtSRSJson}'}}";
+
+                        ExtSRSJson = $"{{'type':'100','instance':'{Int32.Parse(con_txt_dcs_instance.Text)}','payload':{ExtSRSJson}}}";
 
                         ExtSRSUseDefault = false;
                         PerunHelper.LogInfo(ref Globals.AppLogHistory, "SRS data loaded", 3, 0, "100", true);
@@ -737,9 +738,8 @@ namespace Perun_v1
                     try
                     {
                         ExtLotATCJson = System.IO.File.ReadAllText(con_txt_3rd_lotatc.Text);
-                        dynamic raw_srs = JsonConvert.DeserializeObject(ExtLotATCJson);
 
-                        ExtLotATCJson = $"{{'type':'101','instance':'{Int32.Parse(con_txt_dcs_instance.Text)}','payload':'{ExtLotATCJson}'}}";
+                        ExtLotATCJson = $"{{'type':'101','instance':'{Int32.Parse(con_txt_dcs_instance.Text)}','payload':{ExtLotATCJson}}}";
                         ExtLotATCUseDefault = false;
                         PerunHelper.LogInfo(ref Globals.AppLogHistory, "LotATC data loaded", 3, 0, "101", true);
                         ExtLotATCStatus = true;
