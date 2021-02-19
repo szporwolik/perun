@@ -79,9 +79,12 @@ public class DatabaseController
                         SQLQueryTxt += "DELETE FROM pe_OnlinePlayers WHERE pe_OnlinePlayers_instance = " + Int32.Parse(TCPFrameInstance) + ";";
 
                         int player_count = 0;
+                        string safe_player_name = "";
                         foreach (var record_player in TCPFrame.payload.clients)
                         {
-                            SQLQueryTxt += "INSERT INTO `pe_OnlinePlayers` (`pe_OnlinePlayers_id`, `pe_OnlinePlayers_instance`, `pe_OnlinePlayers_ping`, `pe_OnlinePlayers_side`, `pe_OnlinePlayers_slot`, `pe_OnlinePlayers_ucid`) VALUES (" + record_player.id + ", '" + Int32.Parse(TCPFrameInstance) + "', '" + record_player.ping + "', '" + record_player.side + "', '" + record_player.slot + "', '" + record_player.ucid + "');";
+                            safe_player_name = record_player.name;
+                            safe_player_name = safe_player_name.Replace("'", "''");
+                            SQLQueryTxt += "INSERT INTO `pe_OnlinePlayers` (`pe_OnlinePlayers_id`, `pe_OnlinePlayers_instance`, `pe_OnlinePlayers_ping`, `pe_OnlinePlayers_side`, `pe_OnlinePlayers_slot`, `pe_OnlinePlayers_ucid`, `pe_OnlinePlayers_name`) VALUES (" + record_player.id + ", '" + Int32.Parse(TCPFrameInstance) + "', '" + record_player.ping + "', '" + record_player.side + "', '" + record_player.slot + "', '" + record_player.ucid + "', '" + safe_player_name + "');";
                             player_count++;
                             Globals.CurrentMission.PlayerCount = player_count; // Save information for GUI - player count
                         }
