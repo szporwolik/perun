@@ -60,7 +60,7 @@ internal class Globals
     public static int AppInstanceID = 0;                            // Kepp the instance ID
     public static bool AppForceIconReload = true;                   // Force main window icons reload
 
-    public static string[] DatabaseSendBuffer = new string[50];            // MySQL send buffer
+    public static string[] DatabaseSendBuffer = new string[500];            // MySQL send buffer
 
     public static bool StatusDatabase = false;                      // Historic db connection status
     public static bool StatusSRS = false;                           // Historic srs connection status
@@ -85,7 +85,7 @@ internal class Globals
     public static float LastFrameDelay = 0f;                        // Last recorded frame time
 
     public static string[] arrGUILogHistory;                        // Log history for GUI
-    public static string[] arrMySQLSendBuffer;                      // MySQL send buffer
+    public static string[] arrMySQLSendBuffer;                      // MySQL send buffer TBD zwiekszyc
 
     public static CurrentMissionClass CurrentMission = new CurrentMissionClass();   // Actual mission information single ton
 

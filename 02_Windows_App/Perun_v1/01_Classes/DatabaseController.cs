@@ -74,26 +74,34 @@ public class DatabaseController
                         TCPFrame.payload.server["v_win"] = "v" + Globals.VersionPerun; // Inject app version information (for database)
                         Globals.VersionDCSHook = TCPFrame.payload.v_dcs_hook; // Pull DCS hook version (for app)
 
-                        SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
-                        SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_perunversion_winapp` = '" + TCPFrame.payload.server.v_win + "', `pe_OnlineStatus_perunversion_dcshook` ='" + TCPFrame.payload.server.v_dcs_hook + "' WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "' ;";
-                        SQLQueryTxt += "DELETE FROM pe_OnlinePlayers WHERE pe_OnlinePlayers_instance = " + Int32.Parse(TCPFrameInstance) + ";";
+                        SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT @PAR_TCPFrameInstance FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = @PAR_TCPFrameInstance);";
+                        SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_perunversion_winapp` = '" + TCPFrame.payload.server.v_win + "', `pe_OnlineStatus_perunversion_dcshook` ='" + TCPFrame.payload.server.v_dcs_hook + "' WHERE `pe_OnlineStatus_instance` = @PAR_TCPFrameInstance ;";
+                        SQLQueryTxt += "DELETE FROM pe_OnlinePlayers WHERE pe_OnlinePlayers_instance = @PAR_TCPFrameInstance;";
 
                         int player_count = 0;
-                        string safe_player_name = "";
                         foreach (var record_player in TCPFrame.payload.clients)
                         {
-                            safe_player_name = record_player.name;
-                            safe_player_name = safe_player_name.Replace("'", "''");
-                            SQLQueryTxt += "INSERT INTO `pe_OnlinePlayers` (`pe_OnlinePlayers_id`, `pe_OnlinePlayers_instance`, `pe_OnlinePlayers_ping`, `pe_OnlinePlayers_side`, `pe_OnlinePlayers_slot`, `pe_OnlinePlayers_ucid`, `pe_OnlinePlayers_name`) VALUES (" + record_player.id + ", '" + Int32.Parse(TCPFrameInstance) + "', '" + record_player.ping + "', '" + record_player.side + "', '" + record_player.slot + "', '" + record_player.ucid + "', '" + safe_player_name + "');";
+                            SQLQueryTxt += "INSERT INTO `pe_OnlinePlayers` (`pe_OnlinePlayers_id`, `pe_OnlinePlayers_instance`, `pe_OnlinePlayers_ping`, `pe_OnlinePlayers_side`, `pe_OnlinePlayers_slot`, `pe_OnlinePlayers_ucid`, `pe_OnlinePlayers_name`) VALUES (" + record_player.id + ", @PAR_TCPFrameInstance, '" + record_player.ping + "', '" + record_player.side + "', '" + record_player.slot + "', '" + record_player.ucid + $"',@PAR_UserName_{player_count});";
                             player_count++;
                             Globals.CurrentMission.PlayerCount = player_count; // Save information for GUI - player count
                         }
-                        SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT '" + Int32.Parse(TCPFrameInstance) + "' FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "');";
-                        SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_theatre` = '" + TCPFrame.payload.mission.theatre + "', `pe_OnlineStatus_name` = '" + TCPFrame.payload.mission.name + "' , `pe_OnlineStatus_pause` = '" + TCPFrame.payload.mission.pause + "', `pe_OnlineStatus_multiplayer` = '" + TCPFrame.payload.mission.multiplayer + "', `pe_OnlineStatus_realtime` = '" + TCPFrame.payload.mission.realtime + "', `pe_OnlineStatus_modeltime` = '" + TCPFrame.payload.mission.modeltime + "', `pe_OnlineStatus_players` =  " + player_count + " WHERE `pe_OnlineStatus_instance` = '" + Int32.Parse(TCPFrameInstance) + "';";
+                        SQLQueryTxt += "INSERT INTO `pe_OnlineStatus` (`pe_OnlineStatus_instance`) SELECT @PAR_TCPFrameInstance FROM DUAL WHERE NOT EXISTS(SELECT * FROM `pe_OnlineStatus` WHERE `pe_OnlineStatus_instance` = @PAR_TCPFrameInstance);";
+                        SQLQueryTxt += "UPDATE `pe_OnlineStatus` SET `pe_OnlineStatus_theatre` = @PAR_MissionTheathre, `pe_OnlineStatus_name` = @PAR_MissionName , `pe_OnlineStatus_pause` = @PAR_MissionPause, `pe_OnlineStatus_multiplayer` = '" + TCPFrame.payload.mission.multiplayer + "', `pe_OnlineStatus_realtime` = '" + TCPFrame.payload.mission.realtime + "', `pe_OnlineStatus_modeltime` = '" + TCPFrame.payload.mission.modeltime + "', `pe_OnlineStatus_players` =  " + player_count + " WHERE `pe_OnlineStatus_instance` = @PAR_TCPFrameInstance;";
 
                         DatabaseCommand = new MySqlCommand(SQLQueryTxt, DatabaseConnection);
-                        TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload
+                        TCPFramePayload = JsonConvert.SerializeObject(TCPFrame.payload); // Deserialize payload TUTAJ DODAC CATCH TBD
                         DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFramePayload", TCPFramePayload);
+                        DatabaseCommand.Parameters.AddWithValue("@PAR_TCPFrameInstance", TCPFrameInstance);
+                        DatabaseCommand.Parameters.AddWithValue("@PAR_MissionName", TCPFrame.payload.mission.name);
+                        DatabaseCommand.Parameters.AddWithValue("@PAR_MissionTheathre", TCPFrame.payload.mission.theatre);
+                        DatabaseCommand.Parameters.AddWithValue("@PAR_MissionPause", TCPFrame.payload.mission.pause);
+
+                        player_count = 0;
+                        foreach (var record_player in TCPFrame.payload.clients)
+                        {
+                            DatabaseCommand.Parameters.AddWithValue($"@PAR_UserName_{player_count}", TCPFrame.payload.clients[player_count].name);
+                            player_count++;
+                        }
 
                         // Save for GUI
                         Globals.CurrentMission.Theatre = TCPFrame.payload.mission.theatre;  // Mission theatre
@@ -263,6 +271,15 @@ public class DatabaseController
                 }
                 Globals.ErrorsGame++;
 
+            }
+            catch (Exception e)
+            {
+                // General exception found
+                Console.WriteLine(e.ToString());
+                PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR General - error: {e.Message}", 1, 1, TCPFrameType);
+                Globals.ErrorsGame++;
+                DatabaseStatus = false;
+                ReturnValue = 0;
             }
             DatabaseConnection.Close();
             Console.WriteLine("Sending data to MySQL - Done");
