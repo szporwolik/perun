@@ -236,7 +236,7 @@ end
 
 Perun.ConnectToPerun = function ()
 	-- Connects to Perun server
-    Perun.dll_main.connect(Perun.TCPPerunHost, Perun.TCPTargetPort)
+    Perun.dll_main.tcpConnect(Perun.TCPPerunHost, Perun.TCPTargetPort)
 
 	Perun.AddLog(string.format("Connecting to TCP server %s:%i", Perun.TCPPerunHost, Perun.TCPTargetPort), 2)
 end

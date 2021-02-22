@@ -30,7 +30,7 @@ static int tcpConnect(lua_State* luaState) {
 }
 
 static int tcpSend(lua_State* luaState) {
-    // Send frame over TCP socket
+    // Send frame over TCP socket 
 
     // Send over the socket
     tcpConnection.socketSendData(new std::string(lua_tolstring(luaState, 1, 0)));
