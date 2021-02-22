@@ -4,9 +4,14 @@ net.log("Loading - Perun")	-- Display perun information in log
 -- Initial init
 local Perun = {}
 
--- Load Lua Socket
+-- Load Luas
 package.path  = package.path..";"..lfs.currentdir().."/LuaSocket/?.lua"..";"..lfs.writedir() .. "/Mods/services/Perun/lua/?.lua"
 package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
+
+-- Load Dlls
+package.cpath = package.cpath..';'.. lfs.writedir()..'/Mods/services/Perun/bin/' ..'?.dll;'
+Perun.dll_main = require('main') 
+Perun.dll_main.StartOfApp()
 
 -- Load config file
 local PerunConfig = require "perun_config"
@@ -22,6 +27,7 @@ Perun.ConnectionError = PerunConfig.ConnectionError_L1
 
 -- Variable init
 Perun.Version = "v0.12.0"
+
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
@@ -29,20 +35,17 @@ Perun.StatData = {}
 Perun.StatDataLastType = {}
 Perun.PlayersTableCache = {}
 Perun.MissionHash=""
-Perun.ReconnectTimeout = 30
+
 Perun.lastSentStatus = 0
 Perun.lastSentMission = 0
 Perun.lastSentKeepAlive = 0
 Perun.lastConnectionError = 0
 Perun.lastFrameStart = 0;
 Perun.lastTimer = 0
-Perun.lastReconnect = (-1) * Perun.ReconnectTimeout
-Perun.SendRetries = 2
-Perun.RefreshKeepAlive = 3
-Perun.FrameTime = 0;
+Perun.lastFrameTime = 0;
 
-Perun.socket  = require("socket")
-Perun.IsServer = DCS.isServer( )
+Perun.ReconnectTimeout = 30;
+Perun.RefreshKeepAlive = 3
 
 -- ################################ Helper function definitions ################################
 Perun.GetCategory = function(id)
@@ -233,22 +236,9 @@ end
 
 Perun.ConnectToPerun = function ()
 	-- Connects to Perun server
-	Perun.AddLog("Connecting to TCP server",2)
-	Perun.TCP = assert(Perun.socket.tcp())
-	Perun.TCP:settimeout(5000)
-	Perun.TCP:setoption('tcp-nodelay' , true)
-	
-	_, _err = Perun.TCP:connect(Perun.TCPPerunHost, Perun.TCPTargetPort)
-	if _err then
-		-- Could not connect
-		Perun.AddLog("ERROR - TCP connection error : " .. _err , 1)
-	else
-		-- Connected
-		Perun.AddLog("Success - connected to TCP server",2)
+    Perun.dll_main.connect(Perun.TCPPerunHost, Perun.TCPTargetPort)
 
-		Perun.lastSentMission = 0 -- TBD - reset so mission information will be send after connection is back
-	end
-	Perun.lastReconnect = DCS.getRealTime()
+	Perun.AddLog(string.format("Connecting to TCP server %s:%i", Perun.TCPPerunHost, Perun.TCPTargetPort), 2)
 end
 
 Perun.SendToPerun = function(data_id, data_package)
@@ -258,7 +248,7 @@ Perun.SendToPerun = function(data_id, data_package)
     _TempData["payload"]=data_package
     _TempData["timestamp"]=os.date('%Y-%m-%d %H:%M:%S')
 	_TempData["instance"]=Perun.Instance
-	_TempData['dcs_frame_time']=Perun.FrameTime * 1000000
+	_TempData['dcs_frame_time']=Perun.lastFrameTime * 1000000
 	_TempData['dcs_current_frame_delay']=(DCS.getRealTime() - Perun.lastFrameStart) * 1000000
 
 	-- Build TCP frame
@@ -276,41 +266,30 @@ Perun.SendToPerun = function(data_id, data_package)
 	local _delay = 0
 
 	-- Try to send a few times (defind in settings section)
-	_now = DCS.getRealTime()
-	while _intStatus == nil and _intTries < Perun.SendRetries do
-		_intStatus, _err = Perun.TCP:send(_TCPFrame) 
-		if _err then
-			-- Failure, packet was not send
-			_delay = (DCS.getRealTime() - _now) * 1000000
-			Perun.AddLog("Packed not send : " .. data_id .. " , error: " .. _err .. ", tries: " .. _intTries .. ", tcp delay: " ..  _delay .. "us" .. ", lua2json delay: " .. _delay_lua2json .. "us",2)
-			if _now > Perun.lastReconnect + Perun.ReconnectTimeout then
-				Perun.ConnectToPerun()
-			end
-		else
-			-- Succes, packet was send
-			_delay = (DCS.getRealTime() - _now) * 1000000
-			Perun.AddLog("Packet send : " .. data_id .. " , tries:" .. _intTries .. ", tcp delay: " .. _delay .. "us" .. ", lua2json delay: " .. _delay_lua2json .. "us",2)
-			Perun.lastSentKeepAlive = _now	-- reset keep alive counter, reduce traffic
-			_dropped = false
-		end
-		_intTries=_intTries+1
-	end
-	
-	if _dropped == true then
-		-- Add information to log file and send chat message to all that Perun connection is broken
-		_delay = (DCS.getRealTime() - _now) * 1000000
+	_flagConnected, _flagReconnected = Perun.dll_main.tcpSendFrame(_TCPFrame)
+
+	if (_flagConnected < 1) and (_now > Perun.lastConnectionError + Perun.ReconnectTimeout) then
+	-- Add information to log file and send chat message to all that Perun connection is broken
+		-- Add information to log file	
+		Perun.AddLog("ERROR - TCP connection is not available",1)
 		
-		Perun.AddLog("ERROR - packed dropped : " .. data_id .. ", tcp delay: " .. _delay .. "us" .. ", lua2json delay: " .. _delay_lua2json .. "us",1)
-		if _now > Perun.lastConnectionError + Perun.ReconnectTimeout then
-			-- Informs all players that there is Peron error; below hack for DCS net.send_chat not working
-			local _all_players = net.get_player_list()
-			for PlayerIDIndex, _playerID in ipairs(_all_players) do
-				 net.send_chat_to(Perun.ConnectionError , _playerID)
-			end
-			-- Reset last error send counter
-			Perun.lastConnectionError = _now
+		-- Informs all players that there is Peron error; below hack for DCS net.send_chat not working
+		local _all_players = net.get_player_list()
+		for PlayerIDIndex, _playerID in ipairs(_all_players) do
+			net.send_chat_to(Perun.ConnectionError , _playerID)
 		end
+		-- Reset last error send counter
+		Perun.lastConnectionError = _now
 	end 
+
+	-- Handle reconnection to the server
+    if _flagReconnected > 0 then
+		Perun.AddLog("Success - (re)connected to TCP server",2)
+		Perun.lastSentMission = 0
+	end
+
+	_delay = (DCS.getRealTime() - _now) * 1000000
+	Perun.AddLog("TCP frame added to buffer : " .. data_id .. ", tcp delay: " ..  _delay .. "us" .. ", lua2json delay: " .. _delay_lua2json .. "us" .. ", connection: " .. _flagConnected,2)
 end
 
 -- ################################ Log functions ################################
@@ -723,7 +702,7 @@ Perun.onSimulationFrame = function()
 	end
 
 	-- Calculate approx. frame time
-	Perun.FrameTime = DCS.getRealTime() - _now
+	Perun.lastFrameTime = DCS.getRealTime() - _now
 end
 
 Perun.onPlayerStart = function (id)
@@ -865,7 +844,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
     elseif eventName == "takeoff" then
         --"takeoff", playerID, unit_missionID, airdromeName
         if arg3 ~= "" then
-            _temp_airfield = " from " .. arg3; 
+            _temp_airfield = " from " .. arg3;
         else
             _temp_airfield = "";
         end
@@ -898,10 +877,12 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 end
 
 -- ########### Finalize and set callbacks ###########
-if Perun.IsServer then
+if DCS.isServer() then
 	-- If this game instance is hosting multiplayer game, start Perun
 	Perun.MissionHash=Perun.GenerateMissionHash()														-- Generate initial missionhash
 	DCS.setUserCallbacks(Perun)																			-- Set user callbacs,  map DCS event handlers with functions defined above
 	net.log("Loaded - Perun - VladMordock: " .. Perun.Version )											-- Display perun information in log
 	Perun.ConnectToPerun()																				-- Connect to Perun server
 end
+
+

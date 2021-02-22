@@ -2,16 +2,22 @@
 local PerunConfig = {}
 
 -- ###################### SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION #############################
-
+-- Connection
 PerunConfig.TCPPerunHost = "localhost"														    -- (string) [default: "localhost"] IP adress of the Perun instance or "localhost"
-PerunConfig.TCPTargetPort = 48623																-- (int) [default: 48621] TCP port to send data to
-PerunConfig.Instance = 3																	    -- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
-PerunConfig.RefreshStatus = 15																    -- (int) [default: 60] Base refresh rate in seconds to send status update
+PerunConfig.TCPTargetPort = 48621																-- (int) [default: 48621] TCP port to send data to
+PerunConfig.Instance = 1																	    -- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
+PerunConfig.RefreshStatus = 60																    -- (int) [default: 60] Base refresh rate in seconds to send status update
+
+-- Mission Configuration
 PerunConfig.MissionStartNoDeathWindow = 300													    -- (int) [default: 300] Number of secounds after mission start when death of the pilot will not go to statistics, shall avoid death penalty during spawning DCS bugs
-PerunConfig.DebugMode = 2																		-- (int) [0 (default),1,2] Value greater than 0 will display Perun information in DCS log file, values: 1 - minimal verbose, 2 - all log information will be logged
-PerunConfig.MOTD_L1 = "[Perun] Witamy na serwerze #3 Gildia.org !"								        -- (string) Message send to players connecting the server - Line 1
-PerunConfig.MOTD_L2 = "[Perun] Wymagamy obecnosci DCS SRS (UNICOM 242.00MHz) - szczegoly na forum"		-- (string) Message send to players connecting the server - Line 2
-PerunConfig.ConnectionError_L1 = "[Perun] ERROR: Connection broken - contact server admin!"             -- (string) Information to send to players when Perun connection is broken
+
+-- Localisation
+PerunConfig.MOTD_L1 = "[Perun] Welcome to our server !"											-- (string) Message send to players connecting the server - Line 1
+PerunConfig.MOTD_L2 = "[Perun] Stats and event data integrated with Perun for DCS World"		-- (string) Message send to players connecting the server - Line 2
+PerunConfig.ConnectionError_L1 = "[Perun] ERROR: Connection broken - contact server admin!"     -- (string) Information to send to players when Perun connection is broken
+
+-- Debug
+PerunConfig.DebugMode = 1																		-- (int) [0 (default),1,2] Value greater than 0 will display Perun information in DCS log file, values: 1 - minimal verbose, 2 - all log information will be logged
 
 -- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
 return PerunConfig
