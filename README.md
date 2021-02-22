@@ -31,7 +31,7 @@ Core:
 * Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your DCS folder in your Saved Games
 * You can change your configuration settings in DCS\Mods\services\Perun\lua\perun_config
-* Create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
+* Create MySQL database using SQL script located in [04_MySQL](https://github.com/szporwolik/perun/tree/master/04_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
 * Ensure that your MySQL config is not using STRICT_TRANS_TABLES 
 
 ## Running
@@ -64,7 +64,7 @@ Data displaying and handling is not in the current scope of this project. Since 
 ![Mission statistics](https://i.imgur.com/uiRSa9e.png)
 Due to resource limitations, "Perun for DCS World" will focus on pulling the data from DCS (and external modules) and pushing it to MySQL server, but if anyone would like to develop open sourced PHP applets for data/statistics displaying we're willing to cooperate and support such projects. Unfortunetly it's not possible to share the hardcoded code from forum.gildia.org.
 
-Basic example was provided [HERE](/04_Misc/05_PHP_Example/index.php) , support is available via Perun community at our [Discord](https://discord.gg/MTahREx).
+Basic example was provided [HERE](/05_Misc/05_PHP_Example/index.php) , support is available via Perun community at our [Discord](https://discord.gg/MTahREx).
 
 ## Troubleshooting - FAQ
 - [I keep getting 1305 MySQL error](#i-keep-getting-1305-mysql-error)
