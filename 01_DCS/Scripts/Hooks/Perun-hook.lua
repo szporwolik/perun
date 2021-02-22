@@ -242,35 +242,26 @@ end
 
 Perun.SendToPerun = function(data_id, data_package)
     -- Prepares and sends data package
-    local _TempData={}
-    _TempData["type"]=data_id
-    _TempData["payload"]=data_package
-    _TempData["timestamp"]=os.date('%Y-%m-%d %H:%M:%S')
-	_TempData["instance"]=Perun.Instance
-	_TempData['dcs_frame_time']=Perun.lastFrameTime * 1000000
-	_TempData['dcs_current_frame_delay']=(DCS.getRealTime() - Perun.lastFrameStart) * 1000000
-
-	-- Build TCP frame
+	-- Build TCP message
 	local _now = DCS.getRealTime()
-	local _delay_lua2json = 0
 
-    local _tcpMessage="<SOT>" .. net.lua2json(_TempData) .. "<EOT>"
-	_delay_lua2json = (DCS.getRealTime() - _now) * 1000000
+	local _payload
+	if data_package == nil then
+		_payload = "null"
+	else
+		_payload = net.lua2json(data_package);
+	end
+
+	local _TempData={"<SOT>","{\"dcs_current_frame_delay\":",((DCS.getRealTime() - Perun.lastFrameStart) * 1000000),",\"type\":",data_id,",\"dcs_frame_time\":",(Perun.lastFrameTime * 1000000),",\"instance\":",(Perun.Instance),",\"timestamp\":\"",(os.date('%Y-%m-%d %H:%M:%S')),"\",\"payload\":",(_payload),"}<EOT>"}
+    local _tcpMessage= table.concat( _TempData )
 
     -- TCP Part - sending
-	local _intStatus = nil
-	local _intTries =0
-	local _err=nil
-	local _dropped =  true
-	local _delay = 0
-
-	-- Try to send a few times (defind in settings section)
 	_flagConnected, _flagReconnected = Perun.dll_main.tcpSend(_tcpMessage)
 
 	if (_flagConnected < 1) and (_now > Perun.lastConnectionError + Perun.ReconnectTimeout) then
 	-- Add information to log file and send chat message to all that Perun connection is broken
 		-- Add information to log file	
-		Perun.AddLog("ERROR - TCP connection is not available",1)
+		Perun.AddLog("ERROR - TCP connection is not available",0)
 		
 		-- Informs all players that there is Peron error; below hack for DCS net.send_chat not working
 		local _all_players = net.get_player_list()
@@ -287,8 +278,7 @@ Perun.SendToPerun = function(data_id, data_package)
 		Perun.lastSentMission = 0
 	end
 
-	_delay = (DCS.getRealTime() - _now) * 1000000
-	Perun.AddLog("TCP frame added to buffer : " .. data_id .. ", tcp delay: " ..  _delay .. "us" .. ", lua2json delay: " .. _delay_lua2json .. "us" .. ", connection: " .. _flagConnected,2)
+	Perun.AddLog("TCP frame added to buffer : " .. data_id .. ", frame delay: " .. ((DCS.getRealTime() - Perun.lastFrameStart) * 1000000),2)
 end
 
 -- ################################ Log functions ################################
@@ -303,7 +293,7 @@ Perun.LogChat = function(playerID,msg,all)
     _TempData['datetime']=os.date('%Y-%m-%d %H:%M:%S')
     _TempData['missionhash']=Perun.MissionHash
 
-	Perun.AddLog("Sending chat message",2)
+	Perun.AddLog("Sending chat message",1)
     Perun.SendToPerun(50,_TempData)
 end
 
@@ -324,7 +314,7 @@ Perun.LogEvent = function(log_type,log_content,log_arg_1,log_arg_2)
 		log_arg_2 = "null"
 	end
 
-	Perun.AddLog("Sending event data, event: " .. log_type .. ", arg1:" .. log_arg_1 .. ", arg2:" .. log_arg_2 .. ", content: " .. log_content,2)
+	Perun.AddLog("Sending event data, event: " .. log_type .. ", arg1:" .. log_arg_1 .. ", arg2:" .. log_arg_2 .. ", content: " .. log_content,1)
     Perun.SendToPerun(51,_TempData)
 end
 
@@ -341,7 +331,7 @@ Perun.LogStats = function(playerID)
     _TempData['stat_datetime']=os.date('%Y-%m-%d %H:%M:%S')
     _TempData['stat_missionhash']=Perun.MissionHash
 
-	Perun.AddLog("Sending stats data",2)
+	Perun.AddLog("Sending stats data",1)
     Perun.SendToPerun(52,_TempData)
 end
 
@@ -363,7 +353,7 @@ Perun.LogLogin = function(playerID)
     _TempData['login_name']=net.get_player_info(playerID, 'name')
     _TempData['login_datetime']=os.date('%Y-%m-%d %H:%M:%S')
 
-	Perun.AddLog("Sending login event",2)
+	Perun.AddLog("Sending login event",1)
     Perun.SendToPerun(53,_TempData)
 end
 
@@ -678,7 +668,7 @@ Perun.onSimulationFrame = function()
     if _now > Perun.lastSentStatus + Perun.RefreshStatus then
         Perun.lastSentStatus = _now
 
-        Perun.UpdateStatus() 
+        Perun.UpdateStatus()
     end
 	
 	-- Send keepalive - update required
