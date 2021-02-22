@@ -1,5 +1,5 @@
 -- Perun for DCS World https://github.com/szporwolik/perun -> DCS Hook component
-net.log("Loading - Perun")	-- Display perun information in log
+net.log("[Perun] Script started")	-- Display perun information in log
 
 -- Initial init
 local Perun = {}
@@ -11,7 +11,6 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 -- Load Dlls
 package.cpath = package.cpath..';'.. lfs.writedir()..'/Mods/services/Perun/bin/' ..'?.dll;'
 Perun.dll_main = require('main') 
-Perun.dll_main.StartOfApp()
 
 -- Load config file
 local PerunConfig = require "perun_config"
@@ -255,7 +254,7 @@ Perun.SendToPerun = function(data_id, data_package)
 	local _now = DCS.getRealTime()
 	local _delay_lua2json = 0
 
-    local _TCPFrame="<SOT>" .. net.lua2json(_TempData) .. "<EOT>"
+    local _tcpMessage="<SOT>" .. net.lua2json(_TempData) .. "<EOT>"
 	_delay_lua2json = (DCS.getRealTime() - _now) * 1000000
 
     -- TCP Part - sending
@@ -266,7 +265,7 @@ Perun.SendToPerun = function(data_id, data_package)
 	local _delay = 0
 
 	-- Try to send a few times (defind in settings section)
-	_flagConnected, _flagReconnected = Perun.dll_main.tcpSendFrame(_TCPFrame)
+	_flagConnected, _flagReconnected = Perun.dll_main.tcpSend(_tcpMessage)
 
 	if (_flagConnected < 1) and (_now > Perun.lastConnectionError + Perun.ReconnectTimeout) then
 	-- Add information to log file and send chat message to all that Perun connection is broken
@@ -879,10 +878,11 @@ end
 -- ########### Finalize and set callbacks ###########
 if DCS.isServer() then
 	-- If this game instance is hosting multiplayer game, start Perun
-	Perun.MissionHash=Perun.GenerateMissionHash()														-- Generate initial missionhash
-	DCS.setUserCallbacks(Perun)																			-- Set user callbacs,  map DCS event handlers with functions defined above
-	net.log("Loaded - Perun - VladMordock: " .. Perun.Version )											-- Display perun information in log
-	Perun.ConnectToPerun()																				-- Connect to Perun server
+		Perun.dll_main.StartOfApp()																			-- Start the main Perun dll
+		Perun.MissionHash=Perun.GenerateMissionHash()														-- Generate initial missionhash
+		DCS.setUserCallbacks(Perun)																			-- Set user callbacs,  map DCS event handlers with functions defined above
+		Perun.AddLog("Loaded - Perun for DCS World - version: " .. Perun.Version,0)							-- Display perun information in log
+		Perun.ConnectToPerun()																				-- Connect to Perun server
 end
 
 

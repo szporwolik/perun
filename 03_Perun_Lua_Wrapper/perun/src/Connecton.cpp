@@ -6,14 +6,14 @@ socketConnection::socketConnection() {
 }
 
 socketConnection::~socketConnection() {
-    // Destrcutor - do nothing
+    // Destructor - do nothing
 }
 
 int socketConnection::getFlagReconnected() {
     // Return the reconnection flag and reset
     int flagReconnected = this->flagReconnected;
 
-    this->flagReconnected = 0;  // Reset the flag
+    this->flagReconnected = 0; 
 
     return flagReconnected;
 }
@@ -32,7 +32,6 @@ void socketConnection::socketConnect() {
     socketAddress.sin_port = htons(u_short(this->tcpPort));
     socketAddress.sin_addr.s_addr = *((unsigned long*)gethostbyname(this->tcpHost->c_str())->h_addr);
 
-    // Connect to socket
     if (connect(tcpSocket, (sockaddr*)&socketAddress, sizeof(SOCKADDR_IN)) == 0) {
         this->flagConnectionState = CONNECTED;
         this->flagReconnected = 1;
@@ -41,10 +40,9 @@ void socketConnection::socketConnect() {
 
 void socketConnection::socketCreateConnection(std::string* host, int* port) {
     // TCP connection - ConnectTo
-	this->tcpHost = host;   // Set target host
-	this->tcpPort = *port;  // Set target port
+	this->tcpHost = host;  
+	this->tcpPort = *port;
 
-    // Connect to socket
     socketConnect();
 
     // Create new thread
@@ -81,18 +79,18 @@ void socketConnection::socketCreateConnection(std::string* host, int* port) {
                             switch (WSAGetLastError()) {
                                 case WSAECONNRESET:
                                     // Connection was reset
-                                    flagConnectionState = DISCONNECTED; // Set flag
-                                    socketReconnect();    // Try to reconnect
+                                    flagConnectionState = DISCONNECTED; 
+                                    socketReconnect();   
                                     break;
                                 case WSAECONNABORTED:
                                     // Connection aborted
-                                    flagConnectionState = DISCONNECTED; // Set flag
-                                    socketReconnect();    // Try to reconnect
+                                    flagConnectionState = DISCONNECTED; 
+                                    socketReconnect();  
                                     break;
                                 case WSAESHUTDOWN:
                                     // Connection was closed
-                                    flagConnectionState = DISCONNECTED; // Set flag
-                                    socketReconnect();    // Try to reconnect
+                                    flagConnectionState = DISCONNECTED; 
+                                    socketReconnect();  
                                     break;
                             }
                         }
@@ -100,7 +98,7 @@ void socketConnection::socketCreateConnection(std::string* host, int* port) {
                 }
                 mutexLock.unlock();
             } else {
-                // Not connected - try to reconnect
+                // Not connected
                 socketReconnect();
             }
             // Add delay
@@ -113,31 +111,29 @@ void socketConnection::socketCreateConnection(std::string* host, int* port) {
 void socketConnection::socketReconnect() {
     // TCP connection - Reconnect
     if (flagConnectionState == DISCONNECTED) {
-        socketDisconnect();   // Disconnect
+        socketDisconnect();   
         tcpSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); // Reset socket
     }
 
-    // Connect to socket
     socketConnect();
 }
 
 void socketConnection::socketDisconnect() {
     // TCP connection - Disconnect
-	closesocket(tcpSocket); // Close socket
-    flagConnectionState = DISCONNECTED; // Set flag
+	closesocket(tcpSocket); 
+    flagConnectionState = DISCONNECTED; 
 }
 
 void socketConnection::socketSendData(std::string* payload) {
     // Send data
     if (mutexLock.try_lock()) {
-        // Add to queue (set mutex lock)
         while (!dataBuffer.empty()) {
             // Shift buffer to queue
             sendQueue.push_back(dataBuffer.front());
             dataBuffer.pop();
         }
-        sendQueue.push_back(payload);   // Shift queue
-        mutexLock.unlock(); // Unlock sending thread
+        sendQueue.push_back(payload);  
+        mutexLock.unlock(); 
     }
     else {
         // Add to buffer - queue is busy
