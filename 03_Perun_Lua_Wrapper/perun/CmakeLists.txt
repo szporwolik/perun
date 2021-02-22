@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.17)
+project(perun)
+
+set(CMAKE_CXX_STANDARD 20)
+
+set (PERUN_DLL_SOURCES 
+    "src/library.h" 
+    "src/library.cpp" 
+    "src/Connection.h" 
+    "src/Connecton.cpp"
+    )
+
+include (GenerateExportHeader)
+add_library(main SHARED ${PERUN_DLL_SOURCES}) 
+
+target_link_libraries(
+        main
+        lua-5.1.5
+        ws2_32
+)
+
+target_include_directories (main PUBLIC)
+#set_target_properties(main PROPERTIES OUTPUT_NAME "perun")
