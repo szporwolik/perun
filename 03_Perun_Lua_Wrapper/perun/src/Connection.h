@@ -13,19 +13,18 @@
 enum enumConnectionState {
 	DISCONNECTED,
 	CONNECTED,
-	FAILED,
 };
 
-class socketConnection {
+class SocketWrapper {
 public:
-	socketConnection();
-	~socketConnection();
+    SocketWrapper();
+	~SocketWrapper();
 
-	void socketDisconnect();
-	void socketCreateConnection(std::string* host, int* port);
-	void socketSendData(std::string* payload);
+	void disconnect();
+	void createConnection(std::string* host, const int* port);
+	void enqueueForSending(std::string* payload);
 	
-	int getFlagReconnected();
+	int getAndResetReconnected();
 	int getFlagConnected();
 
 private:
@@ -34,15 +33,15 @@ private:
 	int tcpPort;
 
 	int flagReconnected = 0;
-	volatile enumConnectionState flagConnectionState = DISCONNECTED;
+	volatile enumConnectionState connectionState = DISCONNECTED;
 
 	std::queue<std::string*> dataBuffer;
 	std::deque<std::string*> sendQueue;
 
 	std::mutex mutexLock;
 
-	void socketReconnect();
-	void socketConnect();
+	void reconnect();
+	void tcpConnect();
 };
 
 

@@ -11,13 +11,13 @@ set (PERUN_DLL_SOURCES
     )
 
 include (GenerateExportHeader)
-add_library(main SHARED ${PERUN_DLL_SOURCES}) 
+add_library(perun SHARED ${PERUN_DLL_SOURCES})
 
 target_link_libraries(
-        main
+        perun
         lua-5.1.5
         ws2_32
 )
 
-target_include_directories (main PUBLIC)
+target_include_directories (perun PUBLIC)
 #set_target_properties(main PROPERTIES OUTPUT_NAME "perun")

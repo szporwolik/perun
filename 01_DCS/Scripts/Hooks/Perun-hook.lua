@@ -10,7 +10,7 @@ package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
 -- Load Dlls
 package.cpath = package.cpath..';'.. lfs.writedir()..'/Mods/services/Perun/bin/' ..'?.dll;'
-Perun.dll_main = require('main') 
+Perun.DLL = require('perun') 
 
 -- Load config file
 local PerunConfig = require "perun_config"
@@ -235,7 +235,7 @@ end
 
 Perun.ConnectToPerun = function ()
 	-- Connects to Perun server
-    Perun.dll_main.tcpConnect(Perun.TCPPerunHost, Perun.TCPTargetPort)
+    Perun.DLL.tcpConnect(Perun.TCPPerunHost, Perun.TCPTargetPort)
 
 	Perun.AddLog(string.format("Connecting to TCP server %s:%i", Perun.TCPPerunHost, Perun.TCPTargetPort), 2)
 end
@@ -256,7 +256,7 @@ Perun.SendToPerun = function(data_id, data_package)
     local _tcpMessage= table.concat( _TempData )
 
     -- TCP Part - sending
-	_flagConnected, _flagReconnected = Perun.dll_main.tcpSend(_tcpMessage)
+	_flagConnected, _flagReconnected = Perun.DLL.tcpSend(_tcpMessage)
 
 	if (_flagConnected < 1) and (_now > Perun.lastConnectionError + Perun.ReconnectTimeout) then
 	-- Add information to log file and send chat message to all that Perun connection is broken
@@ -868,7 +868,7 @@ end
 -- ########### Finalize and set callbacks ###########
 if DCS.isServer() then
 	-- If this game instance is hosting multiplayer game, start Perun
-		Perun.dll_main.StartOfApp()																			-- Start the main Perun dll
+		Perun.DLL.StartOfApp()																			-- Start the main Perun dll
 		Perun.MissionHash=Perun.GenerateMissionHash()														-- Generate initial missionhash
 		DCS.setUserCallbacks(Perun)																			-- Set user callbacs,  map DCS event handlers with functions defined above
 		Perun.AddLog("Loaded - Perun for DCS World - version: " .. Perun.Version,0)							-- Display perun information in log

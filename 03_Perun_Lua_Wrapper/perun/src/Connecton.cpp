@@ -1,61 +1,53 @@
 #include "Connection.h"
 
-socketConnection::socketConnection() {
-    // Constructor
+SocketWrapper::SocketWrapper() {
 	tcpSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 }
 
-socketConnection::~socketConnection() {
-    // Destructor - do nothing
+SocketWrapper::~SocketWrapper() {
 }
 
-int socketConnection::getFlagReconnected() {
-    // Return the reconnection flag and reset
-    int flagReconnected = this->flagReconnected;
+int SocketWrapper::getAndResetReconnected() {
+    int result = this->flagReconnected;
 
     this->flagReconnected = 0; 
 
-    return flagReconnected;
+    return result;
 }
 
-int socketConnection::getFlagConnected() {
-    // Return the connection flag
-    int flagConnected = this->flagConnectionState;
-
-    return flagConnected;
+int SocketWrapper::getFlagConnected() {
+    return this->connectionState;
 }
 
-void socketConnection::socketConnect() {
-    // Create socket adress object  from TCP port and host
+void SocketWrapper::tcpConnect() {
+    // Create socket address object from TCP port and host
     SOCKADDR_IN socketAddress;
     socketAddress.sin_family = AF_INET;
     socketAddress.sin_port = htons(u_short(this->tcpPort));
     socketAddress.sin_addr.s_addr = *((unsigned long*)gethostbyname(this->tcpHost->c_str())->h_addr);
 
     if (connect(tcpSocket, (sockaddr*)&socketAddress, sizeof(SOCKADDR_IN)) == 0) {
-        this->flagConnectionState = CONNECTED;
+        this->connectionState = CONNECTED;
         this->flagReconnected = 1;
     }
 }
 
-void socketConnection::socketCreateConnection(std::string* host, int* port) {
+void SocketWrapper::createConnection(std::string* host, const int* port) {
     // TCP connection - ConnectTo
 	this->tcpHost = host;  
 	this->tcpPort = *port;
 
-    socketConnect();
+    tcpConnect();
 
     // Create new thread
     std::thread thread_object([this]() {
         // TCP sending loop
-        bool isQueueEmpty = false;  // Helper
-
+        bool nothingToSend = false;
         while (true) {
             // Endless loop (will run after main dll thread is active)
-            if (flagConnectionState == CONNECTED && mutexLock.try_lock()) {
+            if (connectionState == CONNECTED && mutexLock.try_lock()) {
                 if (sendQueue.empty()) {
-                    // Empty queue
-                    isQueueEmpty = true;
+                    nothingToSend = true;
                 } else {
                     // Payload in queue
                     auto payload = sendQueue.front();
@@ -77,21 +69,14 @@ void socketConnection::socketCreateConnection(std::string* host, int* port) {
                         } else {
                             // Payload was not sent - handle error
                             switch (WSAGetLastError()) {
+                                // Connection was reset
                                 case WSAECONNRESET:
-                                    // Connection was reset
-                                    flagConnectionState = DISCONNECTED; 
-                                    socketReconnect();   
-                                    break;
+                                // Connection aborted
                                 case WSAECONNABORTED:
-                                    // Connection aborted
-                                    flagConnectionState = DISCONNECTED; 
-                                    socketReconnect();  
-                                    break;
+                                // Connection was closed
                                 case WSAESHUTDOWN:
-                                    // Connection was closed
-                                    flagConnectionState = DISCONNECTED; 
-                                    socketReconnect();  
-                                    break;
+                                    connectionState = DISCONNECTED;
+                                    reconnect();
                             }
                         }
                     }
@@ -99,33 +84,31 @@ void socketConnection::socketCreateConnection(std::string* host, int* port) {
                 mutexLock.unlock();
             } else {
                 // Not connected
-                socketReconnect();
+                reconnect();
             }
-            // Add delay
-            if (isQueueEmpty) { Sleep(100); } else { Sleep(10); }   // Delay depending if there is something in Queue or not
+            // sleep longer if nothing to send
+            if (nothingToSend) { Sleep(100); } else { Sleep(10); }
         }
         });
     thread_object.detach(); // Detach TCP thread from main thread
 }
 
-void socketConnection::socketReconnect() {
-    // TCP connection - Reconnect
-    if (flagConnectionState == DISCONNECTED) {
-        socketDisconnect();   
+void SocketWrapper::reconnect() {
+    if (connectionState == DISCONNECTED) {
+        disconnect();
         tcpSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); // Reset socket
     }
 
-    socketConnect();
+    tcpConnect();
 }
 
-void socketConnection::socketDisconnect() {
+void SocketWrapper::disconnect() {
     // TCP connection - Disconnect
-	closesocket(tcpSocket); 
-    flagConnectionState = DISCONNECTED; 
+	closesocket(tcpSocket);
+    connectionState = DISCONNECTED;
 }
 
-void socketConnection::socketSendData(std::string* payload) {
-    // Send data
+void SocketWrapper::enqueueForSending(std::string* payload) {
     if (mutexLock.try_lock()) {
         while (!dataBuffer.empty()) {
             // Shift buffer to queue
@@ -136,7 +119,6 @@ void socketConnection::socketSendData(std::string* payload) {
         mutexLock.unlock(); 
     }
     else {
-        // Add to buffer - queue is busy
         dataBuffer.push(payload);
     }
 }
