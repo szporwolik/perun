@@ -582,8 +582,8 @@ namespace Perun_v1
             }
 
             // Frame times
-            label31.Text = $"{Globals.LastFrameTime.ToString("0.00")}µs";
-            label33.Text = $"{Globals.LastFrameDelay.ToString("0.00")}µs";
+            label31.Text = $"{Globals.LastFrameTime.ToString("0.")}u";
+            label33.Text = $"{Globals.LastFrameDelay.ToString("0.")}u";
 
             // Check if we shall rate logs
             Globals.RotateLogs = con_check_minimize_to_tray.Checked;

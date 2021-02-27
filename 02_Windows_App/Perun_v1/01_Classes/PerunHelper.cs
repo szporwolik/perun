@@ -100,13 +100,13 @@ internal class PerunHelper
             }
 
             // Add new entry
-            arrLogHistory[arrLogHistory.Length - 1] = $"{DateTime.Now.ToString("HH:mm:ss")} {LogType} {Globals.LastFrameDelay.ToString("0.00")}µs {strEntryToAdd}"; // Add entry at the last position
+            arrLogHistory[arrLogHistory.Length - 1] = $"{DateTime.Now.ToString("HH:mm:ss")} {LogType} {Globals.LastFrameDelay.ToString("0.")}u {strEntryToAdd}"; // Add entry at the last position
 
             // Update control at my window
             Globals.AppUpdateGUI = true;
         }
         // Add the entry to log file
-        LogController.instance.WriteLog(logLevel, $"{DateTime.Now.ToString("yyyy-MM-dd ")} {DateTime.Now.ToString("HH:mm:ss.fff")} | {Globals.HardwareMonitor.LastCurrentCpuUsage} | {Globals.HardwareMonitor.LastCurrentRamUsage} | {Globals.LastFrameTime.ToString("0.00")} | {Globals.LastFrameDelay.ToString("0.00")} | {Globals.AppInstanceID} | {LogMarker} | {LogDirection} | {strType} | {strEntryToAdd}");
+        LogController.instance.WriteLog(logLevel, $"{DateTime.Now.ToString("yyyy-MM-dd ")} {DateTime.Now.ToString("HH:mm:ss.fff")} | {Globals.HardwareMonitor.LastCurrentCpuUsage} | {Globals.HardwareMonitor.LastCurrentRamUsage} | {Globals.LastFrameTime.ToString("000000.")} | {Globals.LastFrameDelay.ToString("000000.")} | {Globals.AppInstanceID} | {LogMarker} | {LogDirection} | {strType} | {strEntryToAdd}");
     }
 
     // Gets build version
