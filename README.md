@@ -13,7 +13,7 @@ Provided windows app puts received TCP packets to MySQL database; additionaly Pe
 
 However, this software is intended to be used by experienced users - the output is MySQL data; you will need to process/display it yourself.
 
-![Perun in action](https://i.imgur.com/JIlLENa.png)
+![Perun in action](https://i.imgur.com/cCvtGmI.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
 
 Discord server: https://discord.gg/MTahREx
