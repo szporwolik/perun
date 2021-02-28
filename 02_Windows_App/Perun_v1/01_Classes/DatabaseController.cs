@@ -22,11 +22,24 @@ public class DatabaseController
         }
 
         // Parse frame
-        dynamic TCPFrame = JsonConvert.DeserializeObject(RawTCPFrame);                                                  // Deserialize raw data
-        string TCPFrameType = TCPFrame.type;                                                                            // Frame type
-        string TCPFrameTimestamp = (TCPFrame.timestamp != null) ? $"'{TCPFrame.timestamp}'" : "CURRENT_TIMESTAMP()";    // Frame timestamp (Some frames may come without timestamp, use database timestamp then)
-        string TCPFrameInstance = TCPFrame.instance;                                                                    // Frame instance
-        string TCPFramePayload;                                                                                         // Frame payload (we will deserialise only for specific frame types)
+        dynamic TCPFrame;
+        string TCPFrameType;
+        string TCPFrameTimestamp;
+        string TCPFrameInstance;
+        try
+        {
+            TCPFrame = JsonConvert.DeserializeObject(RawTCPFrame); // Deserialize raw data
+            TCPFrameType = TCPFrame.type;
+            TCPFrameTimestamp = (TCPFrame.timestamp != null) ? $"'{TCPFrame.timestamp}'" : "CURRENT_TIMESTAMP()";    // Frame timestamp (Some frames may come without timestamp, use database timestamp then)
+            TCPFrameInstance = TCPFrame.instance;
+        }
+        catch (Exception)
+        {
+            LogController.instance.LogError("ERROR - SendToMySql cannot deserialize tcp frame !", RawTCPFrame);
+            return 0;
+        }
+
+        string TCPFramePayload; // Frame payload (we will deserialise only for specific frame types)
 
         // Connect to mysql and execute sql
         try
