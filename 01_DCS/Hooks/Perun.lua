@@ -1,206 +1,53 @@
 -- Perun for DCS World https://github.com/szporwolik/perun -> DCS Hook component
+net.log("[Perun] Script started")	-- Display perun information in log
 
 -- Initial init
 local Perun = {}
-package.path  = package.path..";"..lfs.currentdir().."/LuaSocket/?.lua"
+
+-- Load Luas
+package.path  = package.path..";"..lfs.currentdir().."/LuaSocket/?.lua"..";"..lfs.writedir() .. "/Mods/services/Perun/lua/?.lua"
 package.cpath = package.cpath..";"..lfs.currentdir().."/LuaSocket/?.dll"
 
--- ###################### SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION #############################
+-- Load Dlls
+package.cpath = package.cpath..';'.. lfs.writedir()..'/Mods/services/Perun/bin/' ..'?.dll;'
+Perun.DLL = require('perun') 
 
-Perun.RefreshStatus = 15 																-- (int) [default: 60] Base refresh rate in seconds to send status update
-Perun.RefreshMission = 60 																-- (int) [default: 120] Refresh rate in seconds to send mission information
-Perun.TCPTargetPort = 48621																-- (int) [default: 48621] TCP port to send data to
-Perun.TCPPerunHost = "localhost"														-- (string) [default: "localhost"] IP adress of the Perun instance or "localhost"
-Perun.Instance = 1																		-- (int) [default: 1] Id number of instance (if multiple DCS instances are to run at the same PC)
-Perun.JsonStatusLocation = "Scripts\\Json\\" 											-- (string) [default: "Scripts\\Json\\"] Folder relative do user's SaveGames DCS folder -> status file updated each RefreshMission
-Perun.MissionStartNoDeathWindow = 300													-- (int) [default: 300] Number of secounds after mission start when death of the pilot will not go to statistics, shall avoid death penalty during spawning DCS bugs
-Perun.DebugMode = 2																		-- (int) [0 (default),1,2] Value greater than 0 will display Perun information in DCS log file, values: 1 - minimal verbose, 2 - all log information will be logged
-Perun.LogServerMessages = 1																-- (int) [0,1 (default)] Set to 1 if you want to log also the chat messages send by server
-Perun.MOTD_L1 = "Witamy na serwerze Gildia.org !"										-- (string) Message send to players connecting the server - Line 1
-Perun.MOTD_L2 = "Wymagamy obecnosci DCS SRS oraz TeamSpeak - szczegoly na forum"		-- (string) Message send to players connecting the server - Line 2
-
--- ###################### END OF SETTINGS - DO NOT MODIFY OUTSIDE THIS SECTION ######################
+-- Load config file
+local PerunConfig = require "perun_config"
+Perun.RefreshStatus = PerunConfig.RefreshStatus
+Perun.TCPTargetPort = PerunConfig.TCPTargetPort
+Perun.TCPPerunHost = PerunConfig.TCPPerunHost
+Perun.Instance = PerunConfig.Instance
+Perun.MissionStartNoDeathWindow = PerunConfig.MissionStartNoDeathWindow
+Perun.DebugMode = PerunConfig.DebugMode
+Perun.MOTD_L1 = PerunConfig.MOTD_L1
+Perun.MOTD_L2 = PerunConfig.MOTD_L2
+Perun.ConnectionError = PerunConfig.ConnectionError_L1
+Perun.BroadcastPerunErrors = PerunConfig.BroadcastPerunErrors
 
 -- Variable init
-Perun.Version = "v0.11.1"
+Perun.Version = "v0.12.0"
+
 Perun.StatusData = {}
 Perun.SlotsData = {}
 Perun.MissionData = {}
-Perun.ServerData = {}
 Perun.StatData = {}
 Perun.StatDataLastType = {}
 Perun.PlayersTableCache = {}
 Perun.MissionHash=""
-Perun.ReconnectTimeout = 30
+
 Perun.lastSentStatus = 0
 Perun.lastSentMission = 0
 Perun.lastSentKeepAlive = 0
 Perun.lastConnectionError = 0
+Perun.lastFrameStart = 0;
 Perun.lastTimer = 0
-Perun.lastReconnect = (-1) * Perun.ReconnectTimeout
-Perun.SendRetries = 2
+Perun.lastFrameTime = 0;
+
+Perun.ReconnectTimeout = 30;
 Perun.RefreshKeepAlive = 3
-Perun.JsonStatusLocation = lfs.writedir() .. Perun.JsonStatusLocation
-Perun.socket  = require("socket")
-Perun.IsServer = DCS.isServer( )								
-Perun.ConnectionError = "[Perun] ERROR: Connection broken - contact server admin!"
 
 -- ################################ Helper function definitions ################################
-function stripChars(str)
-    -- Hellper functions removes accents characters from string
-    -- via https://stackoverflow.com/questions/50459102/replace-accented-characters-in-string-to-standard-with-lua
-    local _tableAccents = {}
-    _tableAccents["à"] = "a"
-    _tableAccents["á"] = "a"
-    _tableAccents["â"] = "a"
-    _tableAccents["ã"] = "a"
-    _tableAccents["ä"] = "a"
-    _tableAccents["ç"] = "c"
-    _tableAccents["è"] = "e"
-    _tableAccents["é"] = "e"
-    _tableAccents["ê"] = "e"
-    _tableAccents["ë"] = "e"
-    _tableAccents["ì"] = "i"
-    _tableAccents["í"] = "i"
-    _tableAccents["î"] = "i"
-    _tableAccents["ï"] = "i"
-    _tableAccents["ñ"] = "n"
-    _tableAccents["ò"] = "o"
-    _tableAccents["ó"] = "o"
-    _tableAccents["ô"] = "o"
-    _tableAccents["õ"] = "o"
-    _tableAccents["ö"] = "o"
-    _tableAccents["ù"] = "u"
-    _tableAccents["ú"] = "u"
-    _tableAccents["û"] = "u"
-    _tableAccents["ü"] = "u"
-    _tableAccents["ý"] = "y"
-    _tableAccents["ÿ"] = "y"
-    _tableAccents["À"] = "A"
-    _tableAccents["Á"] = "A"
-    _tableAccents["Â"] = "A"
-    _tableAccents["Ã"] = "A"
-    _tableAccents["Ä"] = "A"
-    _tableAccents["Ç"] = "C"
-    _tableAccents["È"] = "E"
-    _tableAccents["É"] = "E"
-    _tableAccents["Ê"] = "E"
-    _tableAccents["Ë"] = "E"
-    _tableAccents["Ì"] = "I"
-    _tableAccents["Í"] = "I"
-    _tableAccents["Î"] = "I"
-    _tableAccents["Ï"] = "I"
-    _tableAccents["Ñ"] = "N"
-    _tableAccents["Ò"] = "O"
-    _tableAccents["Ó"] = "O"
-    _tableAccents["Ô"] = "O"
-    _tableAccents["Õ"] = "O"
-    _tableAccents["Ö"] = "O"
-    _tableAccents["Ù"] = "U"
-    _tableAccents["Ú"] = "U"
-    _tableAccents["Û"] = "U"
-    _tableAccents["Ü"] = "U"
-    _tableAccents["Ý"] = "Y"
-
-    -- Polish accents
-    _tableAccents["ę"] = "e"
-    _tableAccents["Ę"] = "Ę"
-    _tableAccents["ó"] = "o"
-    _tableAccents["Ó"] = "O"
-    _tableAccents["ą"] = "a"
-    _tableAccents["Ą"] = "A"
-    _tableAccents["ś"] = "s"
-    _tableAccents["Ś"] = "S"
-    _tableAccents["ć"] = "c"
-    _tableAccents["Ć"] = "C"
-    _tableAccents["ż"] = "z"
-    _tableAccents["Ż"] = "Z"
-    _tableAccents["ź"] = "z"
-    _tableAccents["Ź"] = "Z"
-    _tableAccents["ł"] = "l"
-    _tableAccents["Ł"] = "L"
-
-    -- Cyrillic script (Russian)
-    _tableAccents["а"] = "a"
-    _tableAccents["А"] = "A"
-    _tableAccents["б"] = "b"
-    _tableAccents["Б"] = "B"
-    _tableAccents["в"] = "v"
-    _tableAccents["В"] = "V"
-    _tableAccents["г"] = "g"
-    _tableAccents["Г"] = "G"
-    _tableAccents["д"] = "d"
-    _tableAccents["Д"] = "D"
-    _tableAccents["е"] = "ye"
-    _tableAccents["Е"] = "YE"
-    _tableAccents["ё"] = "yo"
-    _tableAccents["Ё"] = "YO"
-    _tableAccents["ж"] = "zh"
-    _tableAccents["Ж"] = "Zh"
-    _tableAccents["з"] = "z"
-    _tableAccents["З"] = "Z"
-    _tableAccents["и"] = "ee"
-    _tableAccents["И"] = "EE"
-    _tableAccents["й"] = "i"
-    _tableAccents["Й"] = "I"
-    _tableAccents["к"] = "k"
-    _tableAccents["К"] = "K"
-    _tableAccents["л"] = "l"
-    _tableAccents["Л"] = "L"
-    _tableAccents["м"] = "m"
-    _tableAccents["М"] = "M"
-    -- _tableAccents["Н"] = "M" - disabled due to conflict with english
-    _tableAccents["п"] = "p"
-    _tableAccents["П"] = "P"
-    -- _tableAccents["р"] = "r" - disabled due to conflict with english
-    -- _tableAccents["Р"] = "R" - disabled due to conflict with english
-    -- _tableAccents["с"] = "s" - disabled due to conflict with english
-    -- _tableAccents["С"] = "S" - disabled due to conflict with english
-    _tableAccents["т"] = "t"
-    _tableAccents["Т"] = "T"
-    _tableAccents["у"] = "u"
-    _tableAccents["У"] = "U"
-    _tableAccents["ф"] = "f"
-    _tableAccents["Ф"] = "F"
-    -- _tableAccents["х"] = "h" - disabled due to conflict with english
-    -- _tableAccents["Х"] = "H" - disabled due to conflict with english
-    _tableAccents["ц"] = "ts"
-    _tableAccents["Ц"] = "TS"
-    _tableAccents["ч"] = "ch"
-    _tableAccents["Ч"] = "CH"
-    _tableAccents["ш"] = "sh"
-    _tableAccents["Ш"] = "SH"
-    _tableAccents["щ"] = "sh"
-    _tableAccents["Щ"] = "SH"
-    _tableAccents["ъ"] = ""
-    _tableAccents["Ъ"] = ""
-    _tableAccents["ы"] = "i"
-    _tableAccents["Ы"] = "I"
-    _tableAccents["ь"] = ""
-    _tableAccents["Ь"] = ""
-    _tableAccents["э"] = "e"
-    _tableAccents["Э"] = "E"	
-    _tableAccents["ю"] = "yu"
-    _tableAccents["Ю"] = "YU"
-    _tableAccents["я"] = "ya"
-    _tableAccents["Я"] = "YA"	
-	
-    -- TBD additonal characters for other languages
-
-	-- Check string and replace special chars via replacement table
-    local _normalizedString = ''
-    for _strChar in string.gmatch(str, "([%z\1-\127\194-\244][\128-\191]*)") do
-        if _tableAccents[_strChar] ~= nil then
-			-- Replace char
-            _normalizedString = _normalizedString.._tableAccents[_strChar]
-        else
-			-- No need to replace
-            _normalizedString = _normalizedString.._strChar
-        end
-    end
-    return _normalizedString
-end
-
 Perun.GetCategory = function(id)
     -- Helper function returns object category basing on https://pastebin.com/GUAXrd2U
     local _killed_target_category = "Other"
@@ -234,7 +81,7 @@ Perun.SideID2Name = function(id)
         [2] = 'BLUE',
 		[3] = 'NEUTRAL',	-- TBD check once this is released in DCS
     }
-	if id > 0 then
+	if id > 0 and id <= 3 then
 		return _sides[id]
 	else 
 		return "?"
@@ -243,7 +90,6 @@ end
 
 Perun.AddLog = function(text,LogLevel)
     -- Adds logs to DCS.log file
-	LogLevel = LogLevel or 1
 	if Perun.DebugMode >= LogLevel then
 		net.log("[Perun] ".. text)
 	end
@@ -330,7 +176,7 @@ Perun.GetMulticrewCrew = function (owner_playerID)
 
 	local _crew = {}
 	table.insert(_crew, owner_playerID)
-	if _master_type == "F-14B" or _master_type == "Yak-52" or _master_type == "L-39C" or _master_type == "SA342M" or _master_type =="SA342Minigun" or _master_type == "SA342Mistral" or _master_type == "SA342L" then -- TBD add additional multicrew model types
+	if _master_type == "F-14B" or _master_type == "Yak-52" or _master_type == "L-39C" or _master_type == "SA342M" or _master_type =="SA342Minigun" or _master_type == "SA342Mistral" or _master_type == "SA342L" or _master_type == "F-14A-135-GR" or _master_type == "C-101EB" or _master_type == "UH-1H" or _master_type == "C-101CC" then -- TBD add additional multicrew model types
 		local _owner_side=net.get_player_info(owner_playerID, 'side')
 		
 		if _master_slot and _master_slot ~= "" then
@@ -390,70 +236,53 @@ end
 
 Perun.ConnectToPerun = function ()
 	-- Connects to Perun server
-	Perun.AddLog("Connecting to TCP server",2)
-	Perun.TCP = assert(Perun.socket.tcp())
-	Perun.TCP:settimeout(5000)
-	
-	_, _err = Perun.TCP:connect(Perun.TCPPerunHost, Perun.TCPTargetPort)
-	if _err then
-		-- Could not connect
-		Perun.AddLog("ERROR - TCP connection error : " .. _err , 1)
-	else
-		-- Connected
-		Perun.AddLog("Success - connected to TCP server",2)
-	end
-	local _now = DCS.getRealTime()
-	Perun.lastReconnect = _now
+    Perun.DLL.tcpConnect(Perun.TCPPerunHost, Perun.TCPTargetPort)
+
+	Perun.AddLog(string.format("Connecting to TCP server %s:%i", Perun.TCPPerunHost, Perun.TCPTargetPort), 2)
 end
 
 Perun.SendToPerun = function(data_id, data_package)
     -- Prepares and sends data package
-    local _TempData={}
-    _TempData["type"]=data_id
-    _TempData["payload"]=data_package
-    _TempData["timestamp"]=os.date('%Y-%m-%d %H:%M:%S')
-	_TempData["instance"]=Perun.Instance
-	
-	-- Build TCP frame
-    local _TCPFrame="<SOT>" .. stripChars(net.lua2json(_TempData)) .. "<EOT>"
+	-- Build TCP message
+	local _now = DCS.getRealTime()
+
+	local _payload
+	if data_package == nil then
+		_payload = "null"
+	else
+		_payload = net.lua2json(data_package);
+	end
+
+	local _TempData={"<SOT>","{\"dcs_current_frame_delay\":",((DCS.getRealTime() - Perun.lastFrameStart) * 1000000),",\"type\":",data_id,",\"dcs_frame_time\":",(Perun.lastFrameTime * 1000000),",\"instance\":",(Perun.Instance),",\"timestamp\":\"",(os.date('%Y-%m-%d %H:%M:%S')),"\",\"payload\":",(_payload),"}<EOT>"}
+    local _tcpMessage= table.concat( _TempData )
 
     -- TCP Part - sending
-	local _intStatus = nil
-	local _intTries =0
-	local _err=nil
-	local _dropped =  true
+	_flagConnected, _flagReconnected = Perun.DLL.tcpSend(_tcpMessage)
 
-	-- Try to send a few times (defind in settings section)
-	local _now = DCS.getRealTime()
-	while _intStatus == nil and _intTries < Perun.SendRetries do
-		_intStatus, _err = Perun.TCP:send(_TCPFrame) 
-		if _err then
-			-- Failure, packet was not send
-			Perun.AddLog("Packed not send : " .. data_id .. " , error: " .. _err .. ", tries: " .. _intTries,2)
-			if _now > Perun.lastReconnect + Perun.ReconnectTimeout then
-				Perun.ConnectToPerun()
-			end
-		else
-			-- Succes, packet was send
-			Perun.AddLog("Packet send : " .. data_id .. " , tries:" .. _intTries,2)
-			_dropped = false
-		end
-		_intTries=_intTries+1
-	end
-	
-	if _dropped == true then
-		-- Add information to log file and send chat message to all that Perun connection is broken
-		Perun.AddLog("ERROR - packed dropped : " .. data_id,1)
-		if _now > Perun.lastConnectionError + Perun.ReconnectTimeout then
-			-- Informs all players that there is Peron error; below hack for DCS net.send_chat not working
+	if (_flagConnected < 1) and (_now > Perun.lastConnectionError + Perun.ReconnectTimeout) then
+	-- Add information to log file and send chat message to all that Perun connection is broken
+		-- Add information to log file	
+		Perun.AddLog("ERROR - TCP connection is not available",0)
+
+		-- Informs all players that there is Peron error; below hack for DCS net.send_chat not working
+		if Perun.BroadcastPerunErrors > 0 then
 			local _all_players = net.get_player_list()
 			for PlayerIDIndex, _playerID in ipairs(_all_players) do
-				 net.send_chat_to(Perun.ConnectionError , _playerID)
+				net.send_chat_to(Perun.ConnectionError , _playerID)
 			end
-			-- Reset last error send counter
-			Perun.lastConnectionError = _now
 		end
+		
+		-- Reset last error send counter
+		Perun.lastConnectionError = _now
 	end 
+
+	-- Handle reconnection to the server
+    if _flagReconnected > 0 then
+		Perun.AddLog("Success - (re)connected to TCP server",2)
+		Perun.lastSentMission = 0
+	end
+
+	Perun.AddLog("TCP frame added to buffer : " .. data_id .. ", frame delay: " .. ((DCS.getRealTime() - Perun.lastFrameStart) * 1000000),2)
 end
 
 -- ################################ Log functions ################################
@@ -462,13 +291,13 @@ Perun.LogChat = function(playerID,msg,all)
     -- Logs chat messages
     local _TempData={}
     _TempData['player']= net.get_player_info(playerID, "name")
-    _TempData['msg']=stripChars(msg)
+    _TempData['msg']=msg
     _TempData['all']=all
     _TempData['ucid']=net.get_player_info(playerID, 'ucid')
     _TempData['datetime']=os.date('%Y-%m-%d %H:%M:%S')
     _TempData['missionhash']=Perun.MissionHash
 
-	Perun.AddLog("Sending chat message",2)
+	Perun.AddLog("Sending chat message",1)
     Perun.SendToPerun(50,_TempData)
 end
 
@@ -489,7 +318,7 @@ Perun.LogEvent = function(log_type,log_content,log_arg_1,log_arg_2)
 		log_arg_2 = "null"
 	end
 
-	Perun.AddLog("Sending event data, event: " .. log_type .. ", arg1:" .. log_arg_1 .. ", arg2:" .. log_arg_2 .. ", content: " .. log_content,2)
+	Perun.AddLog("Sending event data, event: " .. log_type .. ", arg1:" .. log_arg_1 .. ", arg2:" .. log_arg_2 .. ", content: " .. log_content,1)
     Perun.SendToPerun(51,_TempData)
 end
 
@@ -506,7 +335,7 @@ Perun.LogStats = function(playerID)
     _TempData['stat_datetime']=os.date('%Y-%m-%d %H:%M:%S')
     _TempData['stat_missionhash']=Perun.MissionHash
 
-	Perun.AddLog("Sending stats data",2)
+	Perun.AddLog("Sending stats data",1)
     Perun.SendToPerun(52,_TempData)
 end
 
@@ -528,7 +357,7 @@ Perun.LogLogin = function(playerID)
     _TempData['login_name']=net.get_player_info(playerID, 'name')
     _TempData['login_datetime']=os.date('%Y-%m-%d %H:%M:%S')
 
-	Perun.AddLog("Sending login event",2)
+	Perun.AddLog("Sending login event",1)
     Perun.SendToPerun(53,_TempData)
 end
 
@@ -659,6 +488,7 @@ end
 
 Perun.LogStatsGet = function(playerID)
 	-- Gets Perun statistics array per player 
+	local _now = DCS.getRealTime()
 	local next = next -- Make next function local - this improves performance
 	local _player_hash = nil
 	
@@ -687,52 +517,61 @@ Perun.LogStatsGet = function(playerID)
 		-- Stats for player are empty
 		Perun.LogStatsCount(playerID,'init') -- Init statistics
 	end
-
-	Perun.AddLog("Getting stats data",2)
+	
+	local _delay = (DCS.getRealTime() - _now) * 1000000
+	Perun.AddLog("Getting stats data finished; took: " .. _delay .. "us",2)
 	return Perun.StatData[_player_hash];
 end
 
 Perun.UpdateStatus = function()
-    -- Main function for status updates
+ 	-- Main function for status updates
+	 local _now = DCS.getRealTime()
 
-    -- Diagnostic data
+	-- Diagnostic data
 		-- Update version data
-		Perun.ServerData['v_dcs_hook']=Perun.Version
+		local _ServerData={}
+		_ServerData['v_dcs_hook']=Perun.Version
 
 		-- Update clients data - count connected players
 		_playerlist=net.get_player_list()
-		_count = 0
-		for _ in pairs(_playerlist) do _count = _count + 1 end
-		Perun.ServerData['c_players']=_count
+		_ServerData['c_players']=#_playerlist 
 
-		-- Send
-		Perun.AddLog("Sending server data",2)
-		Perun.SendToPerun(1,Perun.ServerData)
+		Perun.StatusData["server"] = _ServerData
 
-    -- Status data - update all subsections
-		-- 1 - Mission data
-		local _TempData={}
-		_TempData['name']=DCS.getMissionName()
-		_TempData['modeltime']=DCS.getModelTime()
-		_TempData['realtime']=DCS.getRealTime()
-		_TempData['pause']=DCS.getPause()
-		_TempData['multiplayer']=DCS.isMultiplayer()
-		_TempData['theatre'] = Perun.MissionData['mission']['theatre']
-		_TempData['weather'] = Perun.MissionData['mission']['weather']
-		Perun.StatusData["mission"] = _TempData
+	-- Mission data
+		local _MissionData={}
+		_MissionData['name']=DCS.getMissionName()
+		_MissionData['modeltime']=DCS.getModelTime()
+		_MissionData['realtime']=DCS.getRealTime()
+		_MissionData['pause']=DCS.getPause()
+		_MissionData['multiplayer']=DCS.isMultiplayer()
+		_MissionData['theatre'] = Perun.MissionData['mission']['theatre']
 
-		-- 2 - Players data
-		_PlayersTable={}
+		Perun.StatusData["mission"] = _MissionData
+
+	-- Players data
+		local _PlayersTable={}
 		for _k, _i in ipairs(_playerlist) do
 			_PlayersTable[_k]=net.get_player_info(_i)
+			_PlayersTable[_k]['pilotid'] = nil;
+			_PlayersTable[_k]['started'] = nil;
+			_PlayersTable[_k]['lang'] = nil;
+			_PlayersTable[_k]['ipaddr'] = nil;
 		end
-		Perun.StatusData["players"] = _PlayersTable
+		Perun.StatusData["clients"] = _PlayersTable
 
-		-- Send
-		Perun.AddLog("Sending status data",2)
-		Perun.SendToPerun(2,Perun.StatusData)
+	-- Send
+		_delay = (DCS.getRealTime() - _now) * 1000000
+		Perun.AddLog("Updated status data; sending (" .. _delay .. "us)",2)
+		Perun.SendToPerun(1,Perun.StatusData)
+end
 
-    -- Update slots data
+Perun.UpdateSlots = function()
+	-- Update and send slots data
+	local _now = DCS.getRealTime()
+
+	-- Check if we need to pull the data or we can use the stored one
+	if Perun.SlotsData['coalitions'] == nil then
 		Perun.SlotsData['coalitions']=DCS.getAvailableCoalitions()
 		Perun.SlotsData['slots']={}
 
@@ -749,20 +588,32 @@ Perun.UpdateStatus = function()
 				Perun.SlotsData['slots'][_j][_sj]['task']= nil
 				Perun.SlotsData['slots'][_j][_sj]['airdromeId']= nil
 				Perun.SlotsData['slots'][_j][_sj]['helipadName']= nil
+				Perun.SlotsData['slots'][_j][_sj]['multicrew_place']= nil
+				Perun.SlotsData['slots'][_j][_sj]['role']= nil
+				Perun.SlotsData['slots'][_j][_sj]['helipadUnitType']= nil
+				Perun.SlotsData['slots'][_j][_sj]['action']= nil
 			end
 		end
+	end
 
-		-- Send
-		Perun.AddLog("Sending slots data",2)
-		Perun.SendToPerun(3,Perun.SlotsData)
+	local _delay = (DCS.getRealTime() - _now) * 1000000
+	Perun.AddLog("Updated slots data; sending (" .. _delay .. "us)",2)
+	Perun.SendToPerun(2,Perun.SlotsData)
 end
 
 Perun.UpdateMission = function()
     -- Main function for mission information updates
-	Perun.AddLog("Updating mission data",2)
-    Perun.MissionData=DCS.getCurrentMission()
-	-- Perun.SendToPerun(4,Perun.MissionData) -- TBD can cause data transmission troubles
-	Perun.AddLog("Mission data updated",2)
+	local _now = DCS.getRealTime()
+
+	-- Check if we need to get mission data
+	if Perun.MissionData['mission'] == nil then
+		-- Get mission information
+		Perun.MissionData=DCS.getCurrentMission()
+	end
+
+	local _delay = (DCS.getRealTime() - _now) * 1000000
+	Perun.AddLog("Updated mission data; sending (" .. _delay .. "us)",2)
+	Perun.SendToPerun(3,Perun.MissionData)
 end
 
 --- ################################ Event callbacks ################################
@@ -774,21 +625,26 @@ Perun.onSimulationStart = function()
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
 	Perun.PlayersTableCache = {}
+	Perun.SlotsData = {}
+	Perun.MissionData = {}
+	Perun.lastSentMission = 0 -- reset so mission information will be send
 end
 
 Perun.onSimulationStop = function()
 	-- Simulation was stopped
     Perun.LogEvent("SimStop","Mission " .. Perun.MissionHash .. " finished",nil,nil);
+	Perun.LogAllStats()
 	Perun.MissionHash=Perun.GenerateMissionHash();
 	Perun.StatData = {}
+	Perun.MissionData = {}
 	Perun.StatDataLastType = {}
-	Perun.LogAllStats()
 	Perun.PlayersTableCache = {}
+	Perun.SlotsData = {}
 end
 
 Perun.onPlayerDisconnect = function(id, err_code)
 	-- Player disconnected
-	Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.(?)",nil,nil);
+	Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.",nil,nil);
 	
 	return 
 end
@@ -802,30 +658,29 @@ end
 Perun.onSimulationFrame = function()
 	-- Repeat for each simulator frame
     local _now = DCS.getRealTime()
+	Perun.lastFrameStart = _now
 
-    -- First run
-    if Perun.lastSentMission ==0 and Perun.lastSentStatus ==0 then
-        Perun.UpdateMission()
+    -- Send mission update - First run or update required (set on connection errors)
+	if Perun.lastSentMission == 0 then
+		Perun.lastSentMission = _now
+
+		Perun.UpdateMission()
+		Perun.UpdateSlots()
     end
 
-    -- Send mission update and update JSON
-    if _now > Perun.lastSentMission + Perun.RefreshMission then
-        Perun.lastSentMission = _now
-
-        Perun.UpdateMission()
-    end
-
-    -- Send status update
+    -- Send status update - update required
     if _now > Perun.lastSentStatus + Perun.RefreshStatus then
         Perun.lastSentStatus = _now
 
         Perun.UpdateStatus()
     end
 	
-	-- Send keepalive
-	if _now > Perun.lastSentKeepAlive + Perun.SendRetries then
+	-- Send keepalive - update required
+	if _now > Perun.lastSentKeepAlive + Perun.RefreshKeepAlive then 
 		Perun.lastSentKeepAlive = _now
-		Perun.SendToPerun(0,nil)
+
+		-- Lets send aprox. frame time in us
+		Perun.SendToPerun(0,nil) 
 	end
 	
 	-- Calucalate time on slot per each of players
@@ -838,8 +693,9 @@ Perun.onSimulationFrame = function()
 			end
 		end
 	end
-	
-	
+
+	-- Calculate approx. frame time
+	Perun.lastFrameTime = DCS.getRealTime() - _now
 end
 
 Perun.onPlayerStart = function (id)
@@ -859,6 +715,7 @@ end
 
 Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 	-- Game event has occured
+	local _now = DCS.getRealTime()
 	Perun.AddLog("Event handler for ".. eventName .. " started",2)
 	
     if eventName == "friendly_fire" then
@@ -1008,14 +865,18 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
         Perun.LogEvent(eventName,"Unknown event type",nil,nil);
 
     end
-	Perun.AddLog("Event handler for " .. eventName .. " finished",2)
+	local _delay = (DCS.getRealTime() - _now) * 1000000
+	Perun.AddLog("Event handler for " .. eventName .. " finished; it took: " .. _delay .. "us",2)
 end
 
 -- ########### Finalize and set callbacks ###########
-if Perun.IsServer then
+if DCS.isServer() then
 	-- If this game instance is hosting multiplayer game, start Perun
-	Perun.MissionHash=Perun.GenerateMissionHash()														-- Generate initial missionhash
-	DCS.setUserCallbacks(Perun)																			-- Set user callbacs,  map DCS event handlers with functions defined above
-	net.log("Perun by VladMordock was loaded: " .. Perun.Version )										-- Display perun information in log
-	Perun.ConnectToPerun()																				-- Connect to Perun server
+		Perun.DLL.StartOfApp()																			-- Start the main Perun dll
+		Perun.MissionHash=Perun.GenerateMissionHash()														-- Generate initial missionhash
+		DCS.setUserCallbacks(Perun)																			-- Set user callbacs,  map DCS event handlers with functions defined above
+		Perun.AddLog("Loaded - Perun for DCS World - version: " .. Perun.Version,0)							-- Display perun information in log
+		Perun.ConnectToPerun()																				-- Connect to Perun server
 end
+
+
