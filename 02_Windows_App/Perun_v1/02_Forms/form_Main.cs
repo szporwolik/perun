@@ -405,7 +405,7 @@ namespace Perun_v1
                 form_Main_SaveSettings();
 
                 AppCanClose = true; // Save settings on exit
-                this.Close();        // Allow to exit application
+                Application.Exit(); // Quit
             }
             else if (dialogResult == DialogResult.No)
             {
