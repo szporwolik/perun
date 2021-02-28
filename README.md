@@ -13,7 +13,7 @@ Provided windows app puts received TCP packets to MySQL database; additionaly Pe
 
 However, this software is intended to be used by experienced users - the output is MySQL data; you will need to process/display it yourself.
 
-![Perun in action](https://i.imgur.com/JIlLENa.png)
+![Perun in action](https://i.imgur.com/cCvtGmI.png)
 ![Data flow](https://i.imgur.com/JbNu77l.png)
 
 Discord server: https://discord.gg/MTahREx
@@ -29,8 +29,10 @@ Core:
 
 ## Installing
 * Download latest [release](https://github.com/szporwolik/perun/releases)
-* Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your \Scripts folder (located inside DCS folder in your Saved Games)
-* Create MySQL database using SQL script located in [03_MySQL](https://github.com/szporwolik/perun/tree/master/03_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
+* Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your DCS folder in your Saved Games
+* From the downloaded release package, put ```main.dll`` into your DCS folder in your Saved Games, ```Mods/services/Perun/dll```
+* You can change your configuration settings in DCS\Mods\services\Perun\lua\perun_config
+* Create MySQL database using SQL script located in [04_MySQL](https://github.com/szporwolik/perun/tree/master/04_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
 * Ensure that your MySQL config is not using STRICT_TRANS_TABLES 
 
 ## Running
@@ -63,7 +65,7 @@ Data displaying and handling is not in the current scope of this project. Since 
 ![Mission statistics](https://i.imgur.com/uiRSa9e.png)
 Due to resource limitations, "Perun for DCS World" will focus on pulling the data from DCS (and external modules) and pushing it to MySQL server, but if anyone would like to develop open sourced PHP applets for data/statistics displaying we're willing to cooperate and support such projects. Unfortunetly it's not possible to share the hardcoded code from forum.gildia.org.
 
-Basic example was provided [HERE](/04_Misc/05_PHP_Example/index.php) , support is available via Perun community at our [Discord](https://discord.gg/MTahREx).
+Basic example was provided [HERE](/05_Misc/05_PHP_Example/index.php) , support is available via Perun community at our [Discord](https://discord.gg/MTahREx).
 
 ## Troubleshooting - FAQ
 - [I keep getting 1305 MySQL error](#i-keep-getting-1305-mysql-error)
@@ -94,28 +96,26 @@ DCS API does not track carrier or FARP operations natively, so there is a trick 
 ![Database Scheme](https://i.imgur.com/zJsFxV0.png "MIT")
 
 ## Data packets - send from lua to TCP port 
-* ```ID: 1```, contains version/diagnostic information
-	* perun version - for server administration usage
-	* player count - actual number of connected players
-* ```ID: 2```, contains status data in the following sections
-	* mission name - name of the mission file
-	* model time - simulation time
-	* real time - real time
-	* pause - information if server is paused
-	* multiplayer - information if this is multiplayer game (always true for dedicated server usage)
-	* theather - information about area of operation
-	* weather - basic weather information
-	* players - connected players
-* ```ID: 3```, available slots list and coalitions
+* ```ID: 1```, stats update [periodic update]
+	* server - various information for server administration usage
+	* mission - short information about runing mission
+		* mission name - name of the mission file
+		* model time - simulation time
+		* real time - real time
+		* pause - information if server is paused
+		* multiplayer - information if this is multiplayer game (always true for dedicated server usage)
+		* theather - information about area of operation
+	* clients - list of connected players
+* ```ID: 2```, available slots list and coalitions [updated on mision start or Perun reconnection]
 	* coalitions - available coalitions
 	* slots - available slots
-* ```ID: 4```, stores mission data ; idea is to have whole DCS.getCurrentMission() result - currenlty commented out due to performance issues
-* ```ID: 50```, chat event
-* ```ID: 51```, game event
-* ```ID: 52```, player stats ; note that as DSC native stats are not reliable, seperate stats couting methods are used
-* ```ID: 53```, player login to DCS server
-* ```ID: 100```, DCS SRS's client-list.json
-* ```ID: 101```, LotATC's stats.json
+* ```ID: 3```, stores mission data [updated on mision start or Perun reconnection]
+* ```ID: 50```, chat event [event triggered]
+* ```ID: 51```, game event [event triggered]
+* ```ID: 52```, player stats ; note that as DSC native stats are not reliable, seperate stats couting methods are used [event triggered]
+* ```ID: 53```, player login to DCS server [event triggered]
+* ```ID: 100```, DCS SRS's client-list.json [updated every 60s, only between Perun and database]
+* ```ID: 101```, LotATC's stats.json [updated every 60s,only between Perun and database]
 
 # Project information
 ## Built With

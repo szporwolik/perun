@@ -14,7 +14,7 @@
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
-    <PublishUrl>C:\Users\DCS\Desktop\Perun\</PublishUrl>
+    <PublishUrl>C:\Users\Gildias1s2\Desktop\Perun\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -31,8 +31,8 @@
     <PublisherName>szporwolik</PublisherName>
     <SuiteName>Perun</SuiteName>
     <WebPage>Perun.htm</WebPage>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>0.11.1.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.12.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -62,7 +62,8 @@
     </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>03_Resources\perun_logo.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>2ACE4C8C2C325A04CA5986B1CD76744B4B03755D</ManifestCertificateThumbprint>
@@ -170,10 +171,10 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="00_Config\packages.config" />
-    <None Include="00_Config\Perun_v1_TemporaryKey.pfx" />
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
+    <None Include="Properties\DataSources\Globals.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -195,7 +196,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 i x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -205,14 +206,27 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="03_Resources\perun_logo.ico" />
+    <None Include="03_Resources\perun_logo.ico" />
+    <None Include="03_Resources\perun_logo_1.ico" />
     <None Include="03_Resources\perun_logo.png" />
-    <None Include="Resources\perun_logo.png" />
-    <None Include="Resources\status-connected-error.png" />
-    <None Include="Resources\status-disconnected-error.png" />
-    <None Include="Resources\status-disconnected.png" />
-    <None Include="Resources\status-connected.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="03_Resources\perun_logo_2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="03_Resources\perun_logo_3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="03_Resources\perun_logo_4.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="03_Resources\perun_logo_5.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="03_Resources\status-connected-error.png" />
+    <Content Include="03_Resources\status-connected.png" />
+    <Content Include="03_Resources\status-disconnected-error.png" />
+    <Content Include="03_Resources\status-disconnected.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 3.17)
+
+project(lua-5.1.5)
+
+set(CMAKE_C_STANDARD 99)
+
+set  (LUA_RUNTIME_SOURCES
+    "src/lapi.c"
+    "src/lapi.h"
+	"src/lauxlib.h"	"src/lauxlib.c"
+	"src/lcode.h"	"src/lcode.c"
+	"src/ldebug.h"	"src/ldebug.c"
+	"src/ldo.c"		"src/ldo.h"
+	"src/ldump.c"
+	"src/lgc.c"		"src/lgc.h"
+	"src/lfunc.c"	"src/lfunc.h"
+	"src/llex.c"	"src/llex.h"
+	"src/lobject.c"	"src/lobject.h"
+	"src/lopcodes.c" "src/lopcodes.h"
+	"src/lparser.c"	"src/lparser.h"
+	"src/lstate.c"	"src/lstate.h"
+	"src/lstring.c"	"src/lstring.h"
+	"src/ltable.c"	"src/ltable.h"
+	"src/ltm.c"		"src/ltm.h"
+	"src/lmem.h"	"src/lmem.c"
+	"src/lundump.c" "src/lundump.h"
+	"src/lvm.h"		"src/lvm.c"
+	"src/lua.h"
+	"src/lualib.h"
+	"src/lzio.c"	"src/lzio.h"
+)
+
+
+add_library( lua-5.1.5 ${LUA_RUNTIME_SOURCES} )
+SET_TARGET_PROPERTIES(lua-5.1.5 PROPERTIES LINKER_LANGUAGE C)
+
+target_include_directories ( lua-5.1.5 PUBLIC "${PROJECT_SOURCE_DIR}/src")
