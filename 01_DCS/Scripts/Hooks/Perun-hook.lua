@@ -23,7 +23,7 @@ Perun.DebugMode = PerunConfig.DebugMode
 Perun.MOTD_L1 = PerunConfig.MOTD_L1
 Perun.MOTD_L2 = PerunConfig.MOTD_L2
 Perun.ConnectionError = PerunConfig.ConnectionError_L1
-Perun.DontSpamPlayersInCaseOfError = PerunConfig.DontSpamPlayersInCaseOfError
+Perun.BroadcastPerunErrors = PerunConfig.BroadcastPerunErrors
 
 -- Variable init
 Perun.Version = "v0.12.0"
@@ -265,7 +265,7 @@ Perun.SendToPerun = function(data_id, data_package)
 		Perun.AddLog("ERROR - TCP connection is not available",0)
 
 		-- Informs all players that there is Peron error; below hack for DCS net.send_chat not working
-		if not Perun.DontSpamPlayersInCaseOfError then
+		if Perun.BroadcastPerunErrors > 0 then
 			local _all_players = net.get_player_list()
 			for PlayerIDIndex, _playerID in ipairs(_all_players) do
 				net.send_chat_to(Perun.ConnectionError , _playerID)
