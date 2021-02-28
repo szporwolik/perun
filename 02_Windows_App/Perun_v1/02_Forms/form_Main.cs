@@ -399,17 +399,22 @@ namespace Perun_v1
         private void con_Button_Quit_Click(object sender, EventArgs e)
         {
             // Try to close app
-            DialogResult dialogResult = MessageBox.Show("Are you sure to exit Perun?", "Question", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
-            if (dialogResult == DialogResult.Yes)
+            if (tim_MySQL.Enabled == false)
             {
-                form_Main_SaveSettings();
+                DialogResult dialogResult = MessageBox.Show("Are you sure to exit Perun?", "Question", MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    form_Main_SaveSettings();
 
-                AppCanClose = true; // Save settings on exit
-                this.Close();        // Allow to exit application
-            }
-            else if (dialogResult == DialogResult.No)
-            {
-                //do nothing
+                    AppCanClose = true; // Save settings on exit
+                    this.Close();        // Allow to exit application
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    //do nothing
+                }
+            } else {
+                MessageBox.Show("You cannot exit Perun while the connections are open. Stop the server and try again.");
             }
         }
 
