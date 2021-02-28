@@ -26,7 +26,7 @@ Perun.ConnectionError = PerunConfig.ConnectionError_L1
 Perun.BroadcastPerunErrors = PerunConfig.BroadcastPerunErrors
 
 -- Variable init
-Perun.Version = "v0.12.0"
+Perun.Version = "v0.12.1"
 
 Perun.StatusData = {}
 Perun.SlotsData = {}
