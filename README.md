@@ -2,7 +2,6 @@
 ![alt text](https://img.shields.io/github/license/szporwolik/perun.svg "MIT")
 ![alt text](https://img.shields.io/github/release-pre/szporwolik/perun.svg "Latest release")
 ![alt text](https://img.shields.io/github/release-date-pre/szporwolik/perun.svg "Latest release date")
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ZBW8R5L25A8QW&currency_code=EUR&source=url)
 
 ![Perun logo](https://i.imgur.com/PrIkqNA.png)
 
@@ -30,7 +29,7 @@ Core:
 ## Installing
 * Download latest [release](https://github.com/szporwolik/perun/releases)
 * Copy contents of [01_DCS](https://github.com/szporwolik/perun/tree/master/01_DCS) to your DCS folder in your Saved Games
-* From the downloaded release package, put ```perun.dll``` into your DCS folder in your Saved Games,```Mods/services/Perun/dll```
+* From the downloaded release package, put ```perun.dll``` into your DCS folder in your Saved Games,```Mods/services/Perun/bin```
 * You can change your configuration settings in DCS\Mods\services\Perun\lua\perun_config
 * Create MySQL database using SQL script located in [04_MySQL](https://github.com/szporwolik/perun/tree/master/04_MySQL); note that you need just a one database per DCS server machine - multiple instances pushing data to the one database are supported
 * Ensure that your MySQL config is not using STRICT_TRANS_TABLES 
