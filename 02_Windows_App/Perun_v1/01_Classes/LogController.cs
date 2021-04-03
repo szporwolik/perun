@@ -15,7 +15,28 @@ class LogController
         }
     }
 
-    public void WriteLog(int logLevel, string strLog)
+    public void LogError(string strLog, string content = null)
+    {
+        this.WriteLog(0, strLog, content);
+    }
+
+    public void LogWarning(string strLog, string content = null)
+    {
+        this.WriteLog(1, strLog, content);
+    }
+
+    public void LogInfo(string strLog, string content = null)
+    {
+        this.WriteLog(2, strLog, content);
+    }
+
+    public void LogDebug(string strLog, string content = null)
+    {
+        this.WriteLog(3, strLog, content);
+    }
+
+    // TBD - done via https://stackoverflow.com/questions/20185015/how-to-write-log-file-in-c
+    public void WriteLog(int logLevel, string strLog, string content = null)
     {
         // Write log entry to file
         if (logLevel > this.level) return;  // Check if we shall log it with the current log level, if not - exit
@@ -25,6 +46,7 @@ class LogController
         FileStream LogFileStream = null;
         DirectoryInfo LogDirectoryInfo = null;
         FileInfo LogFileInfo;
+        string message = strLog;
 
         string LogFileDir = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents") + "\\Perun\\";
         string LogFilePath = LogFileDir + "Perun_Log_" + Globals.AppInstanceID + "_" + System.DateTime.Today.ToString("yyyyMMdd") + "." + "log";
@@ -46,10 +68,19 @@ class LogController
                 // Do nothing - TBD error handling
             }
         }
+
         try
         {
+            if (content != null)
+            {
+                // write the content to a file and add the name of this file to the message
+                string contentFilename = "Perun_LogContent_" + System.DateTime.Today.ToString("o").Replace('T', '-').Replace(':', '-').Replace('+','-') + "." + "txt";
+                string contentFilepath = LogFileInfo + contentFilename;
+                File.WriteAllText(contentFilepath, content);
+                message = strLog + " - content stored in " + contentFilename;
+            }
             LogStreamWriter = new StreamWriter(LogFileStream);
-            LogStreamWriter.WriteLine(strLog);
+            LogStreamWriter.WriteLine(message);
             LogStreamWriter.Close();
             Globals.LastLogLocation = LogFilePath;
         }
