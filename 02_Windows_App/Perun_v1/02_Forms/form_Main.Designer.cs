@@ -34,6 +34,10 @@
             this.con_Button_Listen_ON = new System.Windows.Forms.Button();
             this.con_Button_Listen_OFF = new System.Windows.Forms.Button();
             this.con_GroupBox_1 = new System.Windows.Forms.GroupBox();
+            this.con_Button_See_log = new System.Windows.Forms.Button();
+            this.label15 = new System.Windows.Forms.Label();
+            this.con_com_loglevel = new System.Windows.Forms.ComboBox();
+            this.con_Button_Add_Marker = new System.Windows.Forms.Button();
             this.tim_GUI = new System.Windows.Forms.Timer(this.components);
             this.con_GroupBox_2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -64,29 +68,57 @@
             this.con_txt_dcs_instance = new System.Windows.Forms.MaskedTextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.con_txt_dcs_server_port = new System.Windows.Forms.MaskedTextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.con_Button_Reset_Flags = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.con_img_logo = new System.Windows.Forms.PictureBox();
+            this.TIM_Autostart = new System.Windows.Forms.Timer(this.components);
+            this.con_check_minimize_to_tray = new System.Windows.Forms.CheckBox();
+            this.con_GroupBox_4 = new System.Windows.Forms.GroupBox();
+            this.con_Button_Reset_Flags = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.con_img_lotATC = new System.Windows.Forms.PictureBox();
             this.con_img_srs = new System.Windows.Forms.PictureBox();
             this.con_img_dcs = new System.Windows.Forms.PictureBox();
             this.con_img_db = new System.Windows.Forms.PictureBox();
-            this.con_Button_Add_Marker = new System.Windows.Forms.Button();
-            this.TIM_Autostart = new System.Windows.Forms.Timer(this.components);
+            this.con_GroupBox_5 = new System.Windows.Forms.GroupBox();
+            this.con_check_delete_logs = new System.Windows.Forms.CheckBox();
+            this.con_GroupBox_6 = new System.Windows.Forms.GroupBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.con_GroupBox_7 = new System.Windows.Forms.GroupBox();
+            this.label33 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.label27 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.tim_HW_status = new System.Windows.Forms.Timer(this.components);
             this.con_GroupBox_1.SuspendLayout();
             this.con_GroupBox_2.SuspendLayout();
             this.con_GroupBox_3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).BeginInit();
+            this.con_GroupBox_4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_lotATC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).BeginInit();
+            this.con_GroupBox_5.SuspendLayout();
+            this.con_GroupBox_6.SuspendLayout();
+            this.con_GroupBox_7.SuspendLayout();
             this.SuspendLayout();
             // 
             // con_List_Received
@@ -95,14 +127,14 @@
             this.con_List_Received.FormattingEnabled = true;
             this.con_List_Received.Items.AddRange(new object[] {
             "Not connected"});
-            this.con_List_Received.Location = new System.Drawing.Point(11, 19);
+            this.con_List_Received.Location = new System.Drawing.Point(8, 44);
             this.con_List_Received.Name = "con_List_Received";
             this.con_List_Received.Size = new System.Drawing.Size(307, 134);
             this.con_List_Received.TabIndex = 0;
             // 
             // con_Button_Listen_ON
             // 
-            this.con_Button_Listen_ON.Location = new System.Drawing.Point(12, 602);
+            this.con_Button_Listen_ON.Location = new System.Drawing.Point(342, 441);
             this.con_Button_Listen_ON.Name = "con_Button_Listen_ON";
             this.con_Button_Listen_ON.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_ON.TabIndex = 2;
@@ -113,7 +145,7 @@
             // con_Button_Listen_OFF
             // 
             this.con_Button_Listen_OFF.Enabled = false;
-            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(104, 602);
+            this.con_Button_Listen_OFF.Location = new System.Drawing.Point(434, 441);
             this.con_Button_Listen_OFF.Name = "con_Button_Listen_OFF";
             this.con_Button_Listen_OFF.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Listen_OFF.TabIndex = 3;
@@ -123,13 +155,68 @@
             // 
             // con_GroupBox_1
             // 
+            this.con_GroupBox_1.Controls.Add(this.con_Button_See_log);
+            this.con_GroupBox_1.Controls.Add(this.label15);
+            this.con_GroupBox_1.Controls.Add(this.con_com_loglevel);
             this.con_GroupBox_1.Controls.Add(this.con_List_Received);
-            this.con_GroupBox_1.Location = new System.Drawing.Point(12, 434);
+            this.con_GroupBox_1.Controls.Add(this.con_Button_Add_Marker);
+            this.con_GroupBox_1.Location = new System.Drawing.Point(342, 248);
             this.con_GroupBox_1.Name = "con_GroupBox_1";
-            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 162);
+            this.con_GroupBox_1.Size = new System.Drawing.Size(324, 187);
             this.con_GroupBox_1.TabIndex = 4;
             this.con_GroupBox_1.TabStop = false;
             this.con_GroupBox_1.Text = "Data log";
+            // 
+            // con_Button_See_log
+            // 
+            this.con_Button_See_log.Enabled = false;
+            this.con_Button_See_log.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_Button_See_log.Location = new System.Drawing.Point(170, 12);
+            this.con_Button_See_log.Name = "con_Button_See_log";
+            this.con_Button_See_log.Size = new System.Drawing.Size(56, 20);
+            this.con_Button_See_log.TabIndex = 24;
+            this.con_Button_See_log.Text = "See log";
+            this.con_Button_See_log.UseVisualStyleBackColor = true;
+            this.con_Button_See_log.Click += new System.EventHandler(this.con_Button_See_log_Click);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(6, 18);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(50, 13);
+            this.label15.TabIndex = 22;
+            this.label15.Text = "Log level";
+            // 
+            // con_com_loglevel
+            // 
+            this.con_com_loglevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.con_com_loglevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F);
+            this.con_com_loglevel.FormattingEnabled = true;
+            this.con_com_loglevel.Items.AddRange(new object[] {
+            "Error",
+            "Warning",
+            "Info",
+            "Debug"});
+            this.con_com_loglevel.Location = new System.Drawing.Point(62, 12);
+            this.con_com_loglevel.Name = "con_com_loglevel";
+            this.con_com_loglevel.Size = new System.Drawing.Size(102, 20);
+            this.con_com_loglevel.TabIndex = 23;
+            this.con_com_loglevel.SelectedIndexChanged += new System.EventHandler(this.con_com_loglevell_SelectedIndexChanged);
+            // 
+            // con_Button_Add_Marker
+            // 
+            this.con_Button_Add_Marker.Enabled = false;
+            this.con_Button_Add_Marker.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_Button_Add_Marker.Location = new System.Drawing.Point(232, 12);
+            this.con_Button_Add_Marker.Name = "con_Button_Add_Marker";
+            this.con_Button_Add_Marker.Size = new System.Drawing.Size(86, 20);
+            this.con_Button_Add_Marker.TabIndex = 21;
+            this.con_Button_Add_Marker.Text = "Add log marker";
+            this.con_Button_Add_Marker.UseVisualStyleBackColor = true;
+            this.con_Button_Add_Marker.Click += new System.EventHandler(this.con_Button_Add_Marker_Click);
             // 
             // tim_GUI
             // 
@@ -148,12 +235,12 @@
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_database);
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_server);
             this.con_GroupBox_2.Controls.Add(this.con_txt_mysql_password);
-            this.con_GroupBox_2.Location = new System.Drawing.Point(14, 54);
+            this.con_GroupBox_2.Location = new System.Drawing.Point(12, 12);
             this.con_GroupBox_2.Name = "con_GroupBox_2";
             this.con_GroupBox_2.Size = new System.Drawing.Size(324, 154);
             this.con_GroupBox_2.TabIndex = 5;
             this.con_GroupBox_2.TabStop = false;
-            this.con_GroupBox_2.Text = "MySQL";
+            this.con_GroupBox_2.Text = "Database settings";
             // 
             // label6
             // 
@@ -242,33 +329,33 @@
             this.con_GroupBox_3.Controls.Add(this.con_txt_3rd_srs);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_lotatc);
             this.con_GroupBox_3.Controls.Add(this.con_check_3rd_srs);
-            this.con_GroupBox_3.Location = new System.Drawing.Point(14, 288);
+            this.con_GroupBox_3.Location = new System.Drawing.Point(12, 246);
             this.con_GroupBox_3.Name = "con_GroupBox_3";
-            this.con_GroupBox_3.Size = new System.Drawing.Size(324, 68);
+            this.con_GroupBox_3.Size = new System.Drawing.Size(324, 118);
             this.con_GroupBox_3.TabIndex = 6;
             this.con_GroupBox_3.TabStop = false;
-            this.con_GroupBox_3.Text = "3rd party";
+            this.con_GroupBox_3.Text = "Integration settings";
             // 
             // con_txt_3rd_lotatc
             // 
-            this.con_txt_3rd_lotatc.Location = new System.Drawing.Point(123, 39);
+            this.con_txt_3rd_lotatc.Location = new System.Drawing.Point(6, 91);
             this.con_txt_3rd_lotatc.Name = "con_txt_3rd_lotatc";
-            this.con_txt_3rd_lotatc.Size = new System.Drawing.Size(190, 20);
+            this.con_txt_3rd_lotatc.Size = new System.Drawing.Size(307, 20);
             this.con_txt_3rd_lotatc.TabIndex = 4;
             this.con_txt_3rd_lotatc.MouseClick += new System.Windows.Forms.MouseEventHandler(this.con_txt_3rd_lotatc_Click);
             // 
             // con_txt_3rd_srs
             // 
-            this.con_txt_3rd_srs.Location = new System.Drawing.Point(123, 16);
+            this.con_txt_3rd_srs.Location = new System.Drawing.Point(6, 42);
             this.con_txt_3rd_srs.Name = "con_txt_3rd_srs";
-            this.con_txt_3rd_srs.Size = new System.Drawing.Size(190, 20);
+            this.con_txt_3rd_srs.Size = new System.Drawing.Size(307, 20);
             this.con_txt_3rd_srs.TabIndex = 3;
             this.con_txt_3rd_srs.MouseClick += new System.Windows.Forms.MouseEventHandler(this.con_txt_3rd_srs_Click);
             // 
             // con_check_3rd_lotatc
             // 
             this.con_check_3rd_lotatc.AutoSize = true;
-            this.con_check_3rd_lotatc.Location = new System.Drawing.Point(6, 42);
+            this.con_check_3rd_lotatc.Location = new System.Drawing.Point(6, 72);
             this.con_check_3rd_lotatc.Name = "con_check_3rd_lotatc";
             this.con_check_3rd_lotatc.Size = new System.Drawing.Size(100, 17);
             this.con_check_3rd_lotatc.TabIndex = 1;
@@ -287,7 +374,7 @@
             // 
             // con_Button_Quit
             // 
-            this.con_Button_Quit.Location = new System.Drawing.Point(251, 602);
+            this.con_Button_Quit.Location = new System.Drawing.Point(580, 441);
             this.con_Button_Quit.Name = "con_Button_Quit";
             this.con_Button_Quit.Size = new System.Drawing.Size(86, 39);
             this.con_Button_Quit.TabIndex = 7;
@@ -299,7 +386,7 @@
             // 
             this.con_lab_github.AutoSize = true;
             this.con_lab_github.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_lab_github.Location = new System.Drawing.Point(183, 39);
+            this.con_lab_github.Location = new System.Drawing.Point(172, 456);
             this.con_lab_github.Name = "con_lab_github";
             this.con_lab_github.Size = new System.Drawing.Size(155, 12);
             this.con_lab_github.TabIndex = 8;
@@ -311,7 +398,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(183, 27);
+            this.label5.Location = new System.Drawing.Point(223, 444);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(102, 12);
             this.label5.TabIndex = 9;
@@ -350,12 +437,12 @@
             this.groupBox1.Controls.Add(this.con_txt_dcs_instance);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.con_txt_dcs_server_port);
-            this.groupBox1.Location = new System.Drawing.Point(14, 214);
+            this.groupBox1.Location = new System.Drawing.Point(12, 172);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(324, 68);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "DCS Connection";
+            this.groupBox1.Text = "DCS World settings";
             // 
             // label8
             // 
@@ -389,67 +476,11 @@
             this.con_txt_dcs_server_port.Size = new System.Drawing.Size(207, 20);
             this.con_txt_dcs_server_port.TabIndex = 3;
             // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(21, 396);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(61, 13);
-            this.label9.TabIndex = 1;
-            this.label9.Text = "Database";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(117, 396);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(39, 13);
-            this.label10.TabIndex = 14;
-            this.label10.Text = "Game";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(205, 396);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(32, 13);
-            this.label11.TabIndex = 15;
-            this.label11.Text = "SRS";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(282, 396);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(49, 13);
-            this.label12.TabIndex = 16;
-            this.label12.Text = "LotATC";
-            // 
-            // con_Button_Reset_Flags
-            // 
-            this.con_Button_Reset_Flags.Enabled = false;
-            this.con_Button_Reset_Flags.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(224, 414);
-            this.con_Button_Reset_Flags.Name = "con_Button_Reset_Flags";
-            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(114, 20);
-            this.con_Button_Reset_Flags.TabIndex = 17;
-            this.con_Button_Reset_Flags.Text = "Reset error flags";
-            this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
-            this.con_Button_Reset_Flags.Click += new System.EventHandler(this.con_Button_Reset_Flags_Click);
-            // 
             // label13
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(63, 7);
+            this.label13.Location = new System.Drawing.Point(64, 427);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(74, 25);
             this.label13.TabIndex = 19;
@@ -459,7 +490,7 @@
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(65, 32);
+            this.label14.Location = new System.Drawing.Point(66, 452);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(88, 13);
             this.label14.TabIndex = 20;
@@ -469,84 +500,397 @@
             // 
             this.con_img_logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.con_img_logo.Image = global::Perun_v1.Properties.Resources.perun_logo;
-            this.con_img_logo.Location = new System.Drawing.Point(12, 7);
+            this.con_img_logo.Location = new System.Drawing.Point(13, 427);
             this.con_img_logo.Name = "con_img_logo";
             this.con_img_logo.Size = new System.Drawing.Size(45, 41);
             this.con_img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.con_img_logo.TabIndex = 18;
             this.con_img_logo.TabStop = false;
             // 
+            // TIM_Autostart
+            // 
+            this.TIM_Autostart.Interval = 500;
+            this.TIM_Autostart.Tick += new System.EventHandler(this.TIM_Autostart_Tick);
+            // 
+            // con_check_minimize_to_tray
+            // 
+            this.con_check_minimize_to_tray.AutoSize = true;
+            this.con_check_minimize_to_tray.Checked = true;
+            this.con_check_minimize_to_tray.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.con_check_minimize_to_tray.Location = new System.Drawing.Point(6, 19);
+            this.con_check_minimize_to_tray.Name = "con_check_minimize_to_tray";
+            this.con_check_minimize_to_tray.Size = new System.Drawing.Size(98, 17);
+            this.con_check_minimize_to_tray.TabIndex = 24;
+            this.con_check_minimize_to_tray.Text = "Minimize to tray";
+            this.con_check_minimize_to_tray.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.con_check_minimize_to_tray.UseVisualStyleBackColor = true;
+            this.con_check_minimize_to_tray.Validated += new System.EventHandler(this.con_check_minimize_to_tray_Validated);
+            // 
+            // con_GroupBox_4
+            // 
+            this.con_GroupBox_4.Controls.Add(this.con_Button_Reset_Flags);
+            this.con_GroupBox_4.Controls.Add(this.label12);
+            this.con_GroupBox_4.Controls.Add(this.label11);
+            this.con_GroupBox_4.Controls.Add(this.label10);
+            this.con_GroupBox_4.Controls.Add(this.label9);
+            this.con_GroupBox_4.Controls.Add(this.con_img_lotATC);
+            this.con_GroupBox_4.Controls.Add(this.con_img_srs);
+            this.con_GroupBox_4.Controls.Add(this.con_img_dcs);
+            this.con_GroupBox_4.Controls.Add(this.con_img_db);
+            this.con_GroupBox_4.Location = new System.Drawing.Point(342, 12);
+            this.con_GroupBox_4.Name = "con_GroupBox_4";
+            this.con_GroupBox_4.Size = new System.Drawing.Size(324, 87);
+            this.con_GroupBox_4.TabIndex = 25;
+            this.con_GroupBox_4.TabStop = false;
+            this.con_GroupBox_4.Text = "Perun status";
+            // 
+            // con_Button_Reset_Flags
+            // 
+            this.con_Button_Reset_Flags.Enabled = false;
+            this.con_Button_Reset_Flags.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.con_Button_Reset_Flags.Location = new System.Drawing.Point(254, 25);
+            this.con_Button_Reset_Flags.Name = "con_Button_Reset_Flags";
+            this.con_Button_Reset_Flags.Size = new System.Drawing.Size(61, 40);
+            this.con_Button_Reset_Flags.TabIndex = 26;
+            this.con_Button_Reset_Flags.Text = "Reset error flags";
+            this.con_Button_Reset_Flags.UseVisualStyleBackColor = true;
+            this.con_Button_Reset_Flags.Click += new System.EventHandler(this.con_Button_Reset_Flags_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(187, 59);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(49, 13);
+            this.label12.TabIndex = 25;
+            this.label12.Text = "LotATC";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(138, 59);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(32, 13);
+            this.label11.TabIndex = 24;
+            this.label11.Text = "SRS";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(77, 59);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(39, 13);
+            this.label10.TabIndex = 23;
+            this.label10.Text = "Game";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(9, 59);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(61, 13);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "Database";
+            // 
             // con_img_lotATC
             // 
-            this.con_img_lotATC.Location = new System.Drawing.Point(292, 362);
+            this.con_img_lotATC.Location = new System.Drawing.Point(196, 28);
             this.con_img_lotATC.Name = "con_img_lotATC";
             this.con_img_lotATC.Size = new System.Drawing.Size(29, 28);
             this.con_img_lotATC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.con_img_lotATC.TabIndex = 13;
+            this.con_img_lotATC.TabIndex = 22;
             this.con_img_lotATC.TabStop = false;
             // 
             // con_img_srs
             // 
-            this.con_img_srs.Location = new System.Drawing.Point(207, 362);
+            this.con_img_srs.Location = new System.Drawing.Point(139, 28);
             this.con_img_srs.Name = "con_img_srs";
             this.con_img_srs.Size = new System.Drawing.Size(29, 28);
             this.con_img_srs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.con_img_srs.TabIndex = 12;
+            this.con_img_srs.TabIndex = 21;
             this.con_img_srs.TabStop = false;
             // 
             // con_img_dcs
             // 
-            this.con_img_dcs.Location = new System.Drawing.Point(122, 362);
+            this.con_img_dcs.Location = new System.Drawing.Point(82, 28);
             this.con_img_dcs.Name = "con_img_dcs";
             this.con_img_dcs.Size = new System.Drawing.Size(29, 28);
             this.con_img_dcs.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.con_img_dcs.TabIndex = 11;
+            this.con_img_dcs.TabIndex = 20;
             this.con_img_dcs.TabStop = false;
             // 
             // con_img_db
             // 
             this.con_img_db.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.con_img_db.Location = new System.Drawing.Point(37, 362);
+            this.con_img_db.Location = new System.Drawing.Point(25, 28);
             this.con_img_db.Name = "con_img_db";
             this.con_img_db.Size = new System.Drawing.Size(29, 28);
             this.con_img_db.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.con_img_db.TabIndex = 10;
+            this.con_img_db.TabIndex = 19;
             this.con_img_db.TabStop = false;
             // 
-            // con_Button_Add_Marker
+            // con_GroupBox_5
             // 
-            this.con_Button_Add_Marker.Enabled = false;
-            this.con_Button_Add_Marker.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.con_Button_Add_Marker.Location = new System.Drawing.Point(12, 414);
-            this.con_Button_Add_Marker.Name = "con_Button_Add_Marker";
-            this.con_Button_Add_Marker.Size = new System.Drawing.Size(114, 20);
-            this.con_Button_Add_Marker.TabIndex = 21;
-            this.con_Button_Add_Marker.Text = "Add log marker";
-            this.con_Button_Add_Marker.UseVisualStyleBackColor = true;
-            this.con_Button_Add_Marker.Click += new System.EventHandler(this.con_Button_Add_Marker_Click);
+            this.con_GroupBox_5.Controls.Add(this.con_check_delete_logs);
+            this.con_GroupBox_5.Controls.Add(this.con_check_minimize_to_tray);
+            this.con_GroupBox_5.Location = new System.Drawing.Point(13, 370);
+            this.con_GroupBox_5.Name = "con_GroupBox_5";
+            this.con_GroupBox_5.Size = new System.Drawing.Size(323, 46);
+            this.con_GroupBox_5.TabIndex = 26;
+            this.con_GroupBox_5.TabStop = false;
+            this.con_GroupBox_5.Text = "Other settings";
             // 
-            // TIM_Autostart
+            // con_check_delete_logs
             // 
-            this.TIM_Autostart.Interval = 500;
+            this.con_check_delete_logs.AutoSize = true;
+            this.con_check_delete_logs.Checked = true;
+            this.con_check_delete_logs.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.con_check_delete_logs.Location = new System.Drawing.Point(105, 19);
+            this.con_check_delete_logs.Name = "con_check_delete_logs";
+            this.con_check_delete_logs.Size = new System.Drawing.Size(138, 17);
+            this.con_check_delete_logs.TabIndex = 25;
+            this.con_check_delete_logs.Text = "Rotate logs after 7 days";
+            this.con_check_delete_logs.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.con_check_delete_logs.UseVisualStyleBackColor = true;
+            this.con_check_delete_logs.Validated += new System.EventHandler(this.con_check_delete_logs_Validated);
+            // 
+            // con_GroupBox_6
+            // 
+            this.con_GroupBox_6.Controls.Add(this.label26);
+            this.con_GroupBox_6.Controls.Add(this.label25);
+            this.con_GroupBox_6.Controls.Add(this.label24);
+            this.con_GroupBox_6.Controls.Add(this.label23);
+            this.con_GroupBox_6.Controls.Add(this.label22);
+            this.con_GroupBox_6.Controls.Add(this.label21);
+            this.con_GroupBox_6.Controls.Add(this.label16);
+            this.con_GroupBox_6.Controls.Add(this.label19);
+            this.con_GroupBox_6.Controls.Add(this.label18);
+            this.con_GroupBox_6.Controls.Add(this.label17);
+            this.con_GroupBox_6.Location = new System.Drawing.Point(343, 105);
+            this.con_GroupBox_6.Name = "con_GroupBox_6";
+            this.con_GroupBox_6.Size = new System.Drawing.Size(323, 76);
+            this.con_GroupBox_6.TabIndex = 28;
+            this.con_GroupBox_6.TabStop = false;
+            this.con_GroupBox_6.Text = "DCS World status";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(240, 53);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(77, 13);
+            this.label26.TabIndex = 33;
+            this.label26.Text = "player(s) online";
+            this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(6, 55);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(79, 13);
+            this.label25.TabIndex = 32;
+            this.label25.Text = "Mission uptime:";
+            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(10, 42);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(75, 13);
+            this.label24.TabIndex = 31;
+            this.label24.Text = "Server uptime:";
+            this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(54, 30);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(31, 13);
+            this.label23.TabIndex = 30;
+            this.label23.Text = "Map:";
+            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(40, 17);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(45, 13);
+            this.label22.TabIndex = 29;
+            this.label22.Text = "Mission:";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(82, 55);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(69, 13);
+            this.label21.TabIndex = 28;
+            this.label21.Text = "[mission time]";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(82, 42);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(64, 13);
+            this.label16.TabIndex = 27;
+            this.label16.Text = "[server time]";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label19.Location = new System.Drawing.Point(267, 31);
+            this.label19.Name = "label19";
+            this.label19.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.label19.Size = new System.Drawing.Size(50, 24);
+            this.label19.TabIndex = 2;
+            this.label19.Text = "[000]";
+            this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(82, 29);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(70, 13);
+            this.label18.TabIndex = 1;
+            this.label18.Text = "[mission map]";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(82, 16);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(76, 13);
+            this.label17.TabIndex = 0;
+            this.label17.Text = "[mission name]";
+            // 
+            // con_GroupBox_7
+            // 
+            this.con_GroupBox_7.Controls.Add(this.label33);
+            this.con_GroupBox_7.Controls.Add(this.label32);
+            this.con_GroupBox_7.Controls.Add(this.label31);
+            this.con_GroupBox_7.Controls.Add(this.label30);
+            this.con_GroupBox_7.Controls.Add(this.label29);
+            this.con_GroupBox_7.Controls.Add(this.label28);
+            this.con_GroupBox_7.Controls.Add(this.label27);
+            this.con_GroupBox_7.Controls.Add(this.label20);
+            this.con_GroupBox_7.Location = new System.Drawing.Point(343, 187);
+            this.con_GroupBox_7.Name = "con_GroupBox_7";
+            this.con_GroupBox_7.Size = new System.Drawing.Size(323, 55);
+            this.con_GroupBox_7.TabIndex = 29;
+            this.con_GroupBox_7.TabStop = false;
+            this.con_GroupBox_7.Text = "System status";
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(174, 34);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(67, 13);
+            this.label33.TabIndex = 36;
+            this.label33.Text = "[frame delay]";
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(86, 34);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(87, 13);
+            this.label32.TabIndex = 35;
+            this.label32.Text = "Last frame delay:";
+            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(174, 16);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(61, 13);
+            this.label31.TabIndex = 34;
+            this.label31.Text = "[frame time]";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(92, 16);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(81, 13);
+            this.label30.TabIndex = 34;
+            this.label30.Text = "Last frame time:";
+            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(40, 34);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(37, 13);
+            this.label29.TabIndex = 34;
+            this.label29.Text = "[RAM]";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(40, 16);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(35, 13);
+            this.label28.TabIndex = 34;
+            this.label28.Text = "[CPU]";
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(10, 34);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(34, 13);
+            this.label27.TabIndex = 34;
+            this.label27.Text = "RAM:";
+            this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(10, 16);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(32, 13);
+            this.label20.TabIndex = 34;
+            this.label20.Text = "CPU:";
+            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // tim_HW_status
+            // 
+            this.tim_HW_status.Enabled = true;
+            this.tim_HW_status.Interval = 1000;
+            this.tim_HW_status.Tick += new System.EventHandler(this.tim_HW_status_Tick);
             // 
             // form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 653);
-            this.Controls.Add(this.con_Button_Add_Marker);
+            this.ClientSize = new System.Drawing.Size(675, 485);
+            this.Controls.Add(this.con_GroupBox_7);
+            this.Controls.Add(this.con_GroupBox_6);
+            this.Controls.Add(this.con_GroupBox_5);
+            this.Controls.Add(this.con_GroupBox_4);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.con_img_logo);
-            this.Controls.Add(this.con_Button_Reset_Flags);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.con_img_lotATC);
-            this.Controls.Add(this.con_img_srs);
-            this.Controls.Add(this.con_img_dcs);
-            this.Controls.Add(this.con_img_db);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.con_GroupBox_3);
             this.Controls.Add(this.label5);
@@ -561,10 +905,12 @@
             this.MaximizeBox = false;
             this.Name = "form_Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Perun for DCS";
+            this.Text = "Perun for DCS World";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.form_Main_FormClosing);
             this.Load += new System.EventHandler(this.form_Main_Load);
+            this.Resize += new System.EventHandler(this.form_Main_Resize);
             this.con_GroupBox_1.ResumeLayout(false);
+            this.con_GroupBox_1.PerformLayout();
             this.con_GroupBox_2.ResumeLayout(false);
             this.con_GroupBox_2.PerformLayout();
             this.con_GroupBox_3.ResumeLayout(false);
@@ -572,16 +918,21 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_logo)).EndInit();
+            this.con_GroupBox_4.ResumeLayout(false);
+            this.con_GroupBox_4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_lotATC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_srs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_dcs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.con_img_db)).EndInit();
+            this.con_GroupBox_5.ResumeLayout(false);
+            this.con_GroupBox_5.PerformLayout();
+            this.con_GroupBox_6.ResumeLayout(false);
+            this.con_GroupBox_6.PerformLayout();
+            this.con_GroupBox_7.ResumeLayout(false);
+            this.con_GroupBox_7.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-            // TIM_Autostart
-            // 
-            this.TIM_Autostart.Tick += new System.EventHandler(this.TIM_Autostart_Tick);
-            // 
+
         }
 
         #endregion
@@ -620,20 +971,48 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.MaskedTextBox con_txt_dcs_instance;
-        private System.Windows.Forms.PictureBox con_img_db;
-        private System.Windows.Forms.PictureBox con_img_dcs;
-        private System.Windows.Forms.PictureBox con_img_srs;
-        private System.Windows.Forms.PictureBox con_img_lotATC;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Button con_Button_Reset_Flags;
         private System.Windows.Forms.PictureBox con_img_logo;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Button con_Button_Add_Marker;
         private System.Windows.Forms.Timer TIM_Autostart;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ComboBox con_com_loglevel;
+        private System.Windows.Forms.CheckBox con_check_minimize_to_tray;
+        private System.Windows.Forms.GroupBox con_GroupBox_4;
+        private System.Windows.Forms.Button con_Button_Reset_Flags;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.PictureBox con_img_lotATC;
+        private System.Windows.Forms.PictureBox con_img_srs;
+        private System.Windows.Forms.PictureBox con_img_dcs;
+        private System.Windows.Forms.PictureBox con_img_db;
+        private System.Windows.Forms.GroupBox con_GroupBox_5;
+        private System.Windows.Forms.GroupBox con_GroupBox_6;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.GroupBox con_GroupBox_7;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Timer tim_HW_status;
+        private System.Windows.Forms.Button con_Button_See_log;
+        private System.Windows.Forms.CheckBox con_check_delete_logs;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.Label label32;
     }
 }
 

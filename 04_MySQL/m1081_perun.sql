@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `pe_Config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `pe_Config` (`pe_Config_id`, `pe_Config_payload`) VALUES
-(1, 'v0.11.1');
+(1, 'v0.12.1');
 
 DROP TABLE IF EXISTS `pe_DataMissionHashes`;
 CREATE TABLE IF NOT EXISTS `pe_DataMissionHashes` (
@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS `pe_DataRaw`;
 CREATE TABLE IF NOT EXISTS `pe_DataRaw` (
   `pe_dataraw_type` tinyint(4) NOT NULL,
   `pe_dataraw_instance` smallint(5) UNSIGNED NOT NULL,
-  `pe_dataraw_payload` text,
+  `pe_dataraw_payload` longtext,
   `pe_dataraw_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`pe_dataraw_type`,`pe_dataraw_instance`),
   KEY `pe_dataraw_type_pe_dataraw_instance` (`pe_dataraw_type`,`pe_dataraw_instance`),
@@ -175,6 +175,7 @@ DELIMITER ;
 DROP TABLE IF EXISTS `pe_OnlinePlayers`;
 CREATE TABLE IF NOT EXISTS `pe_OnlinePlayers` (
   `pe_OnlinePlayers_id` int(11) NOT NULL,
+  `pe_OnlinePlayers_name` varchar(255) NOT NULL,
   `pe_OnlinePlayers_instance` int(11) NOT NULL,
   `pe_OnlinePlayers_ping` int(11) DEFAULT NULL,
   `pe_OnlinePlayers_side` int(11) DEFAULT NULL,
@@ -186,13 +187,13 @@ CREATE TABLE IF NOT EXISTS `pe_OnlinePlayers` (
 DROP TABLE IF EXISTS `pe_OnlineStatus`;
 CREATE TABLE IF NOT EXISTS `pe_OnlineStatus` (
   `pe_OnlineStatus_instance` int(11) NOT NULL,
-  `pe_OnlineStatus_theatre` varchar(255) DEFAULT NULL,
-  `pe_OnlineStatus_name` varchar(255) DEFAULT NULL,
-  `pe_OnlineStatus_pause` varchar(255) DEFAULT NULL,
-  `pe_OnlineStatus_multiplayer` varchar(255) DEFAULT NULL,
-  `pe_OnlineStatus_realtime` varchar(255) DEFAULT NULL,
-  `pe_OnlineStatus_modeltime` varchar(255) DEFAULT NULL,
-  `pe_OnlineStatus_players` int(11) DEFAULT NULL,
+  `pe_OnlineStatus_server_realtime` varchar(255) DEFAULT NULL,
+  `pe_OnlineStatus_server_pause` varchar(255) DEFAULT NULL,
+  `pe_OnlineStatus_mission_name` varchar(255) DEFAULT NULL,
+  `pe_OnlineStatus_mission_theatre` varchar(255) DEFAULT NULL,
+  `pe_OnlineStatus_mission_modeltime` varchar(255) DEFAULT NULL,
+  `pe_OnlineStatus_mission_multiplayer` varchar(255) DEFAULT NULL,
+  `pe_OnlineStatus_server_players` int(11) DEFAULT NULL,
   `pe_OnlineStatus_perunversion_winapp` varchar(255) DEFAULT NULL,
   `pe_OnlineStatus_perunversion_dcshook` varchar(255) DEFAULT NULL,
   `pe_OnlineStatus_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
