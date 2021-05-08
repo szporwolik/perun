@@ -81,7 +81,7 @@ Perun.SideID2Name = function(id)
         [2] = 'BLUE',
 		[3] = 'NEUTRAL',	-- TBD check once this is released in DCS
     }
-	if id > 0 and id <= 3 then
+	if id and id > 0 and id <= 3 then
 		return _sides[id]
 	else 
 		return "?"
@@ -807,7 +807,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 		else
 			_sub_slot =" (" .. _sub_slot .. ")  "
 		end       
-	    Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " changed slot to " .. _master_type .. " " .. _sub_slot,nil,nil);
+	    Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") or "[nil]" .. " changed slot to " .. _master_type or "[nil]" .. " " .. _sub_slot or "[nil]",nil,nil);
        	
 		Perun.LogStats(arg1);
 		Perun.LogStatsCount(arg1,"init")
