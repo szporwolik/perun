@@ -24,6 +24,7 @@ Perun.MOTD_L1 = PerunConfig.MOTD_L1
 Perun.MOTD_L2 = PerunConfig.MOTD_L2
 Perun.ConnectionError = PerunConfig.ConnectionError_L1
 Perun.BroadcastPerunErrors = PerunConfig.BroadcastPerunErrors
+Perun.RecordChatMessages = PerunConfig.RecordChatMessages
 
 -- Variable init
 Perun.Version = "v0.12.1"
@@ -706,7 +707,7 @@ end
 
 Perun.onPlayerTrySendChat = function (playerID, msg, all)
 	-- Somebody tries to send chat message
-    if msg~=Perun.MOTD_L1 and msg~=Perun.MOTD_L2 and msg~=Perun.ConnectionError then
+    if Perun.RecordChatMessages and msg~=Perun.MOTD_L1 and msg~=Perun.MOTD_L2 and msg~=Perun.ConnectionError then
         Perun.LogChat(playerID,msg,all)
     end
 
