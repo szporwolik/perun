@@ -261,6 +261,14 @@ public class DatabaseController
                         DatabaseStatus = true; // True as connection is not broken
                         ReturnValue = 1; // Return a value to remove this query from quae
                         break;
+                    case 1366: // Invalid character 
+                        PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR MySQL - error id: {m_ex.Number}", 1, 1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR MySQL - query: {SQLQueryTxt}", 1, 1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR MySQL - error: {m_ex.Message}", 1, 1, TCPFrameType);
+                        PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR MySQL - frame skipped, it will not be saved to the database", 1, 1, TCPFrameType);
+                        DatabaseStatus = true; // True as connection is not broken
+                        ReturnValue = 1; // Return a value to remove this query from queue
+                        break;
                     default:    // Default error handler
                         PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR MySQL - error id: {m_ex.Number}", 1, 1, TCPFrameType);
                         PerunHelper.LogError(ref Globals.AppLogHistory, $"ERROR MySQL - query: {SQLQueryTxt}", 1, 1, TCPFrameType);
