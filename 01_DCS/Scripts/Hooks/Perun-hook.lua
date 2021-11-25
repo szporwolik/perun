@@ -13,17 +13,18 @@ package.cpath = package.cpath..';'.. lfs.writedir()..'/Mods/services/Perun/bin/'
 Perun.DLL = require('perun') 
 
 -- Load config file
-local PerunConfig = require "perun_config"
-Perun.RefreshStatus = PerunConfig.RefreshStatus
-Perun.TCPTargetPort = PerunConfig.TCPTargetPort
-Perun.TCPPerunHost = PerunConfig.TCPPerunHost
-Perun.Instance = PerunConfig.Instance
-Perun.MissionStartNoDeathWindow = PerunConfig.MissionStartNoDeathWindow
-Perun.DebugMode = PerunConfig.DebugMode
-Perun.MOTD_L1 = PerunConfig.MOTD_L1
-Perun.MOTD_L2 = PerunConfig.MOTD_L2
-Perun.ConnectionError = PerunConfig.ConnectionError_L1
-Perun.BroadcastPerunErrors = PerunConfig.BroadcastPerunErrors
+local config = require "perun_config"
+
+Perun.RefreshStatus = config.RefreshStatus
+Perun.TCPTargetPort = config.port
+Perun.TCPPerunHost = config.host
+Perun.Instance = config.Instance
+Perun.MissionStartNoDeathWindow = config.MissionStartNoDeathWindow
+Perun.DebugMode = config.DebugMode
+Perun.MOTD_L1 = config.MOTD_L1
+Perun.MOTD_L2 = config.MOTD_L2
+Perun.ConnectionError = config.ConnectionError_L1
+Perun.BroadcastPerunErrors = config.BroadcastPerunErrors
 
 -- Variable init
 Perun.Version = "v0.12.1"
@@ -46,6 +47,23 @@ Perun.lastFrameTime = 0;
 
 Perun.ReconnectTimeout = 30;
 Perun.RefreshKeepAlive = 3
+
+Perun.State = {}
+Perun.State.connected = false;
+
+-- to avoid declaring every time a function is run
+Perun.Globals = {}
+Perun.Globals.Sides =  {
+	[0] = 'SPECTATOR',
+	[1] = 'RED',
+	[2] = 'BLUE',
+	[3] = 'NEUTRAL',	-- TBD check once this is released in DCS
+}
+
+Perun.Mission = {}
+Perun.Mission.Coalitions = {}
+
+
 
 -- ################################ Helper function definitions ################################
 Perun.GetCategory = function(id)
@@ -75,14 +93,8 @@ end
 
 Perun.SideID2Name = function(id)
     -- Helper function returns side name per side (coalition) id
-    local _sides = {
-        [0] = 'SPECTATOR',
-        [1] = 'RED',
-        [2] = 'BLUE',
-		[3] = 'NEUTRAL',	-- TBD check once this is released in DCS
-    }
 	if id > 0 and id <= 3 then
-		return _sides[id]
+		return Perun.Globals.Sides[id]
 	else 
 		return "?"
 	end
@@ -91,11 +103,11 @@ end
 Perun.AddLog = function(text,LogLevel)
     -- Adds logs to DCS.log file
 	if Perun.DebugMode >= LogLevel then
-		net.log("[Perun] ".. text)
+		net.log("[Perun] ", text)
 	end
 end
 
-Perun.GenerateMissionHash = function()
+Perun.generate_mission_hash = function()
 	-- Generates unique simulation mission hash
 	return DCS.getMissionName( ).."@".. Perun.Instance .. "@" .. Perun.Version .. "@".. os.date('%Y%m%d_%H%M%S') 
 end
@@ -239,6 +251,7 @@ Perun.ConnectToPerun = function ()
     Perun.DLL.tcpConnect(Perun.TCPPerunHost, Perun.TCPTargetPort)
 
 	Perun.AddLog(string.format("Connecting to TCP server %s:%i", Perun.TCPPerunHost, Perun.TCPTargetPort), 2)
+	Perun.State.connected = true;
 end
 
 Perun.SendToPerun = function(data_id, data_package)
@@ -253,7 +266,7 @@ Perun.SendToPerun = function(data_id, data_package)
 		_payload = net.lua2json(data_package);
 	end
 
-	local _TempData={"<SOT>","{\"dcs_current_frame_delay\":",((DCS.getRealTime() - Perun.lastFrameStart) * 1000000),",\"type\":",data_id,",\"dcs_frame_time\":",(Perun.lastFrameTime * 1000000),",\"instance\":",(Perun.Instance),",\"timestamp\":\"",(os.date('%Y-%m-%d %H:%M:%S')),"\",\"payload\":",(_payload),"}<EOT>"}
+	local _TempData={"<SOT>","{\"dcs_current_frame_delay\":",((DCS.getRealTime() - Perun.lastFrameStart) * 1000),",\"type\":",data_id,",\"dcs_frame_time\":",(Perun.lastFrameTime * 1000),",\"instance\":",(Perun.Instance),",\"timestamp\":\"",(os.date('%Y-%m-%d %H:%M:%S')),"\",\"payload\":",(_payload),"}<EOT>"}
     local _tcpMessage= table.concat( _TempData )
 
     -- TCP Part - sending
@@ -620,7 +633,7 @@ end
 
 Perun.onSimulationStart = function()
 	-- Simulation was started
-    Perun.MissionHash=Perun.GenerateMissionHash()
+    Perun.MissionHash=Perun.generate_mission_hash()
     Perun.LogEvent("SimStart","Mission " .. Perun.MissionHash .. " started",nil,nil);
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
@@ -634,7 +647,7 @@ Perun.onSimulationStop = function()
 	-- Simulation was stopped
     Perun.LogEvent("SimStop","Mission " .. Perun.MissionHash .. " finished",nil,nil);
 	Perun.LogAllStats()
-	Perun.MissionHash=Perun.GenerateMissionHash();
+	Perun.MissionHash=Perun.generate_mission_hash();
 	Perun.StatData = {}
 	Perun.MissionData = {}
 	Perun.StatDataLastType = {}
@@ -716,6 +729,24 @@ end
 Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 	-- Game event has occured
 	local _now = DCS.getRealTime()
+
+	local _payload = net.lua2json({eventName, arg1, arg2, arg3, arg4, arg5, arg6, arg7})
+	Perun.DLL.tcpSend("<SOT>" .. _payload .. "<EOT>")
+
+	for i, value in pairs({ "red", "blue" }) do
+		-- table { type, unit_missionID }
+		local slots = DCS.getAvailableSlots(value)
+		for slot in slots do
+			local idx = slot[1];
+			Perun.Mission.Coalitions[value][idx] = {}
+			Perun.Mission.Coalitions[value][idx]["type"] = slot[2];
+			Perun.DLL.tcpSend("<SOT>" .. net.lua2json(DCS.getUnitType(idx)) .. "<EOT>")
+		end
+	end
+
+	local _payload = net.lua2json(Perun.Mission.Coalitions)
+	Perun.DLL.tcpSend("<SOT> SLOTS " .. _payload .. "<EOT>")
+
 	Perun.AddLog("Event handler for ".. eventName .. " started",2)
 	
     if eventName == "friendly_fire" then
@@ -873,7 +904,7 @@ end
 if DCS.isServer() then
 	-- If this game instance is hosting multiplayer game, start Perun
 		Perun.DLL.StartOfApp()																			-- Start the main Perun dll
-		Perun.MissionHash=Perun.GenerateMissionHash()														-- Generate initial missionhash
+		Perun.MissionHash=Perun.generate_mission_hash()														-- Generate initial missionhash
 		DCS.setUserCallbacks(Perun)																			-- Set user callbacs,  map DCS event handlers with functions defined above
 		Perun.AddLog("Loaded - Perun for DCS World - version: " .. Perun.Version,0)							-- Display perun information in log
 		Perun.ConnectToPerun()																				-- Connect to Perun server

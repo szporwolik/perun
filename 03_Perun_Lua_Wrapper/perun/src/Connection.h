@@ -17,7 +17,7 @@ enum enumConnectionState {
 
 class SocketWrapper {
 public:
-    SocketWrapper();
+    SocketWrapper(std::string name);
 	~SocketWrapper();
 
 	void disconnect();
@@ -28,6 +28,9 @@ public:
 	int getFlagConnected();
 
 private:
+//    SocketWrapper(const SocketWrapper&);
+//    SocketWrapper& operator=(const SocketWrapper&);
+
 	SOCKET tcpSocket;
 	std::string* tcpHost;
 	int tcpPort;
@@ -39,6 +42,7 @@ private:
 	std::deque<std::string*> sendQueue;
 
 	std::mutex mutexLock;
+    std::ofstream outputFile;
 
 	void reconnect();
 	void tcpConnect();

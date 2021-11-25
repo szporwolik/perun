@@ -1,42 +1,68 @@
 #include "library.h"
 
-static SocketWrapper tcpConnection;
+static SocketWrapper * tcpConnection = nullptr;
+
+/* this method exists for comments */
+static int valuesToReturn(int input) {
+    return input;
+}
 
 static int appStartHook(lua_State* luaState) {
     // Starting the app - prepare
+    if(tcpConnection == nullptr) {
+        auto nowMillis = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
+        auto millis = nowMillis.time_since_epoch().count();
+
+        char buffer[50];
+        sprintf_s(buffer, "c:/temp/perun.%llu.log", millis);
+
+        tcpConnection = new SocketWrapper(std::string(buffer));
+    }
 
     lua_pushinteger(luaState, 1);       // First return value: confirmation that app was started
 
-    return (1);                         // Set return to number of arguments returned
+    return valuesToReturn(1);
 }
 
 static int appEndHook(lua_State* luaState) {
     // Closing the app - clean up
 
-    tcpConnection.disconnect();
+    if(tcpConnection != nullptr) {
+        tcpConnection->disconnect();
+    }
 
-    return (0);                         // No return values
+    return valuesToReturn(0);
 }
 
 static int tcpConnect(lua_State* luaState) {
     // Connect to the TCP socket
 
-    auto *host = new std::string(lua_tolstring(luaState, 1, 0));
-    const int *port = new int(lua_tointeger(luaState, 2));
-    tcpConnection.createConnection(host, port);
+    if(tcpConnection != nullptr) {
+        auto *host = new std::string(lua_tolstring(luaState, 1, 0));
+        const int *port = new int(lua_tointeger(luaState, 2));
 
-    return (0);                         // No return values
+        tcpConnection->createConnection(host, port);
+    }
+
+    return valuesToReturn(0);
 }
 
 static int tcpSend(lua_State* luaState) {
     // Send frame over TCP socket 
 
-    tcpConnection.enqueueForSending(new std::string(lua_tolstring(luaState, 1, 0)));
+    if(tcpConnection != nullptr) {
+        tcpConnection->enqueueForSending(new std::string(lua_tolstring(luaState, 1, 0)));
 
-    lua_pushinteger(luaState, tcpConnection.getFlagConnected());     // First return value: information if there is TCP connection
-    lua_pushinteger(luaState, tcpConnection.getAndResetReconnected());   // Secound return value: information if there was recent reconnection to TCP server
+        lua_pushinteger(luaState,
+                        tcpConnection->getFlagConnected());     // First return value: information if there is TCP connection
+        lua_pushinteger(luaState,
+                        tcpConnection->getAndResetReconnected());   // Second return value: information if there was recent reconnection to TCP server
+    } else {
+        lua_pushinteger(luaState, 0);
+        lua_pushinteger(luaState, 0);
+    }
 
-    return (2);                         // Set return to number of arguments returned
+    return valuesToReturn(2);
 }
 
 extern "C" int __declspec(dllexport) luaopen_perun(lua_State * L) {

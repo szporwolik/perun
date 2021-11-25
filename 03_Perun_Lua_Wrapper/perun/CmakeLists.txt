@@ -7,7 +7,7 @@ set (PERUN_DLL_SOURCES
     "src/library.h" 
     "src/library.cpp" 
     "src/Connection.h" 
-    "src/Connecton.cpp"
+    "src/Connection.cpp"
     )
 
 include (GenerateExportHeader)

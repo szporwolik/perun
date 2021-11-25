@@ -1,6 +1,6 @@
 #include "Connection.h"
 
-SocketWrapper::SocketWrapper() {
+SocketWrapper::SocketWrapper(std::string name): outputFile(name, std::ofstream::app) {
 	tcpSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 }
 
@@ -44,14 +44,15 @@ void SocketWrapper::createConnection(std::string* host, const int* port) {
         // TCP sending loop
         bool nothingToSend = false;
         while (true) {
-            // Endless loop (will run after main dll thread is active)
             if (connectionState == CONNECTED && mutexLock.try_lock()) {
                 if (sendQueue.empty()) {
                     nothingToSend = true;
                 } else {
                     // Payload in queue
                     auto payload = sendQueue.front();
-                    int length = payload->length();
+
+                    outputFile.write(payload->c_str(), payload->length());
+                    outputFile.flush();
                     int bytesSent = send(tcpSocket, payload->c_str(), payload->length(), 0);
 
                     if (bytesSent == payload->length()) {
@@ -62,7 +63,7 @@ void SocketWrapper::createConnection(std::string* host, const int* port) {
                         // Remaining paylad
                         if (bytesSent > 0) {
                             // Send remaining bytes
-                            auto shortened = payload->substr(bytesSent, length - bytesSent);
+                            auto shortened = payload->substr(bytesSent, payload->length() - bytesSent);
                             sendQueue.pop_front();
                             sendQueue.push_front(&shortened);
                             delete payload;
