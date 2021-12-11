@@ -1,22 +1,17 @@
 #include "Connection.h"
 
-SocketWrapper::SocketWrapper(std::string name): outputFile(name, std::ofstream::app) {
-	tcpSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+#include <utility>
+#include <filesystem>
+
+SocketWrapper::SocketWrapper(std::string logPath,
+                             std::string host,
+                             const int port): path(std::move(logPath)), tcpHost(std::move(host)), tcpPort(port){
+	this->tcpSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    startNewRecording();
 }
 
 SocketWrapper::~SocketWrapper() {
-}
-
-int SocketWrapper::getAndResetReconnected() {
-    int result = this->flagReconnected;
-
-    this->flagReconnected = 0; 
-
-    return result;
-}
-
-int SocketWrapper::getFlagConnected() {
-    return this->connectionState;
 }
 
 void SocketWrapper::tcpConnect() {
@@ -24,7 +19,7 @@ void SocketWrapper::tcpConnect() {
     SOCKADDR_IN socketAddress;
     socketAddress.sin_family = AF_INET;
     socketAddress.sin_port = htons(u_short(this->tcpPort));
-    socketAddress.sin_addr.s_addr = *((unsigned long*)gethostbyname(this->tcpHost->c_str())->h_addr);
+    socketAddress.sin_addr.s_addr = *((unsigned long*)gethostbyname(this->tcpHost.c_str())->h_addr);
 
     if (connect(tcpSocket, (sockaddr*)&socketAddress, sizeof(SOCKADDR_IN)) == 0) {
         this->connectionState = CONNECTED;
@@ -32,33 +27,54 @@ void SocketWrapper::tcpConnect() {
     }
 }
 
-void SocketWrapper::createConnection(std::string* host, const int* port) {
+void SocketWrapper::startNewRecording() {
+    if(outputFile != nullptr && outputFile->is_open() && outputFile->good()) {
+        outputFile->flush();
+        outputFile->close();
+        delete outputFile;
+    }
+
+    auto const now = std::chrono::system_clock::now();
+    auto const gmt = std::chrono::locate_zone("Etc/GMT");
+    auto const filename = std::format("pierog.{:%FT_%H%M%S}.log", std::chrono::zoned_time{gmt, floor<std::chrono::milliseconds>(now)});
+
+    std::filesystem::path dir(this->path);
+    std::filesystem::path file(filename);
+    auto fullPath = (dir / file).string();
+
+    outputFile = new std::ofstream(fullPath, std::ofstream::app | std::ios::out);
+
+    // clean the network buffer if nothing was ever sent
+    if(sentCounter > 0) {
+        mutexLock.lock();
+        dataBuffer.clear();
+        sendQueue.clear();
+        mutexLock.unlock();
+    }
+}
+
+void SocketWrapper::createConnection() {
     // TCP connection - ConnectTo
-	this->tcpHost = host;  
-	this->tcpPort = *port;
 
     tcpConnect();
 
-    // Create new thread
     std::thread thread_object([this]() {
-        // TCP sending loop
+
         bool nothingToSend = false;
-        while (true) {
+        while (shouldRun) {
             if (connectionState == CONNECTED && mutexLock.try_lock()) {
                 if (sendQueue.empty()) {
                     nothingToSend = true;
                 } else {
                     // Payload in queue
                     auto payload = sendQueue.front();
-
-                    outputFile.write(payload->c_str(), payload->length());
-                    outputFile.flush();
                     int bytesSent = send(tcpSocket, payload->c_str(), payload->length(), 0);
 
                     if (bytesSent == payload->length()) {
                         // All payload was sent
                         sendQueue.pop_front();
                         delete payload;
+                        sentCounter += bytesSent;
                     } else {
                         // Remaining paylad
                         if (bytesSent > 0) {
@@ -67,6 +83,7 @@ void SocketWrapper::createConnection(std::string* host, const int* port) {
                             sendQueue.pop_front();
                             sendQueue.push_front(&shortened);
                             delete payload;
+                            sentCounter += bytesSent;
                         } else {
                             // Payload was not sent - handle error
                             switch (WSAGetLastError()) {
@@ -110,16 +127,38 @@ void SocketWrapper::disconnect() {
 }
 
 void SocketWrapper::enqueueForSending(std::string* payload) {
+    if(outputFile == nullptr) {
+        startNewRecording();
+    }
+
+    if(outputFile != nullptr) {
+        outputFile->write(payload->c_str(), payload->length());
+        if(payload->length() > 50) {
+            outputFile->flush();
+        }
+    }
     if (mutexLock.try_lock()) {
         while (!dataBuffer.empty()) {
             // Shift buffer to queue
             sendQueue.push_back(dataBuffer.front());
-            dataBuffer.pop();
+            dataBuffer.pop_front();
         }
         sendQueue.push_back(payload);  
         mutexLock.unlock(); 
     }
     else {
-        dataBuffer.push(payload);
+        dataBuffer.push_back(payload);
     }
+}
+
+int SocketWrapper::getAndResetReconnected() {
+    int result = this->flagReconnected;
+
+    this->flagReconnected = 0;
+
+    return result;
+}
+
+int SocketWrapper::getFlagConnected() {
+    return this->connectionState;
 }

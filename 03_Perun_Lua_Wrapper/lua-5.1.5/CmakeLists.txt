@@ -28,7 +28,7 @@ set  (LUA_RUNTIME_SOURCES
 	"src/lua.h"
 	"src/lualib.h"
 	"src/lzio.c"	"src/lzio.h"
-)
+        ../experimental/src/main.cpp)
 
 
 add_library( lua-5.1.5 ${LUA_RUNTIME_SOURCES} )

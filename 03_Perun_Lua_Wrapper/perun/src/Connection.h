@@ -17,32 +17,36 @@ enum enumConnectionState {
 
 class SocketWrapper {
 public:
-    SocketWrapper(std::string name);
-	~SocketWrapper();
+    SocketWrapper(std::string logPath,
+                  std::string host,
+                  const int port);
+
+    ~SocketWrapper();
 
 	void disconnect();
-	void createConnection(std::string* host, const int* port);
+	void createConnection();
+    void startNewRecording();
 	void enqueueForSending(std::string* payload);
 	
 	int getAndResetReconnected();
 	int getFlagConnected();
 
 private:
-//    SocketWrapper(const SocketWrapper&);
-//    SocketWrapper& operator=(const SocketWrapper&);
-
 	SOCKET tcpSocket;
-	std::string* tcpHost;
-	int tcpPort;
+    const std::string path;
+	const std::string tcpHost = "localhost";
+	const int tcpPort = 0;
 
 	int flagReconnected = 0;
 	volatile enumConnectionState connectionState = DISCONNECTED;
+    std::atomic<long long> sentCounter;
+    std::atomic<boolean> shouldRun = true;
 
-	std::queue<std::string*> dataBuffer;
+	std::deque<std::string*> dataBuffer;
 	std::deque<std::string*> sendQueue;
 
 	std::mutex mutexLock;
-    std::ofstream outputFile;
+    std::ofstream * outputFile = nullptr;
 
 	void reconnect();
 	void tcpConnect();
