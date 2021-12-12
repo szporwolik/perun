@@ -44,7 +44,7 @@ void luaK_nil (FuncState *fs, int from, int n) {
       if (GET_OPCODE(*previous) == OP_LOADNIL) {
         int pfrom = GETARG_A(*previous);
         int pto = GETARG_B(*previous);
-        if (pfrom <= from && from <= pto+1) {  /* can connect both? */
+        if (pfrom <= from && from <= pto+1) {  /* can _connect both? */
           if (from+n-1 > pto)
             SETARG_B(*previous, from+n-1);
           return;

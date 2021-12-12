@@ -9,10 +9,13 @@ set (EXPERIMENTAL_SOURCES
 
 add_executable(experimental ${EXPERIMENTAL_SOURCES})
 
+include_directories(${pierog_SOURCE_DIR})
+
 target_link_libraries(
-        lua-5.1.5
+        experimental
         ws2_32
+        pierog
 )
 
-target_include_directories (pierog PUBLIC)
-#set_target_properties(main PROPERTIES OUTPUT_NAME "perun")
+target_include_directories (pierog PUBLIC pierog)
+#set_target_properties(main PROPERTIES OUTPUT_NAME "pierog")

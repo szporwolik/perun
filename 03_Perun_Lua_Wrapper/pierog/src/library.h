@@ -12,6 +12,5 @@ extern "C" {
 #include <fstream>
 #include <chrono>
 #include <queue>
-#include "Connection.h"
 
 #endif //PERUN_LIBRARY_H

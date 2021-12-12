@@ -14,5 +14,5 @@ if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 19.12.25835)
 endif()
 
 add_subdirectory(lua-5.1.5)
-add_subdirectory(perun)
+add_subdirectory(pierog)
 add_subdirectory(experimental)

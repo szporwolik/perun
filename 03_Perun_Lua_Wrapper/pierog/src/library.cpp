@@ -1,8 +1,9 @@
 #include "library.h"
+#include "DataDistributor.h"
 #include <format>
 #include <filesystem>
 
-static SocketWrapper * tcpConnection = nullptr;
+static DataDistributor * dataDistributor = nullptr;
 
 static std::string *startingDelimiter = nullptr;
 static std::string *endingDelimiter = nullptr;
@@ -15,15 +16,15 @@ static int valuesToReturn(int input) {
 
 static int appStartHook(lua_State* luaState) {
     // Starting the app - prepare
-    if(tcpConnection == nullptr) {
+    if(dataDistributor == nullptr) {
 
         int i = 1;
         const std::string path = std::string(lua_tolstring(luaState, i++, 0));
         const std::string host = std::string(lua_tolstring(luaState, i++, 0));
         const int port = (int) lua_tointeger(luaState, i++);
 
-        tcpConnection = new SocketWrapper(path, host, port);
-        tcpConnection->createConnection();
+        dataDistributor = new DataDistributor(path, host, port);
+        dataDistributor->start();
     }
 
     lua_pushinteger(luaState, 1);       // First return value: confirmation that app was started
@@ -34,8 +35,8 @@ static int appStartHook(lua_State* luaState) {
 static int appEndHook(lua_State* luaState) {
     // Closing the app - clean up
 
-    if(tcpConnection != nullptr) {
-        tcpConnection->disconnect();
+    if(dataDistributor != nullptr) {
+        dataDistributor->stop();
     }
 
     return valuesToReturn(0);
@@ -52,8 +53,8 @@ static int markMissionStart(lua_State* luaState) {
 
     std::string missionHash = std::string(lua_tolstring(luaState, 1, 0));
 
-    if(tcpConnection != nullptr && missionHash ==lastObservedHash) {
-        tcpConnection->startNewRecording();
+    if(dataDistributor != nullptr && missionHash != lastObservedHash) {
+        dataDistributor->markNewRecording();
         lastObservedHash = missionHash;
     }
 
@@ -63,25 +64,22 @@ static int markMissionStart(lua_State* luaState) {
 static int tcpSend(lua_State* luaState) {
     // Send frame over TCP socket 
 
-    if(tcpConnection != nullptr) {
+    if(dataDistributor != nullptr) {
         if(startingDelimiter != nullptr) {
-            tcpConnection->enqueueForSending(new std::string(*startingDelimiter));
+            dataDistributor->enqueueForSending(new std::string(*startingDelimiter));
         }
-        tcpConnection->enqueueForSending(new std::string(lua_tolstring(luaState, 1, 0)));
+        dataDistributor->enqueueForSending(new std::string(lua_tolstring(luaState, 1, 0)));
         if(endingDelimiter != nullptr) {
-            tcpConnection->enqueueForSending(new std::string(*endingDelimiter));
+            dataDistributor->enqueueForSending(new std::string(*endingDelimiter));
         }
 
         lua_pushinteger(luaState,
-                        tcpConnection->getFlagConnected());     // First return value: information if there is TCP connection
-        lua_pushinteger(luaState,
-                        tcpConnection->getAndResetReconnected());   // Second return value: information if there was recent reconnection to TCP server
+                        dataDistributor->isConnected());     // First return value: information if there is TCP connection
     } else {
-        lua_pushinteger(luaState, 0);
         lua_pushinteger(luaState, 0);
     }
 
-    return valuesToReturn(2);
+    return valuesToReturn(1);
 }
 
 extern "C" int __declspec(dllexport) luaopen_pierog(lua_State * L) {
