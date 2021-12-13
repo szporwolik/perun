@@ -18,10 +18,6 @@ int SocketOutput::write(std::string *payload) {
     }
 
     int bytesSent = send(tcpSocket, payload->c_str(), payload->length(), 0);
-    if(bytesSent == payload->length()) {
-        return 0;
-    }
-
     if(bytesSent > 0) {
         return bytesSent;
     } else {

@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant UI
+participant Server
+participant Mission
+participant Simulation
+participant Paused
+participant Active
+
+UI -> Server: onNetMissionChange
+note left: start server
+Server -> Mission: onMissionLoadBegin
+Server -> Mission: onMissionLoadEnd
+
+Mission -> Paused: onSimulationStart
+note right: if starting configured, will unpause automatically
+Paused -> Active: onSimulationResume
+
+
+Active -> Paused: onSimulationPaused
+note left: when paused in the UI
+Paused -> Active: onSimulationResume
+note right: when simulation is unpaused
+
+Simulation -> Mission: onSimulationStop
+note right: when simulation is stopped
+
+
+UI -> Server: onNetMissionChange
+note left: change mission
+Server -> Mission: onMissionLoadBegin
+
+@enduml
+
+

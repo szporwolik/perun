@@ -1,6 +1,7 @@
 #include "DataDistributor.h"
 
 #include <utility>
+#include <ostream>
 
 DataDistributor::DataDistributor(std::string logPath,
                                  std::string host,
@@ -18,22 +19,24 @@ void DataDistributor::start() {
     }
 
     std::thread thread_object([this]() {
-        bool anythingToSend = true;
         long KEEP_ALIVE = 1000;
-        auto now = std::chrono::system_clock::now();
+        bool nothingToSend = false;
 
         while(shouldRun) {
+            auto now = std::chrono::system_clock::now();
+
             if(lock.try_lock()) {
                 if(sendQueue.empty()) {
                     auto delay = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastSent);
                     if(delay.count() > KEEP_ALIVE) {
                         sendQueue.push_front(new std::string(" "));
                     } else {
-                        anythingToSend = false;
+                        nothingToSend = true;
                     }
                 } else {
                     auto payload = sendQueue.front();
                     int sent = socketOutput->write(payload);
+                    lastSent = std::chrono::system_clock::now();
 
                     if(sent > 0) {
                         everSentViaSocket = true;
@@ -45,7 +48,6 @@ void DataDistributor::start() {
                             sendQueue.push_front(&shortened);
                             delete payload;
                         }
-                        lastSent = std::chrono::system_clock::now();
                     } else {
                         // failed to send
                     }
@@ -54,9 +56,7 @@ void DataDistributor::start() {
                 lock.unlock();
             }
 
-            if(anythingToSend) {
-                Sleep(10);
-            } else {
+            if(nothingToSend) {
                 Sleep(100);
             }
         }
