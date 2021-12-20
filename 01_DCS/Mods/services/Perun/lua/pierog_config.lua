@@ -12,8 +12,8 @@ config.logPath = "c:\\temp"              -- path for communication logs
 
 config.bigUpdatesSeconds = 100          -- big updates (mission, unit IDs, slots) have to wait between being sent
 -- deprecated, decrease greatly
-config.refreshSlotsSeconds = 300        -- delay between slot updates are sent
-config.refreshMissionSeconds = 200        -- delay between mission update is sent
+config.refreshSlotsSeconds = 1200        -- delay between slot updates are sent
+config.refreshMissionSeconds = 1200        -- delay between mission update is sent
 
 -- Localisation
 -- Server MOTD, sent to ALL players when entering cockpit

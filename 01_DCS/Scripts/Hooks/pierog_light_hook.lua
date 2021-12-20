@@ -1,4 +1,4 @@
--- Pierog for DCS World, inspired by
+-- Pierog for DCS World (evolution of Perun, name needs deconfliction for parallel runs)
 -- https://github.com/szporwolik/perun -> DCS Hook component
 net.log("[Pierog] Loading Pierog")
 
@@ -38,44 +38,16 @@ Pierog.refreshMissionSeconds         = config.refreshMissionSeconds
 
 net.log("[Pierog]", "Config loaded")
 
--- to avoid declaring every time a function is run
 Pierog.Globals = {}
-Pierog.Globals.version = "v0.12.1"
-Pierog.Globals.Sides =  {
-    [0] = 'SPECTATOR',
-    [1] = 'RED',
-    [2] = 'BLUE',
-    [3] = 'NEUTRAL',	-- TBD check once this is released in DCS
-}
+Pierog.Globals.version = "v0.21.12"
 
 net.log("[Pierog]", "Global variables initialised")
-
---net.log("[Pierog]", "Dupa")
-
-Pierog.lastSentStatus = 0
-Pierog.lastSentMission = 0
-Pierog.lastSentKeepAlive = 0
-Pierog.lastConnectionError = 0
-Pierog.lastFrameStart = 0;
-Pierog.lastTimer = 0
-Pierog.lastFrameTime = 0;
 
 Pierog.ReconnectTimeout = 30;
 Pierog.RefreshKeepAlive = 5
 
---net.log("[Pierog]", "Dupa2")
-
 Pierog.State = {}
 Pierog.State.connected = false;
-Pierog.State.slotsInitialised = false;
-
---net.log("[Pierog]", "Dupa3")
-
-Pierog.Mission = {}
-Pierog.Mission.Hash = {}
-Pierog.Mission.Slots = {}
-Pierog.Mission.Players = {}
-Pierog.Mission.Units = {}
 
 net.log("[Pierog]", "Initialising handlers")
 
@@ -95,15 +67,26 @@ Pierog.HandlerArgCounts["disconnect"] = 4
 Pierog.HandlerArgCounts["kill"] = 7
 
 Pierog.Stats = {}
-Pierog.Stats.LastSentTCP = 0
-Pierog.Stats.LastSentSlots = 0
-Pierog.Stats.LastBigUpdate = 0
-Pierog.Stats.LastSentMission = 0
 Pierog.Stats.LastConnectionError = 0
 
 Pierog.func = {};
+
+Pierog.func.initialiseMissionData = function()
+    Pierog.Mission = {}
+    Pierog.Mission.Hash= {}
+    Pierog.Mission.Slots = {}
+    Pierog.Mission.Players = {}
+    Pierog.Mission.Units = {}
+    Pierog.Mission.slotsInitialised = false;
+    Pierog.Mission.lastSent = 0;
+
+    Pierog.Mission.LastSentMission = 0;
+    Pierog.Mission.LastSentSlots = 0;
+    Pierog.Mission.LastBigUpdate = 0;
+end
+
 Pierog.func.ensureSlots = function()
-    if(not Pierog.State.slotsInitialised) then
+    if(not Pierog.Mission.slotsInitialised) then
 
         local count = 0;
         local coalitions = DCS.getAvailableCoalitions();
@@ -118,21 +101,22 @@ Pierog.func.ensureSlots = function()
 
         if(count > 0) then
             net.log("[Pierog]", "initialised ".. count .. " slots")
-            Pierog.State.slotsInitialised = true;
+            Pierog.Mission.slotsInitialised = true;
         end
     end
 end
 
 Pierog.func.ensureUnitId = function(unitId)
+    net.log("[Pierog]", "Ensuring unit id: ", unitId)
     if(not Pierog.Mission.Units[unitId]) then
         local unitType = DCS.getUnitType(unitId);
         Pierog.Mission.Units[unitId] = unitType;
 
-        net.log("[Pierog]", unitId, "category:", DCS.getUnitTypeAttribute(unitType, "category"));
-        net.log("[Pierog]", unitId, "category via type -> Prop:", DCS.getUnitProperty(unitType, DCS.UNIT_CATEGORY));
-        net.log("[Pierog]", unitId, "category via id -> Prop:", DCS.getUnitProperty(unitId, DCS.UNIT_CATEGORY));
-        net.log("[Pierog]", unitId, "wing span:", DCS.getUnitTypeAttribute(unitType, "WingSpan"));
-        net.log("[Pierog]", unitId, "deck level", DCS.getUnitTypeAttribute(unitType, "DeckLevel"));
+        --net.log("[Pierog]", unitId, "category:", DCS.getUnitTypeAttribute(unitType, "category"));
+        --net.log("[Pierog]", unitId, "category via type -> Prop:", DCS.getUnitProperty(unitType, DCS.UNIT_CATEGORY));
+        --net.log("[Pierog]", unitId, "category via id -> Prop:", DCS.getUnitProperty(unitId, DCS.UNIT_CATEGORY));
+        --net.log("[Pierog]", unitId, "wing span:", DCS.getUnitTypeAttribute(unitType, "WingSpan"));
+        --net.log("[Pierog]", unitId, "deck level", DCS.getUnitTypeAttribute(unitType, "DeckLevel"));
     --
         local payload = Pierog.Handlers["event"]("unit_definition");
         payload["unitId"] = unitId;
@@ -147,11 +131,13 @@ end
 
 Pierog.func.sendData = function(payload)
 
-    local now = DCS.getRealTime()
+    local now = DCS.getRealTime();
 
-    local connected, reconnected = Pierog.DLL.tcpSend(payload)
-    --net.log("[Pierog]", connected, reconnected)
+    local connected = Pierog.DLL.tcpSend(payload);
+    net.log("[Pierog]", "Sending", payload)
+
     if(connected < 1) and (now > Pierog.Stats.LastConnectionError + Pierog.ReconnectTimeout) then
+        Pierog.Stats.LastConnectionError = now;
         Pierog.AddLog("ERROR - TCP connection not available",0)
 
         if Pierog.BroadcastPierogErrors > 0 then
@@ -160,24 +146,13 @@ Pierog.func.sendData = function(payload)
                 net.send_chat_to(Pierog.ConnectionError , playerId)
             end
         end
-
-        Pierog.Stats.LastConnectionError = now
-    else
-        Pierog.Stats.LastSentTCP = now
-
-        if(reconnected > 0) then
-            net.log("[Pierog]", "TCP reconnected")
-            Pierog.Stats.LastBigUpdate = 0
-            Pierog.Stats.LastSentSlots = 0
-            Pierog.Stats.LastSentMission = 0
-        end
     end
 end
 
 Pierog.func.sendMissionUpdate = function()
     local payload = Pierog.Handlers["event"]("mission")
     payload["mission"] = DCS.getCurrentMission()["mission"]
-    payload["missionName"] = DCS.getCurrentMission()
+    payload["missionName"] = DCS.getMissionName()
 
     local json = net.lua2json(payload);
     Pierog.func.sendData(json)
@@ -361,44 +336,38 @@ Pierog.LogChat = function(playerID, msg, all)
     Pierog.func.sendData(net.lua2json(data));
 end
 
-Pierog.LogEvent = function(log_type, log_content, log_arg_1, log_arg_2)
+Pierog.LogEvent = function(log_type, log_content, log_arg1, log_arg2)
     -- Logs events messages
     local data = Pierog.Handlers["event"]("customLog");
     data['log_type']= log_type
-    data['log_arg_1']= log_arg_1
-    data['log_arg_2']= log_arg_2
+    data['log_arg_1']= log_arg1
+    data['log_arg_2']= log_arg2
     data['log_content']=log_content
     data['log_missionhash']=Pierog.Mission.Hash
 
-    Pierog.AddLog("Sending event data, event: " .. log_type .. ", arg1:" .. log_arg_1 .. ", arg2:" .. log_arg_2 .. ", content: " .. log_content,1)
-
     Pierog.func.sendData(net.lua2json(data));
+
+    Pierog.AddLog("Sending event data, event: " .. log_type .. ", arg1:" .. log_arg1 .. ", arg2:" .. log_arg2 .. ", content: " .. log_content,1)
+end
+
+Pierog.onMissionLoadEnd = function()
+    Pierog.func.initialiseMissionData();
+    Pierog.Mission.Hash=Pierog.generate_mission_hash();
+    Pierog.DLL.markMissionStart(Pierog.Mission.Hash);
+
+    net.log("[Pierog]", "Mission loaded", Pierog.Mission.Hash);
 end
 
 --- ################################ Event callbacks ################################
 
 Pierog.onSimulationStart = function()
-    Pierog.Mission.Hash=Pierog.generate_mission_hash()
-    Pierog.LogEvent("SimStart","Mission " .. Pierog.Mission.Hash .. " started",nil,nil);
-    Pierog.lastSentMission = 0 -- reset so mission information will be sent
-    Pierog.State.slotsInitialised = false;
-
-    Pierog.DLL.markMissionStart(Pierog.Mission.Hash);
-end
-
-Pierog.onSimulationStop = function()
-    Pierog.LogEvent("SimStop","Mission " .. Pierog.Mission.Hash .. " finished",nil,nil);
-
-    Pierog.Mission = {}
+    Pierog.func.initialiseMissionData();
     Pierog.Mission.Hash=Pierog.generate_mission_hash();
-    Pierog.Mission.Slots = {}
-    Pierog.Mission.Players = {}
-    Pierog.Mission.Units = {}
-
-    Pierog.Stats.LastSentSlots = 0
-    Pierog.Stats.LastBigUpdate = 0
-    Pierog.Stats.LastSentMission = 0
     Pierog.DLL.markMissionStart(Pierog.Mission.Hash);
+
+    net.log("[Pierog]", "markMissionStart", Pierog.Mission.Hash);
+
+    Pierog.LogEvent("SimStart","Mission " .. Pierog.Mission.Hash .. " started",nil,nil);
 end
 
 Pierog.onPlayerStop = function (id)
@@ -417,13 +386,13 @@ Pierog.onSimulationFrame = function()
 
     local now = DCS.getRealTime()
 
-    if(Pierog.Stats.LastBigUpdate < 1 or now > Pierog.Stats.LastBigUpdate + Pierog.bigUpdatesSeconds) then
-        --net.log("[Pierog]", "Big update evaluation at", now, ", Pierog.Stats.LastSentSlots", Pierog.Stats.LastSentSlots, ", Pierog.Stats.LastBigUpdate", Pierog.Stats.LastBigUpdate)
+    if(Pierog.Mission.LastBigUpdate < 1 or now > Pierog.Mission.LastBigUpdate + Pierog.bigUpdatesSeconds) then
+        --net.log("[Pierog]", "Big update evaluation at", now, ", Pierog.Mission.LastSentSlots", Pierog.Mission.LastSentSlots, ", Pierog.Stats.LastBigUpdate", Pierog.Stats.LastBigUpdate)
         --net.log("[Pierog]", "Pierog.refreshSlotsSeconds: ".. Pierog.refreshSlotsSeconds)
         --net.log("[Pierog]", "name: >"..DCS.getMissionName().."<");
         --net.log("[Pierog]", "mission"..net.lua2json(DCS.getCurrentMission()))
 
-        if(not Pierog.State.slotsInitialised) then
+        if(not Pierog.Mission.slotsInitialised) then
             local foo = Pierog.func.ensureSlots;
 
             local status, error = pcall(foo);
@@ -431,28 +400,24 @@ Pierog.onSimulationFrame = function()
                 Pierog.AddLog( "error getting slot information" .. error);
             else
                 Pierog.func.sendSlotUpdate();
-                Pierog.Stats.LastSentSlots = now;
-                Pierog.Stats.LastBigUpdate = now;
+                Pierog.Mission.LastSentSlots = now;
+                Pierog.Mission.LastBigUpdate = now;
             end
-        elseif(now > Pierog.Stats.LastSentSlots + Pierog.refreshSlotsSeconds) then
+        elseif(now > Pierog.Mission.LastSentSlots + Pierog.refreshSlotsSeconds) then
             --net.log("[Pierog]", "Slots")
 
             Pierog.func.sendSlotUpdate();
-            Pierog.Stats.LastSentSlots = now;
-            Pierog.Stats.LastBigUpdate = now;
+            Pierog.Mission.LastSentSlots = now;
+            Pierog.Mission.LastBigUpdate = now;
         end
 
-        if (now > Pierog.Stats.LastSentMission) then
+        if (now > Pierog.Mission.LastSentMission) then
             --net.log("[Pierog]", "Mission")
 
             Pierog.func.sendMissionUpdate()
-            Pierog.Stats.LastSentMission = now
-            Pierog.Stats.LastBigUpdate = now
+            Pierog.Mission.LastSentMission = now
+            Pierog.Mission.LastBigUpdate = now
         end
-    end
-
-    if(now > Pierog.LastSentTCP + Pierog.RefreshKeepAlive) then
-        Pierog.func.sendData(" ")
     end
 end
 
@@ -472,9 +437,16 @@ Pierog.onPlayerTrySendChat = function (playerID, msg, all)
     return msg;
 end
 
+Pierog.onPlayerTryConnect= function(address, name, ucid, id)
+    net.log("[Pierog]", "onPlayerTryConnect", address, name, ucid, id);
+    return true;
+end
+
 Pierog.onGameEvent = function(eventName, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-    local argCount = Pierog.HandlerArgCounts[eventName]
-    local handler = Pierog.Handlers[eventName]
+    local argCount = Pierog.HandlerArgCounts[eventName];
+    local handler = Pierog.Handlers[eventName];
+
+    --net.log("[Pierog]", 'Event', eventName);
 
     if(Pierog.Handlers[eventName] == nil) then
         --    no handler found
@@ -498,11 +470,7 @@ Pierog.onGameEvent = function(eventName, arg1, arg2, arg3, arg4, arg5, arg6, arg
     local json = net.lua2json(payload)
     Pierog.func.sendData(json)
 
-    if(eventName == "mission_end") then
-        Pierog.DLL.markMissionStart(Pierog.Mission.Hash);
-    end
-
-    --net.log("[Pierog] json", json)
+    net.log("[Pierog] json", json)
 
     --net.log("[Pierog]", "get_player_list", net.lua2json(net.get_player_list()))
     --net.log("[Pierog]", "mission_data", net.lua2json(DCS.getCurrentMission()))
@@ -522,9 +490,8 @@ if DCS.isServer() then
     Pierog.DLL.delimiters(Pierog.delimiters[1], Pierog.delimiters[2])
     Pierog.DLL.StartOfApp(Pierog.logPath, Pierog.host, Pierog.port);
     net.log("[Pierog]", "DLL started")
-    Pierog.Mission.Hash=Pierog.generate_mission_hash();													-- Generate initial missionhash
-    DCS.setUserCallbacks(Pierog);																		-- Set user callbacs,  map DCS event handlers with functions defined above
-    Pierog.AddLog("Loaded - Pierog for DCS World - version: " .. Pierog.Globals.version,0)		    -- Display Pierog information in log
+    DCS.setUserCallbacks(Pierog);																		        -- Set user callbacs,  map DCS event handlers with functions defined above
+    Pierog.AddLog("Loaded - Pierog for DCS World - version: " .. Pierog.Globals.version,0)		-- Display Pierog information in log
 end
 
 
