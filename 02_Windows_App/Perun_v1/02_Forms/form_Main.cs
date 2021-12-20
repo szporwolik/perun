@@ -231,7 +231,7 @@ namespace Perun_v1
             trayIconMain.Text = this.Text; // Set notification icon text
 
             // Prepare MySQL connection string
-            Globals.DatabaseConnection.DatabaseConnectionString = $"server={con_txt_mysql_server.Text};user={con_txt_mysql_username.Text};database={con_txt_mysql_database.Text};port={con_txt_mysql_port.Text};password={con_txt_mysql_password.Text}";
+            Globals.DatabaseConnection.DatabaseConnectionString = $"server={con_txt_mysql_server.Text};user={con_txt_mysql_username.Text};database={con_txt_mysql_database.Text};port={con_txt_mysql_port.Text};password={con_txt_mysql_password.Text};CharSet=utf8mb4";
 
             // Start listening
             PerunHelper.LogInfo(ref Globals.AppLogHistory, "Opening connections", 0, 1);
