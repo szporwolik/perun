@@ -18,6 +18,7 @@ PerunConfig.ConnectionError_L1 = "[Perun] ERROR: Connection broken - contact ser
 
 -- Misc
 PerunConfig.BroadcastPerunErrors = 1															-- (int) [0 (default),1] Value greater than 0 will broadcast chat message about missing connection to Perun
+PerunConfig.RecordChatMessages = 1
 
 -- Debug
 PerunConfig.DebugMode = 1																		-- (int) [0 (default),1,2] Value greater than 0 will display Perun information in DCS log file, values: 1 - minimal verbose, 2 - all log information will be logged
