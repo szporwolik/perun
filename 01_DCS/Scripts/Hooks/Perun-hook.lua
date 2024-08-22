@@ -48,6 +48,14 @@ Perun.lastFrameTime = 0;
 Perun.ReconnectTimeout = 30;
 Perun.RefreshKeepAlive = 3
 
+Perun.PTS = function(data) -- ProtectedToString
+	if data == nil then
+		return "[nil]"
+	else
+		return tostring(data)
+	end
+end
+
 -- ################################ Helper function definitions ################################
 Perun.GetCategory = function(id)
     -- Helper function returns object category basing on https://pastebin.com/GUAXrd2U
@@ -82,7 +90,7 @@ Perun.SideID2Name = function(id)
         [2] = 'BLUE',
 		[3] = 'NEUTRAL',	-- TBD check once this is released in DCS
     }
-	if id > 0 and id <= 3 then
+	if id and id > 0 and id <= 3 then
 		return _sides[id]
 	else 
 		return "?"
@@ -622,7 +630,7 @@ end
 Perun.onSimulationStart = function()
 	-- Simulation was started
     Perun.MissionHash=Perun.GenerateMissionHash()
-    Perun.LogEvent("SimStart","Mission " .. Perun.MissionHash .. " started",nil,nil);
+    Perun.LogEvent("SimStart","Mission " .. Perun.PTS(Perun.MissionHash) .. " started",nil,nil);
 	Perun.StatData = {}
 	Perun.StatDataLastType = {}
 	Perun.PlayersTableCache = {}
@@ -633,7 +641,7 @@ end
 
 Perun.onSimulationStop = function()
 	-- Simulation was stopped
-    Perun.LogEvent("SimStop","Mission " .. Perun.MissionHash .. " finished",nil,nil);
+    Perun.LogEvent("SimStop","Mission " .. Perun.PTS(Perun.MissionHash) .. " finished",nil,nil);
 	Perun.LogAllStats()
 	Perun.MissionHash=Perun.GenerateMissionHash();
 	Perun.StatData = {}
@@ -645,14 +653,14 @@ end
 
 Perun.onPlayerDisconnect = function(id, err_code)
 	-- Player disconnected
-	Perun.LogEvent("disconnect", "Player " .. id .. " disconnected.",nil,nil);
+	Perun.LogEvent("disconnect", "Player " .. Perun.PTS(id) .. " disconnected.",nil,nil);
 	
 	return 
 end
 
 Perun.onPlayerStop = function (id)
     -- Player left the simulation (happens right before a disconnect, if player exited by desire)
-	Perun.LogEvent("quit", "Player " .. id .. " quit the server.",nil,nil);
+	Perun.LogEvent("quit", "Player " .. Perun.PTS(id) .. " quit the server.",nil,nil);
 	return
 end
 
@@ -725,11 +733,11 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			arg2 = "Cannon"
 		end
 		
-        Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player(s) " .. Perun.GetMulticrewCrewNames(arg1) .." killed friendly " .. Perun.GetMulticrewCrewNames(arg3) .. " using " .. arg2,nil,nil);
+        Perun.LogEvent(Perun.PTS(eventName),Perun.SideID2Name( Perun.PTS(net.get_player_info(arg1, "side"))) .. " player(s) " .. Perun.PTS(Perun.GetMulticrewCrewNames(arg1)) .." killed friendly " .. Perun.PTS(Perun.GetMulticrewCrewNames(arg3)) .. " using " .. Perun.PTS(arg2),nil,nil);
 
     elseif eventName == "mission_end" then
         --"mission_end", winner, msg
-        Perun.LogEvent(eventName,"Mission finished, winner " .. arg1 .. " message: " .. arg2,nil,nil);
+        Perun.LogEvent(Perun.PTS(eventName),"Mission finished, winner " .. Perun.PTS(arg1) .. " message: " .. Perun.PTS(arg2),nil,nil);
 
     elseif eventName == "kill" then
         --"kill", killerPlayerID, killerUnitType, killerSide, victimPlayerID, victimUnitType, victimSide, weaponName
@@ -792,12 +800,12 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 			victim_vehicle = "?"
 		end
 		
-		Perun.LogEvent(eventName,Perun.SideID2Name(arg3) .. _temp_killers .. " in " .. arg2 .. " killed " .. Perun.SideID2Name(arg6) .. _temp_victims .. " in " .. victim_vehicle  .. " using " .. arg7 .. " [".. Perun.GetCategory(arg5).."]",arg7,Perun.GetCategory(arg5));
+		Perun.LogEvent(Perun.PTS(eventName),Perun.PTS(Perun.SideID2Name(arg3)) .. _temp_killers .. " in " .. Perun.PTS(arg2) .. " killed " .. Perun.PTS(Perun.SideID2Name(arg6)) .. Perun.PTS(_temp_victims) .. " in " .. Perun.PTS(victim_vehicle)  .. " using " .. Perun.PTS(arg7) .. " [".. Perun.PTS(Perun.GetCategory(arg5)).."]",arg7,Perun.GetCategory(arg5));
 
     elseif eventName == "self_kill" then
         --"self_kill", playerID
 		Perun.LogStats(arg1);
-        Perun.LogEvent(eventName,net.get_player_info(arg1, "name") .. " killed himself",nil,nil);
+        Perun.LogEvent(Perun.PTS(eventName),Perun.PTS(net.get_player_info(arg1, "name")) .. " killed himself",nil,nil);
 
     elseif eventName == "change_slot" then
         --"change_slot", playerID, slotID, prevSide
@@ -808,7 +816,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
 		else
 			_sub_slot =" (" .. _sub_slot .. ")  "
 		end       
-	    Perun.LogEvent(eventName,Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player " .. net.get_player_info(arg1, "name") .. " changed slot to " .. _master_type .. " " .. _sub_slot,nil,nil);
+	    Perun.LogEvent(Perun.PTS(eventName),Perun.PTS(Perun.SideID2Name( net.get_player_info(arg1, "side"))) .. " player " .. Perun.PTS(net.get_player_info(arg1, "name")) .. " changed slot to " .. Perun.PTS(_master_type) .. " " .. Perun.PTS(_sub_slot),nil,nil);
        	
 		Perun.LogStats(arg1);
 		Perun.LogStatsCount(arg1,"init")
@@ -817,23 +825,23 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
     elseif eventName == "connect" then
         --"connect", playerID, name
         Perun.LogLogin(arg1);
-        Perun.LogEvent(eventName,"Player "..net.get_player_info(arg1, "name") .. " connected",nil,nil);
+        Perun.LogEvent(Perun.PTS(eventName),"Player "..Perun.PTS(net.get_player_info(arg1, "name")) .. " connected",nil,nil);
 		Perun.PlayersTableCache["p"..arg1]=net.get_player_info(arg1);
 
     elseif eventName == "disconnect" then
         --"disconnect", playerID, name, playerSide, reason_code
-        Perun.LogEvent(eventName,"Player " ..  arg2 .. " disconnected (".. arg4 .. ")." ,arg4,nil);
+        Perun.LogEvent(Perun.PTS(eventName),"Player " ..  Perun.PTS(arg2) .. " disconnected (".. Perun.PTS(arg4) .. ")." ,arg4,nil);
 		Perun.LogStats(arg1);
 
     elseif eventName == "crash" then
         --"crash", playerID, unit_missionID
 		Perun.LogStatsCountCrew (arg1,"crash")
-		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player(s) " .. Perun.GetMulticrewCrewNames(arg1)  .. " crashed in " .. DCS.getUnitType(arg2),nil,nil);
+		Perun.LogEvent(Perun.PTS(eventName), Perun.PTS(Perun.SideID2Name( net.get_player_info(arg1, "side"))) .. " player(s) " .. Perun.PTS(Perun.GetMulticrewCrewNames(arg1))  .. " crashed in " .. Perun.PTS(DCS.getUnitType(arg2)),nil,nil);
 
     elseif eventName == "eject" then
         --"eject", playerID, unit_missionID
 		Perun.LogStatsCountCrew (arg1,"eject") -- TBD crew or initiator only?
-		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player(s) " .. Perun.GetMulticrewCrewNames(arg1) .. " ejected " .. DCS.getUnitType(arg2),nil,nil);
+		Perun.LogEvent(Perun.PTS(eventName), Perun.PTS(Perun.SideID2Name( net.get_player_info(arg1, "side"))) .. " player(s) " .. Perun.PTS(Perun.GetMulticrewCrewNames(arg1)) .. " ejected " .. Perun.PTS(DCS.getUnitType(arg2)),nil,nil);
 
     elseif eventName == "takeoff" then
         --"takeoff", playerID, unit_missionID, airdromeName
@@ -844,7 +852,7 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
         end
 
 		Perun.LogStatsCountCrew (arg1,Perun.GetTakeOffLandingEvent(true,arg3))
-		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player(s) " .. Perun.GetMulticrewCrewNames(arg1) .. " took off in ".. DCS.getUnitType(arg2) .. _temp_airfield,arg3,nil);
+		Perun.LogEvent(Perun.PTS(eventName), Perun.PTS(Perun.SideID2Name( net.get_player_info(arg1, "side"))) .. " player(s) " .. Perun.PTS(Perun.GetMulticrewCrewNames(arg1)) .. " took off in ".. Perun.PTS(DCS.getUnitType(arg2)) .. Perun.PTS(_temp_airfield),arg3,nil);
 
     elseif eventName == "landing" then
         --"landing", playerID, unit_missionID, airdromeName
@@ -855,15 +863,15 @@ Perun.onGameEvent = function (eventName,arg1,arg2,arg3,arg4,arg5,arg6,arg7)
         end
 
 		Perun.LogStatsCountCrew (arg1,Perun.GetTakeOffLandingEvent(false,arg3))
-		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player(s) " .. Perun.GetMulticrewCrewNames(arg1) .. " landed in " .. DCS.getUnitType(arg2).. _temp_airfield,arg3,nil);
+		Perun.LogEvent(Perun.PTS(eventName), Perun.PTS(Perun.SideID2Name( net.get_player_info(arg1, "side"))) .. " player(s) " .. Perun.PTS(Perun.GetMulticrewCrewNames(arg1)) .. " landed in " .. Perun.PTS(DCS.getUnitType(arg2)).. Perun.PTS(_temp_airfield),arg3,nil);
 
     elseif eventName == "pilot_death" then
         --"pilot_death", playerID, unit_missionID
 		Perun.LogStatsCountCrew (arg1,"pilot_death")  -- TBD crew or initiator only?
-		Perun.LogEvent(eventName, Perun.SideID2Name( net.get_player_info(arg1, "side")) .. " player(s) " .. Perun.GetMulticrewCrewNames(arg1) .. " in " .. DCS.getUnitType(arg2) .. " died",nil,nil);
+		Perun.LogEvent(Perun.PTS(eventName), Perun.PTS(Perun.SideID2Name( net.get_player_info(arg1, "side"))) .. " player(s) " .. Perun.PTS(Perun.GetMulticrewCrewNames(arg1)) .. " in " .. Perun.PTS(DCS.getUnitType(arg2)) .. " died",nil,nil);
 
     else
-        Perun.LogEvent(eventName,"Unknown event type",nil,nil);
+        Perun.LogEvent(Perun.PTS(eventName),"Unknown event type",nil,nil);
 
     end
 	local _delay = (DCS.getRealTime() - _now) * 1000000
