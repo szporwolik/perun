@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> This repository is no longer actively maintained.
+> 
+> I have not hosted games or played DCS for a long time, so I decided to archive this project.
+> 
+> The code will remain available for reference. Anyone interested is welcome to fork the repository and continue maintaining or improving it.
+
 ![Discord](https://img.shields.io/discord/641759751780302866)
 ![alt text](https://img.shields.io/github/license/szporwolik/perun.svg "MIT")
 ![alt text](https://img.shields.io/github/release-pre/szporwolik/perun.svg "Latest release")
